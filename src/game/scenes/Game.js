@@ -78,7 +78,7 @@ export class Game extends Scene {
 
         this.player = this.createPlayer(100, 100)
 
-        this.physics.add.collider(this.player, this.group, this.reproducir, null, this)
+        this.physics.add.collider(this.player, this.group, this.morir, null, this)
 
 
         this.input.mouse.disableContextMenu();
@@ -93,10 +93,10 @@ export class Game extends Scene {
         EventBus.emit('current-scene-ready', this);
     }
 
-    reproducir(player, rana) {
+    morir(player, rana) {
         rana.destroy()
         player.vida --
-        if (player.vida ===0) {
+        if (player.vida === 0) {
             this.scene.start('GameOver')
         }
     }
