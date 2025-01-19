@@ -1,39 +1,37 @@
 import { useRef, useState } from 'react';
 
-import Phaser from 'phaser';
+// import Phaser from 'phaser';
 import { PhaserGame } from './game/PhaserGame';
 
-function App ()
-{
+function App() {
     // The sprite can only be moved in the MainMenu Scene
-    const [canMoveSprite, setCanMoveSprite] = useState(true);
-    
+    // const [canMoveSprite, setCanMoveSprite] = useState(true);
+    const [centroControl, setCentroControl] = useState({btnPlay:true, btnSalir:false})
+
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
-    const [spritePosition, setSpritePosition] = useState({ x: 0, y: 0 });
+    // const [spritePosition, setSpritePosition] = useState({ x: 0, y: 0 });
 
     const changeScene = () => {
 
         const scene = phaserRef.current.scene;
 
-        if (scene)
-        {
-            scene.changeScene();
+        if (scene) {
+            scene.changeScene()
         }
     }
 
-    const moveSprite = () => {
+/*     const moveSprite = () => {
 
         const scene = phaserRef.current.scene;
 
-        if (scene && scene.scene.key === 'MainMenu')
-        {
+        if (scene && scene.scene.key === 'MainMenu') {
             // Get the update logo position
             scene.moveLogo(({ x, y }) => {
 
                 setSpritePosition({ x, y });
 
-            });
+            })
         }
     }
 
@@ -41,8 +39,7 @@ function App ()
 
         const scene = phaserRef.current.scene;
 
-        if (scene)
-        {
+        if (scene) {
             // Add more stars
             const x = Phaser.Math.Between(64, scene.scale.width - 64);
             const y = Phaser.Math.Between(64, scene.scale.height - 64);
@@ -62,12 +59,12 @@ function App ()
             });
         }
     }
-
+ */
     // Event emitted from the PhaserGame component
-    const currentScene = (scene) => {
-
-        setCanMoveSprite(scene.scene.key !== 'MainMenu');
-        
+    const currentScene = () => {        
+        centroControl.btnPlay = !centroControl.btnPlay
+        centroControl.btnSalir = !centroControl.btnSalir
+        setCentroControl({...centroControl})
     }
 
     return (
@@ -75,16 +72,13 @@ function App ()
             <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
             <div>
                 <div>
-                    <button className="button" onClick={changeScene}>Change Scene</button>
+                    <button disabled={centroControl.btnPlay} className="button" onClick={changeScene}>Play</button>
                 </div>
                 <div>
-                    <button disabled={canMoveSprite} className="button" onClick={moveSprite}>Toggle Movement</button>
-                </div>
-                <div className="spritePosition">Sprite Position:
-                    <pre>{`{\n  x: ${spritePosition.x}\n  y: ${spritePosition.y}\n}`}</pre>
+                    <button disabled={centroControl.btnSalir} className="button" onClick={changeScene}>Salir</button>
                 </div>
                 <div>
-                    <button className="button" onClick={addSprite}>Add New Sprite</button>
+                    {/* <button className="button" onClick={addSprite}>Add New Sprite</button> */}
                 </div>
             </div>
         </div>

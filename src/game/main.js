@@ -13,6 +13,12 @@ const config = {
     height: 600,
     parent: 'game-container',
     backgroundColor: '#028af8',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false
+        }
+    },
     scene: [
         Boot,
         Preloader,

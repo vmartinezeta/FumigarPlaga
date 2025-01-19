@@ -33,6 +33,7 @@ export class Preloader extends Scene
         this.load.setPath('assets');
 
         this.load.spritesheet("rana", "rana-spritesheet.png", {frameWidth:64, frameHeight:64})
+        this.load.spritesheet("player", "dude.png", {frameWidth:32, frameHeight:48})
         this.load.image('logo', 'logo.png');
         this.load.image('star', 'star.png');
     }
