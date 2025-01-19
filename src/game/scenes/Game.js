@@ -81,8 +81,7 @@ export class Game extends Scene {
         this.input.mouse.disableContextMenu()
         this.input.on('pointerdown', function (pointer) {
             if (pointer.leftButtonDown()) {
-                this.fumigar()
-                this.physics.add.collider(this.emitter, this.group)
+                this.fumigar()                
             }
         }, this)
 
@@ -107,7 +106,8 @@ export class Game extends Scene {
     }
 
     fumigar() {
-        const zona = { type: 'edge', source: this.player.getBounds(), quantity: 42 };
+        const rect = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 80, 80)
+        const zona = { type: 'edge', source: rect, quantity: 42 }
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             speed: 24,
@@ -120,6 +120,7 @@ export class Game extends Scene {
         });
         
         this.emitter.start(2000);
+
     }
 
     morir(player, rana) {
@@ -172,6 +173,16 @@ export class Game extends Scene {
         if (this.keyboard.space.isDown) {
             this.fumigar()           
         }
+
+        if (this.emitter) {
+            this.group.getChildren().forEach(plaga => {
+                const plagas = this.emitter.overlap(plaga.body)
+                if (plagas.length > 0) {
+                    plaga.destroy()
+                }
+            })
+        }
+
     }
 
 }
