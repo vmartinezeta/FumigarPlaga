@@ -6,7 +6,7 @@ import { PhaserGame } from './game/PhaserGame';
 function App() {
     // The sprite can only be moved in the MainMenu Scene
     // const [canMoveSprite, setCanMoveSprite] = useState(true);
-    const [centroControl, setCentroControl] = useState({btnPlay:true, btnSalir:false})
+    const [centroControl, setCentroControl] = useState({btnPlay:false, btnSalir:true})
 
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
@@ -61,10 +61,13 @@ function App() {
     }
  */
     // Event emitted from the PhaserGame component
-    const currentScene = () => {        
-        centroControl.btnPlay = !centroControl.btnPlay
-        centroControl.btnSalir = !centroControl.btnSalir
-        setCentroControl({...centroControl})
+    const currentScene = (scene) => {        
+        if (scene.scene.key === "MainMenu") {
+            setCentroControl({btnPlay:false, btnSalir:true})
+        } else if (scene.scene.key === "Game" || scene.scene.key === "GameOver") {
+            setCentroControl({btnPlay:true, btnSalir:false})
+        }
+        
     }
 
     return (

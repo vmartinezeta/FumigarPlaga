@@ -87,10 +87,28 @@ export class Game extends Scene {
             if (pointer.leftButtonDown()) {
                 this.player.x = pointer.x
                 this.player.y = pointer.y
+                this.fumigar()
             }
         }, this)
 
         EventBus.emit('current-scene-ready', this);
+    }
+
+    fumigar() {
+        
+        const emitZone1 = { type: 'edge', source: this.player.getBounds(), quantity: 42 };
+
+        const emitter = this.add.particles(0, 0, 'particle', {
+            speed: 24,
+            lifespan: 1500,
+            quantity: 10,
+            scale: { start: 0.4, end: 0 },
+            emitZone: emitZone1,
+            duration: 500,
+            emitting: false
+        });
+        
+        emitter.start(2000);
     }
 
     morir(player, rana) {
