@@ -10,7 +10,7 @@ export class Game extends Scene {
         this.emitter = null
         this.zona = null
         this.gameOver = false
-        this.pareja = null
+        this.reproducirse = false
     }
 
     create() {
@@ -66,7 +66,7 @@ export class Game extends Scene {
         this.createPerimetro()
 
         this.group = this.add.group()
-        this.addPlagas(10)
+        this.addPlagas(20)
 
         this.player = this.createPlayer(100, 100)
         this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 60, 20)
@@ -104,19 +104,9 @@ export class Game extends Scene {
         const reproducirse = (p1.hembra && !p2.hembra)
         || (!p1.hembra && p2.hembra)
         if (reproducirse) {
-            this.pareja ={
-                izquierda:p1,
-                derecha:p2
-            }
+            this.reproducirse = true
         }
         return !reproducirse
-    }
-
-    reproducir() {
-        const {izquierda, derecha} = this.pareja
-        izquierda.destroy()
-        derecha.destroy()
-        this.addPlagas(10)    
     }
 
     rotar(_, rana) {
@@ -187,9 +177,9 @@ export class Game extends Scene {
     update() {
         if (this.gameOver) return
 
-        if (this.pareja) {
-            this.reproducir()
-            this.pareja = null
+        if (this.reproducirse){
+            this.addPlagas(2)
+            this.reproducirse = false
         }
 
         if (this.keyboard.left.isDown) {
@@ -228,7 +218,16 @@ export class Game extends Scene {
 
         if (this.group.countActive()===0){
             this.gameOver = true
-            this.scene.start('GameOver')
+            setTimeout(() => {
+                this.gameOver = false
+                this.group = null
+                this.player = null
+                this.perimetro = null
+                this.emitter = null
+                this.zona = null
+                this.reproducirse = false
+                this.scene.start('GameOver')                
+            }, 100)
         }
 
     }

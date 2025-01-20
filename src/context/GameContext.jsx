@@ -12,7 +12,7 @@ export const useGame = () => {
 }
 
 export function GameProvider({ children }) {
-    const [play, { stop }] = useSound(urlSound)
+    const [play, { stop }] = useSound(urlSound,{loop:true})
     const [toggleMusica, setToggleMusica] = useState(false)
 
     const onToggleMusica = () => {
