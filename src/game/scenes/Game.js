@@ -1,5 +1,5 @@
-import { EventBus } from '../EventBus';
-import Phaser , { Scene } from 'phaser';
+import { EventBus } from '../EventBus'
+import Phaser , { Scene } from 'phaser'
 
 export class Game extends Scene {
     constructor() {
@@ -8,6 +8,9 @@ export class Game extends Scene {
         this.player = null
         this.perimetro = null
         this.emitter = null
+        this.zona = null
+        this.gameOver = false
+        this.pareja = null
     }
 
     create() {
@@ -62,21 +65,17 @@ export class Game extends Scene {
 
         this.createPerimetro()
 
-        this.group = this.add.group();
-        const TOTAL_RANAS = 50
-        const base = this.game.config.width
-        const altura = this.game.config.height
-        for (let i = 1; i <= TOTAL_RANAS; i++) {
-            const x = Math.random() * base
-            const y = Math.random() * altura
-            const hembra = Math.floor(Math.random() * 2)
-            this.group.add(this.createPlaga(x, y, hembra))
-        }
+        this.group = this.add.group()
+        this.addPlagas(10)
 
         this.player = this.createPlayer(100, 100)
+        this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 60, 20)
 
         this.physics.add.collider(this.player, this.group, this.morir, null, this)
         this.physics.add.collider(this.perimetro, this.group, this.rotar, null, this)
+
+        this.physics.add.collider(this.group, this.group, null, this.dejarReproducirse, this)
+
 
         this.input.mouse.disableContextMenu()
         this.input.on('pointerdown', function (pointer) {
@@ -88,6 +87,36 @@ export class Game extends Scene {
         this.keyboard = this.input.keyboard.createCursorKeys()
 
         EventBus.emit('current-scene-ready', this);
+    }
+
+    addPlagas(cantidad) {      
+        const base = this.game.config.width
+        const altura = this.game.config.height
+        for (let i = 1; i <= cantidad; i++) {
+            const x = Math.random() * base
+            const y = Math.random() * altura
+            const hembra = Math.floor(Math.random() * 2)
+            this.group.add(this.createPlaga(x, y, hembra))
+        }
+    }
+
+    dejarReproducirse(p1, p2) {
+        const reproducirse = (p1.hembra && !p2.hembra)
+        || (!p1.hembra && p2.hembra)
+        if (reproducirse) {
+            this.pareja ={
+                izquierda:p1,
+                derecha:p2
+            }
+        }
+        return !reproducirse
+    }
+
+    reproducir() {
+        const {izquierda, derecha} = this.pareja
+        izquierda.destroy()
+        derecha.destroy()
+        this.addPlagas(10)    
     }
 
     rotar(_, rana) {
@@ -106,8 +135,7 @@ export class Game extends Scene {
     }
 
     fumigar() {
-        const rect = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 80, 80)
-        const zona = { type: 'edge', source: rect, quantity: 42 }
+        const zona = { type: 'edge', source: this.zona, quantity: 42 }
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             speed: 24,
@@ -135,6 +163,7 @@ export class Game extends Scene {
         const rana = this.add.sprite(x, y, 'rana')
         rana.tint = hembra ? 0x00ffff : 0x00ff00   
         rana.vida = 10 
+        rana.hembra = Boolean(hembra)
         this.physics.world.enable(rana)
         rana.body.setVelocity(Phaser.Math.Between(30, 50), Phaser.Math.Between(30, 50))
         rana.body.setBounce(1).setCollideWorldBounds(true)
@@ -156,18 +185,33 @@ export class Game extends Scene {
     }
 
     update() {
+        if (this.gameOver) return
+
+        if (this.pareja) {
+            this.reproducir()
+            this.pareja = null
+        }
+
         if (this.keyboard.left.isDown) {
             this.player.anims.play("left", true)
             this.player.x -= 2
+            if (!this.zona)return
+            this.zona = new Phaser.Geom.Rectangle(this.player.x-160, this.player.y, 60, 20)
         } else if (this.keyboard.right.isDown) {
             this.player.anims.play("right", true)
             this.player.x += 2
+            if (!this.zona)return
+            this.zona = new Phaser.Geom.Rectangle(this.player.x+100, this.player.y, 60, 20)
         } else if (this.keyboard.up.isDown){
             this.player.anims.play("idle", true)
             this.player.y -= 2
+            if (!this.zona)return
+            this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y-120, 60, 20)
         } else if (this.keyboard.down.isDown) {
             this.player.anims.play("idle", true)
             this.player.y += 2
+            if (!this.zona)return
+            this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y+100, 60, 20)
         }
 
         if (this.keyboard.space.isDown) {
@@ -177,10 +221,14 @@ export class Game extends Scene {
         if (this.emitter) {
             this.group.getChildren().forEach(plaga => {
                 const plagas = this.emitter.overlap(plaga.body)
-                if (plagas.length > 0) {
-                    plaga.destroy()
-                }
+                if (plagas.length === 0) return
+                plaga.destroy()
             })
+        }
+
+        if (this.group.countActive()===0){
+            this.gameOver = true
+            this.scene.start('GameOver')
         }
 
     }
