@@ -4,6 +4,7 @@ import Player from '../sprites/Player'
 import Plaga from '../sprites/Plaga'
 import { Punto } from '../Punto'
 import TanqueConAgua from '../sprites/TanqueConAgua'
+import { Tanque } from '../Tanque'
 
 export class Game extends Scene {
     constructor() {
@@ -15,6 +16,9 @@ export class Game extends Scene {
         this.zona = null
         this.gameOver = false
         this.hembra = null
+        this.tanque = null
+        this.tanqueGroup = null
+        this.busquedaTanque = false
     }
 
     create() {
@@ -26,14 +30,18 @@ export class Game extends Scene {
         this.group = this.add.group()
         this.addPlagas(20)
 
+        this.tanqueGroup = this.add.group()
+
         this.player = new Player(this, new Punto(100, 100), "player")
         this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 60, 20)
+        this.tanque = new Tanque()
 
         this.physics.add.collider(this.player, this.group, this.morir, null, this)
         this.physics.add.collider(this.perimetro, this.group, this.rotar, null, this)
 
         this.physics.add.collider(this.group, this.group, null, this.dejarReproducirse, this)
 
+        this.physics.add.collider(this.player, this.tanqueGroup, this.llenarTanque, null, this)
 
         this.input.mouse.disableContextMenu()
         this.input.on('pointerdown', function (pointer) {
@@ -56,6 +64,12 @@ export class Game extends Scene {
             const hembra = Math.floor(Math.random() * 2)
             this.group.add(new Plaga(this, new Punto(x, y), "rana", Boolean(hembra)))
         }
+    }
+
+    llenarTanque(_, tanque) {
+        this.tanque.reset()
+        tanque.destroy()
+        this.busquedaTanque = false
     }
 
     dejarReproducirse(p1, p2) {
@@ -85,7 +99,12 @@ export class Game extends Scene {
     }
 
     fumigar() {
+        if (this.tanque.estaVacio()) return
         const zona = { type: 'edge', source: this.zona, quantity: 42 }
+        this.tanque.vaciar()
+        if (this.tanque.estaVacio()) {
+            this.busquedaTanque = true
+        }
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             speed: 24,
@@ -118,13 +137,13 @@ export class Game extends Scene {
 
         if (this.hembra){
             this.addPlagas(2)    
-            if (this.hembra.parido>=3) {
+            if (this.busquedaTanque && this.hembra.parido>=3) {
                 const base = this.game.config.width
                 const altura = this.game.config.height
                 const x = Math.random() * base
                 const y = Math.random() * altura
 
-                new TanqueConAgua(this, new Punto(x, y), "tanque")
+                this.tanqueGroup.add(new TanqueConAgua(this, new Punto(x, y), "tanque"))
                 this.hembra.parido = 0
             }
             this.hembra.parido = this.hembra.parido+1
@@ -132,22 +151,22 @@ export class Game extends Scene {
         }
 
         if (this.keyboard.left.isDown) {
-            this.player.anims.play("left", true)
+            this.player.anims.play("izq", true)
             this.player.x -= 2
             if (!this.zona)return
             this.zona = new Phaser.Geom.Rectangle(this.player.x-160, this.player.y, 60, 20)
         } else if (this.keyboard.right.isDown) {
-            this.player.anims.play("right", true)
+            this.player.anims.play("der", true)
             this.player.x += 2
             if (!this.zona)return
             this.zona = new Phaser.Geom.Rectangle(this.player.x+100, this.player.y, 60, 20)
         } else if (this.keyboard.up.isDown){
-            this.player.anims.play("idle", true)
+            this.player.anims.play("centro", true)
             this.player.y -= 2
             if (!this.zona)return
             this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y-120, 60, 20)
         } else if (this.keyboard.down.isDown) {
-            this.player.anims.play("idle", true)
+            this.player.anims.play("centro", true)
             this.player.y += 2
             if (!this.zona)return
             this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y+100, 60, 20)

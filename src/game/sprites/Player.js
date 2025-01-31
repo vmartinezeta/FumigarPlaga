@@ -22,6 +22,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.play('centro');
     }
 
+
+
     createAnimations(scene) {
         // Crear una animación para el sprite
         scene.anims.create({

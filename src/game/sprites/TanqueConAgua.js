@@ -6,10 +6,16 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
         this.texture = texture
         // Añadir el sprite a la escena
         scene.add.existing(this);
-
+        scene.physics.world.enable(this)
         // Configurar propiedades del sprite
         this.setOrigin(0.5, 0.5); // Centrar el punto de origen
         this.setScale(1); // Escalar el sprite
+        // Crear un Timer que ejecute un callback después de 5 segundos
+        scene.time.delayedCall(5000, this.onTimerComplete, [], this);
+    }
+
+    onTimerComplete() {
+        this.destroy()
     }
 
     createAnimations(scene) {
