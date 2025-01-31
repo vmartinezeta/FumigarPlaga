@@ -1,5 +1,9 @@
 import { EventBus } from '../EventBus'
 import Phaser , { Scene } from 'phaser'
+import Player from '../sprites/Player'
+import Plaga from '../sprites/Plaga'
+import { Punto } from '../Punto'
+import TanqueConAgua from '../sprites/TanqueConAgua'
 
 export class Game extends Scene {
     constructor() {
@@ -10,65 +14,19 @@ export class Game extends Scene {
         this.emitter = null
         this.zona = null
         this.gameOver = false
-        this.reproducirse = false
+        this.hembra = null
     }
 
     create() {
         this.add.image(512, 384, 'background');
         this.physics.world.setBounds(0, 0, 1024, 600 )
 
-        const manager = this.anims
-        if (!manager.exists("walk")) {
-            manager.create({
-                key: 'walk',
-                frames: this.anims.generateFrameNumbers(
-                    'rana',
-                    { start: 0, end: 3 }
-                ),
-                frameRate: 12,
-                repeat: -1
-            })
-        }
-
-        if (!manager.exists("right")) {
-            this.anims.create({
-                key: 'right',
-                frames: this.anims.generateFrameNumbers(
-                    'player',
-                    { start: 5, end: 8 }
-                ),
-                frameRate: 12,
-                repeat: -1
-            })
-        }
-
-        if (!manager.exists("left")) {
-            this.anims.create({
-                key: 'left',
-                frames: this.anims.generateFrameNumbers(
-                    'player',
-                    { start: 0, end: 3 }
-                ),
-                frameRate: 12,
-                repeat: -1
-            })
-        }
-
-        if (!manager.exists("idle")) {
-            this.anims.create({
-                key: 'idle',
-                frames: [{ key: "player", frame: 4 }],
-                frameRate: 12,
-                repeat: -1
-            })
-        }
-
         this.createPerimetro()
 
         this.group = this.add.group()
         this.addPlagas(20)
 
-        this.player = this.createPlayer(100, 100)
+        this.player = new Player(this, new Punto(100, 100), "player")
         this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 60, 20)
 
         this.physics.add.collider(this.player, this.group, this.morir, null, this)
@@ -89,28 +47,30 @@ export class Game extends Scene {
         EventBus.emit('current-scene-ready', this);
     }
 
-    addPlagas(cantidad) {      
+    addPlagas(cantidad) {
         const base = this.game.config.width
         const altura = this.game.config.height
         for (let i = 1; i <= cantidad; i++) {
             const x = Math.random() * base
             const y = Math.random() * altura
             const hembra = Math.floor(Math.random() * 2)
-            this.group.add(this.createPlaga(x, y, hembra))
+            this.group.add(new Plaga(this, new Punto(x, y), "rana", Boolean(hembra)))
         }
     }
 
     dejarReproducirse(p1, p2) {
         const reproducirse = (p1.hembra && !p2.hembra)
         || (!p1.hembra && p2.hembra)
-        if (reproducirse) {
-            this.reproducirse = true
+        if (reproducirse && p1.hembra) {
+            this.hembra = p1
+        } else if (reproducirse && p2.hembra) {
+            this.hembra = p2
         }
         return !reproducirse
     }
 
     rotar(_, rana) {
-        rana.flipX = true
+        rana.rotar()
     }
 
     createPerimetro() {
@@ -149,27 +109,6 @@ export class Game extends Scene {
         }
     }
 
-    createPlaga(x, y, hembra) {
-        const rana = this.add.sprite(x, y, 'rana')
-        rana.tint = hembra ? 0x00ffff : 0x00ff00   
-        rana.vida = 10 
-        rana.hembra = Boolean(hembra)
-        this.physics.world.enable(rana)
-        rana.body.setVelocity(Phaser.Math.Between(30, 50), Phaser.Math.Between(30, 50))
-        rana.body.setBounce(1).setCollideWorldBounds(true)
-        rana.play("walk", true)
-        return rana
-    }
-
-    createPlayer(x, y) {
-        const player = this.add.sprite(x, y, 'player')
-        player.vida = 10
-        this.physics.world.enable(player)
-        player.body.allowGravity = false
-        player.body.setCollideWorldBounds(true)
-        return player
-    }
-
     changeScene() {
         this.scene.start('MainMenu')
     }
@@ -177,9 +116,19 @@ export class Game extends Scene {
     update() {
         if (this.gameOver) return
 
-        if (this.reproducirse){
-            this.addPlagas(2)
-            this.reproducirse = false
+        if (this.hembra){
+            this.addPlagas(2)    
+            if (this.hembra.parido>=3) {
+                const base = this.game.config.width
+                const altura = this.game.config.height
+                const x = Math.random() * base
+                const y = Math.random() * altura
+
+                new TanqueConAgua(this, new Punto(x, y), "tanque")
+                this.hembra.parido = 0
+            }
+            this.hembra.parido = this.hembra.parido+1
+            this.hembra = null
         }
 
         if (this.keyboard.left.isDown) {
@@ -225,7 +174,7 @@ export class Game extends Scene {
                 this.perimetro = null
                 this.emitter = null
                 this.zona = null
-                this.reproducirse = false
+                this.hembra = false
                 this.scene.start('GameOver')                
             }, 100)
         }
