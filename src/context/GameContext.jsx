@@ -48,10 +48,16 @@ export function GameProvider({ children }) {
         return false
     }
 
+    const reset = () => {
+        letrasGlobal = []
+        setLetras(letrasGlobal)
+    }
+
     return <GameContext.Provider value={{
         letras,
         onToggleMusica,
-        addLetra
+        addLetra,
+        reset
     }}>
         {children}
     </GameContext.Provider>

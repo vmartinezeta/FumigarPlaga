@@ -10,7 +10,7 @@ function App() {
     const [centroControl, setCentroControl] = useState({btnPlay:false, btnSalir:true})
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
-    const {onToggleMusica, addLetra} = useGame()
+    const {onToggleMusica, addLetra, reset} = useGame()
 
     const changeScene = () => {
 
@@ -18,6 +18,7 @@ function App() {
 
         if (scene) {
             scene.changeScene()
+            reset()
         }
     }
 
