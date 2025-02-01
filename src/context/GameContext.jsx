@@ -11,9 +11,12 @@ export const useGame = () => {
     return context
 }
 
+let letrasGlobal = []
+
 export function GameProvider({ children }) {
     const [play, { stop }] = useSound(urlSound,{loop:true})
     const [toggleMusica, setToggleMusica] = useState(false)
+    const [letras, setLetras] = useState([])
 
     const onToggleMusica = () => {
         const toggle = !toggleMusica
@@ -26,8 +29,29 @@ export function GameProvider({ children }) {
         setToggleMusica(toggle)
     }
 
+    const addLetra = (letra) => {
+        if(letra && !existe(letra)) {
+            letrasGlobal = [...letrasGlobal, letra]
+            setLetras(letrasGlobal)
+        } else if(letra && letra.isPrimera() && letrasGlobal.length>0){
+            letrasGlobal = [letra]
+            setLetras(letrasGlobal)
+        }
+    }
+
+    const existe = (letra) =>{
+        for(const l of letrasGlobal) {
+            if (l.origen.toString() === letra.origen.toString()) {
+                return true
+            }
+        }
+        return false
+    }
+
     return <GameContext.Provider value={{
-        onToggleMusica
+        letras,
+        onToggleMusica,
+        addLetra
     }}>
         {children}
     </GameContext.Provider>

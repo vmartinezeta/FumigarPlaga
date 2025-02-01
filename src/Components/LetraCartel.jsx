@@ -1,5 +1,5 @@
 // eslint-disable-next-line react/prop-types
-export default function Letra({letra}) {
+export default function LetraCartel({letra}) {
     if (!letra) return null
     return <div className="caja" style={{
         left:letra.origen.x-25,

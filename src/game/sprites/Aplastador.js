@@ -14,7 +14,7 @@ export default class Aplastador extends Phaser.GameObjects.Group {
         this.scene = scene // Guardar la escena como propiedad
         this.setup() // Llamar a la configuración inicial
         scene.time.delayedCall(1000, this.onTimerComplete, [], this)
-        this.origen = new Punto(512, 200)
+        this.origen = new Punto(412, 200)
         this.plaga = new Plaga(scene, this.origen, "rana")
         this.plaga.rotar()
         this.plaga.disabledBody()
@@ -23,13 +23,13 @@ export default class Aplastador extends Phaser.GameObjects.Group {
 
     onTimerComplete() {
         if (this.total === this.texto.length) {
-            this.total = 0            
+            this.total = 0          
             this.plaga.x = this.origen.x            
         }
         const actual = this.texto.charAt(this.total)
-        this.letra = new Letra(new Punto(this.plaga.x, this.plaga.y), actual)
+        this.letra = new Letra(new Punto(this.plaga.x, this.plaga.y), actual, this.total)
         this.total ++
-        this.plaga.x +=20
+        this.plaga.x += 40
         this.scene.time.delayedCall(1000, this.onTimerComplete, [], this)
     }
 

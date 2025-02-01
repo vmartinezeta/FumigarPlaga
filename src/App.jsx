@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import { PhaserGame } from './game/PhaserGame'
 import { useGame } from './context/GameContext'
-import Letra from './Components/Letra';
 import "./estilos.css"
+import LetraList from './Components/LetraList';
 
 function App() {
     // The sprite can only be moved in the MainMenu Scene
@@ -10,8 +10,7 @@ function App() {
     const [centroControl, setCentroControl] = useState({btnPlay:false, btnSalir:true})
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
-    const {onToggleMusica} = useGame()
-    const [letra, setLetra] = useState(null)
+    const {onToggleMusica, addLetra} = useGame()
 
     const changeScene = () => {
 
@@ -36,7 +35,7 @@ function App() {
                 {
                 // Get the update logo position
                 scene.moveLetra(obj => {
-                    setLetra(obj)
+                    addLetra(obj)
                 })
             }
     }
@@ -44,7 +43,7 @@ function App() {
     return (
         <div id="app">
             <div className="centro">
-                <Letra letra={letra} />
+                <LetraList />
                 <PhaserGame ref={phaserRef} currentActiveScene={(scene)=>{
                     currentScene(scene)
                     moveLetra(scene)
