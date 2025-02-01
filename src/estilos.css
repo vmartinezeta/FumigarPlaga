@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.centro {
+    position: relative;
+}
+
+.caja {    
+    position: absolute;
+    width: 50px;
+    height: 50px;    
+    background-color: tomato;
+    display: flex;
+    animation: aplastar 1 1s;
+}
+
+.titulo {
+    text-align: center;
+    background: #000;
+    font-weight: 600;    
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes aplastar {
+    to {
+        transform: scaleY(.4) scaleX(1.3);
+    }
+}

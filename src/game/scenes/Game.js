@@ -2,9 +2,9 @@ import { EventBus } from '../EventBus'
 import Phaser , { Scene } from 'phaser'
 import Player from '../sprites/Player'
 import Plaga from '../sprites/Plaga'
-import { Punto } from '../Punto'
+import { Punto } from '../classes/Punto'
 import TanqueConAgua from '../sprites/TanqueConAgua'
-import { Tanque } from '../Tanque'
+import { Tanque } from '../classes/Tanque'
 
 export class Game extends Scene {
     constructor() {

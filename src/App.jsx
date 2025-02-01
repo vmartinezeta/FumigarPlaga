@@ -1,6 +1,8 @@
-import { useRef, useState } from 'react';
-import { PhaserGame } from './game/PhaserGame';
-import { useGame } from './context/GameContext';
+import { useRef, useState } from 'react'
+import { PhaserGame } from './game/PhaserGame'
+import { useGame } from './context/GameContext'
+import Letra from './Components/Letra';
+import "./estilos.css"
 
 function App() {
     // The sprite can only be moved in the MainMenu Scene
@@ -9,8 +11,7 @@ function App() {
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
     const {onToggleMusica} = useGame()
-
-    // const [spritePosition, setSpritePosition] = useState({ x: 0, y: 0 });
+    const [letra, setLetra] = useState(null)
 
     const changeScene = () => {
 
@@ -28,12 +29,27 @@ function App() {
         } else if (scene.scene.key === "Game" || scene.scene.key === "GameOver") {
             setCentroControl({btnPlay:true, btnSalir:false})
         }
-        
+    }
+
+    const moveLetra = (scene) => {
+            if (scene && scene.scene.key === 'MainMenu')
+                {
+                // Get the update logo position
+                scene.moveLetra(obj => {
+                    setLetra(obj)
+                })
+            }
     }
 
     return (
         <div id="app">
-            <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
+            <div className="centro">
+                <Letra letra={letra} />
+                <PhaserGame ref={phaserRef} currentActiveScene={(scene)=>{
+                    currentScene(scene)
+                    moveLetra(scene)
+                }} />
+            </div>
             <div>
                 <div>
                     <button disabled={centroControl.btnPlay} className="button" onClick={changeScene}>Play</button>

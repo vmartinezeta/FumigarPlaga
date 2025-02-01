@@ -1,26 +1,19 @@
-import { EventBus } from '../EventBus';
-import { Scene } from 'phaser';
-import Plaga from '../sprites/Plaga';
-import { Punto } from '../Punto';
-
+import { EventBus } from '../EventBus'
+import { Scene } from 'phaser'
+import Aplastador from '../sprites/Aplastador'
 
 export class MainMenu extends Scene {
 
     constructor() {
         super('MainMenu')
+        this.aplastador = null        
     }
 
     create() {
         this.cameras.main.setBackgroundColor(0x00ff00);
         this.add.image(512, 384, 'background')
 
-        this.add.text(512, 284, 'Fumigar plagas', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100)
-
-        new Plaga(this, new Punto(512, 200), "rana", true)
+        this.aplastador = new Aplastador(this)
 
         EventBus.emit('current-scene-ready', this)
     }
@@ -29,5 +22,8 @@ export class MainMenu extends Scene {
         this.scene.start('Game');
     }    
 
-    // moveLogo(reactCallback) { }
+    moveLetra(reactCallback) {
+        reactCallback(this.aplastador.getLetra())
+        this.time.delayedCall(100, this.moveLetra, [reactCallback], this)
+    }
 }
