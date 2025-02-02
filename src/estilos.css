@@ -9,7 +9,7 @@
 }
 
 .caja {    
-    position: absolute;
+    position: absolute;    
     width: 30px;
     height: 50px;    
     background-color: tomato;
@@ -27,6 +27,6 @@
 
 @keyframes aplastar {
     to {
-        transform: scaleY(.4) scaleX(1.3);
+        transform: scaleX(1.3) scaleY(.5);
     }
 }

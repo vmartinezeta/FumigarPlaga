@@ -5,6 +5,7 @@ import Plaga from '../sprites/Plaga'
 import { Punto } from '../classes/Punto'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import { Tanque } from '../classes/Tanque'
+import GameStatus from '../sprites/GameStatus'
 
 export class Game extends Scene {
     constructor() {
@@ -25,6 +26,8 @@ export class Game extends Scene {
         this.add.image(512, 384, 'background');
         this.physics.world.setBounds(0, 0, 1024, 600 )
 
+        this.gameStatus = new GameStatus(this)
+        
         this.createPerimetro()
 
         this.group = this.add.group()
@@ -123,6 +126,7 @@ export class Game extends Scene {
     morir(player, rana) {
         rana.destroy()
         player.vida --
+        this.gameStatus.setVida(player.vida)
         if (player.vida === 0) {
             this.scene.start('GameOver')
         }

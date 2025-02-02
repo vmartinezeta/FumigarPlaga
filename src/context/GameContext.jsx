@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react'
 import useSound from 'use-sound'
 const GameContext = createContext()
 import urlSound from "../audio/musica-fondo.mp3"
+import PropTypes from "prop-types"
 
 export const useGame = () => {
     const context = useContext(GameContext)
@@ -12,6 +13,7 @@ export const useGame = () => {
 }
 
 let letrasGlobal = []
+
 
 export function GameProvider({ children }) {
     const [play, { stop }] = useSound(urlSound,{loop:true})
@@ -33,9 +35,8 @@ export function GameProvider({ children }) {
         if(letra && !existe(letra)) {
             letrasGlobal = [...letrasGlobal, letra]
             setLetras(letrasGlobal)
-        } else if(letra && letra.isPrimera() && letrasGlobal.length>0){
-            letrasGlobal = [letra]
-            setLetras(letrasGlobal)
+        } else if(letra && letra.isPrimera() && letrasGlobal.length>1){
+            reset()
         }
     }
 
@@ -61,4 +62,9 @@ export function GameProvider({ children }) {
     }}>
         {children}
     </GameContext.Provider>
+}
+
+
+GameProvider.propTypes = {
+    children: PropTypes.node
 }
