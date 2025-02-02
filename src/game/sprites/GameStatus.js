@@ -8,6 +8,7 @@ export default class GameStatus extends Phaser.GameObjects.Group {
         this.scene = scene // Guardar la escena como propiedad
         this.setup() // Llamar a la configuración inicial
         this.vida = 10
+        this.capacidad = 10
         const EJE_Y = 20
 
         this.rotuloVida = this.scene.add.text(40, EJE_Y, 'Vida: '+this.vida, {
@@ -32,10 +33,17 @@ export default class GameStatus extends Phaser.GameObjects.Group {
         this.scene.physics.add.existing(this, true) // Añadir físicas al grupo (opcional)
     }
 
+    setCapacidad(capacidad) {
+        if (this.capacidad !== capacidad) {
+            this.capacidad = capacidad
+            this.rotuloCapacidad.setText("Capacidad: "+capacidad)
+        }
+    }
+
     setVida(vida) {
         if (this.vida !== vida && this.vida> 0) {
-            this.vida --
-            this.rotuloVida.setText("Vida: "+this.vida)
+            this.vida = vida
+            this.rotuloVida.setText("Vida: "+vida)
         }
     }
 }

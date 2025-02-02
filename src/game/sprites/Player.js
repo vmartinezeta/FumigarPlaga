@@ -22,8 +22,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.play('centro');
     }
 
-
-
     createAnimations(scene) {
         // Crear una animación para el sprite
         scene.anims.create({
@@ -47,5 +45,25 @@ export default class Player extends Phaser.GameObjects.Sprite {
             repeat: -1
         });
 
+    }
+
+    left() {
+        this.anims.play("izq")
+        this.x -= 2
+    }
+
+    right() {
+        this.anims.play("der")
+        this.x += 2
+    }
+
+    top() {
+        this.anims.play("centro")
+        this.y -= 2
+    }
+
+    bottom() {
+        this.anims.play("centro")
+        this.y += 2
     }
 }

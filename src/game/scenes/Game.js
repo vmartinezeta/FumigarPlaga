@@ -20,6 +20,7 @@ export class Game extends Scene {
         this.tanque = null
         this.tanqueGroup = null
         this.busquedaTanque = false
+        this.fumigando = false
     }
 
     create() {
@@ -27,7 +28,7 @@ export class Game extends Scene {
         this.physics.world.setBounds(0, 0, 1024, 600 )
 
         this.gameStatus = new GameStatus(this)
-        
+
         this.createPerimetro()
 
         this.group = this.add.group()
@@ -103,8 +104,11 @@ export class Game extends Scene {
 
     fumigar() {
         if (this.tanque.estaVacio()) return
+
         const zona = { type: 'edge', source: this.zona, quantity: 42 }
         this.tanque.vaciar()
+        this.gameStatus.setCapacidad(this.tanque.capacidad)
+
         if (this.tanque.estaVacio()) {
             this.busquedaTanque = true
         }
@@ -117,10 +121,9 @@ export class Game extends Scene {
             emitZone: zona,
             duration: 500,
             emitting: false
-        });
-        
-        this.emitter.start(2000);
+        })
 
+        this.emitter.start(2000)
     }
 
     morir(player, rana) {
@@ -134,6 +137,16 @@ export class Game extends Scene {
 
     changeScene() {
         this.scene.start('MainMenu')
+    }
+
+    reset() {
+        this.gameOver = false
+        this.group = null
+        this.player = null
+        this.perimetro = null
+        this.emitter = null
+        this.zona = null
+        this.hembra = false
     }
 
     update() {
@@ -155,29 +168,28 @@ export class Game extends Scene {
         }
 
         if (this.keyboard.left.isDown) {
-            this.player.anims.play("izq", true)
-            this.player.x -= 2
-            if (!this.zona)return
+            this.player.left()
+            if (!this.zona) return
             this.zona = new Phaser.Geom.Rectangle(this.player.x-160, this.player.y, 60, 20)
         } else if (this.keyboard.right.isDown) {
-            this.player.anims.play("der", true)
-            this.player.x += 2
+            this.player.right()
             if (!this.zona)return
             this.zona = new Phaser.Geom.Rectangle(this.player.x+100, this.player.y, 60, 20)
         } else if (this.keyboard.up.isDown){
-            this.player.anims.play("centro", true)
-            this.player.y -= 2
+            this.player.top()
             if (!this.zona)return
             this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y-120, 60, 20)
         } else if (this.keyboard.down.isDown) {
-            this.player.anims.play("centro", true)
-            this.player.y += 2
+            this.player.bottom()
             if (!this.zona)return
             this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y+100, 60, 20)
         }
 
-        if (this.keyboard.space.isDown) {
-            this.fumigar()           
+        if (!this.fumigando && this.keyboard.space.isDown) {
+            this.fumigando = true
+            this.fumigar()    
+        } else {
+            this.fumigando = false
         }
 
         if (this.emitter) {
@@ -190,18 +202,9 @@ export class Game extends Scene {
 
         if (this.group.countActive()===0){
             this.gameOver = true
-            setTimeout(() => {
-                this.gameOver = false
-                this.group = null
-                this.player = null
-                this.perimetro = null
-                this.emitter = null
-                this.zona = null
-                this.hembra = false
-                this.scene.start('GameOver')                
-            }, 100)
+            this.reset()
+            this.scene.start('GameOver')
         }
 
     }
-
 }
