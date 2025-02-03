@@ -1,9 +1,10 @@
 import { createContext, useContext, useState } from 'react'
 import useSound from 'use-sound'
-const GameContext = createContext()
 import urlSound from "../audio/musica-fondo.mp3"
 import PropTypes from "prop-types"
 
+
+const GameContext = createContext()
 export const useGame = () => {
     const context = useContext(GameContext)
     if (!context) {

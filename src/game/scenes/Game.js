@@ -45,7 +45,7 @@ export class Game extends Scene {
 
         this.physics.add.collider(this.group, this.group, null, this.dejarReproducirse, this)
 
-        this.physics.add.collider(this.player, this.tanqueGroup, this.llenarTanque, null, this)
+        this.physics.add.overlap(this.player, this.tanqueGroup, this.llenarTanque, null, this)
 
         this.input.mouse.disableContextMenu()
         this.input.on('pointerdown', function (pointer) {
@@ -73,7 +73,7 @@ export class Game extends Scene {
     llenarTanque(_, tanque) {
         this.tanque.reset()
         tanque.destroy()
-        this.busquedaTanque = false
+        this.gameStatus.setCapacidad(this.tanque.capacidad)
     }
 
     dejarReproducirse(p1, p2) {
@@ -154,7 +154,7 @@ export class Game extends Scene {
 
         if (this.hembra){
             this.addPlagas(2)    
-            if (this.busquedaTanque && this.hembra.parido>=3) {
+            if (this.hembra.parido>=2) {
                 const base = this.game.config.width
                 const altura = this.game.config.height
                 const x = Math.random() * base

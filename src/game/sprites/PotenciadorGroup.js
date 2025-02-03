@@ -1,6 +1,6 @@
 import Phaser from "phaser"
 // src/groups/CustomGroup.js
-export default class PlagaGroup extends Phaser.GameObjects.Group {
+export default class PotenciadorGroup extends Phaser.GameObjects.Group {
     constructor(scene, children, config) {
         // Llamar al constructor de la clase padre (Phaser.GameObjects.Group)
         super(scene, children, config);

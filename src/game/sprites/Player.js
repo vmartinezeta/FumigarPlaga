@@ -7,19 +7,19 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.texture = texture
         this.vida = 10
         // Añadir el sprite a la escena
-        scene.add.existing(this);
+        scene.add.existing(this)
         scene.physics.world.enable(this)
         this.body.setCollideWorldBounds(true)
-        this.body.allowGravity = false
+        // this.body.allowGravity = false
         // Configurar propiedades del sprite
-        this.setOrigin(0.5, 0.5); // Centrar el punto de origen
+        this.setOrigin(0.5, 0.5) // Centrar el punto de origen
         this.setScale(1); // Escalar el sprite
 
         // Crear animación (si es necesario)
-        this.createAnimations(scene);
+        this.createAnimations(scene)
 
         // Reproducir animación
-        this.play('centro');
+        this.play('centro')
     }
 
     createAnimations(scene) {
@@ -48,22 +48,22 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     left() {
-        this.anims.play("izq")
+        this.play("izq")
         this.x -= 2
     }
 
     right() {
-        this.anims.play("der")
+        this.play("der")
         this.x += 2
     }
 
     top() {
-        this.anims.play("centro")
+        this.play("centro")
         this.y -= 2
     }
 
     bottom() {
-        this.anims.play("centro")
+        this.play("centro")
         this.y += 2
     }
 }
