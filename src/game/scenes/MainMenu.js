@@ -19,9 +19,13 @@ export class MainMenu extends Scene {
         EventBus.emit('current-scene-ready', this)
     }
 
-    changeScene() {
+    play() {
         this.scene.start('Game');
-    }    
+    }
+
+    changeScene() {
+        this.scene.start('HowTo');  
+    } 
 
     moveLetra(reactCallback) {
         reactCallback(this.animation.getLetra())

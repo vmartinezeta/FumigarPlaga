@@ -12,12 +12,21 @@ function App() {
     const phaserRef = useRef();
     const {onToggleMusica, addLetra, reset} = useGame()
 
-    const changeScene = () => {
 
-        const scene = phaserRef.current.scene;
+    const changeScene = () => {
+        const scene = phaserRef.current.scene
 
         if (scene) {
             scene.changeScene()
+            reset()
+        }
+    }
+
+    const play = () => {
+        const scene = phaserRef.current.scene;
+
+        if (scene && scene.scene.key === "MainMenu") {
+            scene.play()
             reset()
         }
     }
@@ -52,7 +61,7 @@ function App() {
             </div>
             <div>
                 <div>
-                    <button disabled={centroControl.btnPlay} className="button" onClick={changeScene}>Play</button>
+                    <button disabled={centroControl.btnPlay} className="button" onClick={play}>Play</button>
                 </div>
                 <div>
                     <button disabled={centroControl.btnSalir} className="button" onClick={changeScene}>Salir</button>
@@ -60,6 +69,9 @@ function App() {
                 <div>
                     <button className="button" onClick={()=>onToggleMusica()}>Toggle Musíca</button>
                 </div>
+                <div>
+                    <button className="button" onClick={changeScene}>HowTo</button>
+                </div>                
             </div>
         </div>
     )

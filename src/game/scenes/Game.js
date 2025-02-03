@@ -19,7 +19,6 @@ export class Game extends Scene {
         this.hembra = null
         this.tanque = null
         this.tanqueGroup = null
-        this.busquedaTanque = false
         this.fumigando = false
     }
 
@@ -48,11 +47,6 @@ export class Game extends Scene {
         this.physics.add.overlap(this.player, this.tanqueGroup, this.llenarTanque, null, this)
 
         this.input.mouse.disableContextMenu()
-        this.input.on('pointerdown', function (pointer) {
-            if (pointer.leftButtonDown()) {
-                this.fumigar()                
-            }
-        }, this)
 
         this.keyboard = this.input.keyboard.createCursorKeys()
 
@@ -72,7 +66,9 @@ export class Game extends Scene {
 
     llenarTanque(_, tanque) {
         this.tanque.reset()
-        tanque.destroy()
+        if (this.keyboard.shift.isDown) {
+            tanque.destroy()
+        }
         this.gameStatus.setCapacidad(this.tanque.capacidad)
     }
 

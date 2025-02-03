@@ -1,6 +1,6 @@
 import Phaser from "phaser"
 
-// src/sprites/MiSprite.js
+
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(scene, origen, texture) {
         super(scene, origen.x, origen.y, texture, 0); // Llamar al constructor de la clase padre (Sprite)
@@ -19,7 +19,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.createAnimations(scene)
 
         // Reproducir animación
-        this.play('centro')
+        this.play('frontal')
+        this.dx = 10
     }
 
     createAnimations(scene) {
@@ -32,7 +33,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         });
 
         scene.anims.create({
-            key: 'centro',
+            key: 'frontal',
             frames: [{ key: "player", frame: 4 }],
             frameRate: 12,
             repeat: -1
@@ -49,21 +50,21 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     left() {
         this.play("izq")
-        this.x -= 2
+        this.body.velocity.x -=this.dx
     }
 
     right() {
         this.play("der")
-        this.x += 2
+        this.body.velocity.x +=this.dx
     }
 
     top() {
-        this.play("centro")
-        this.y -= 2
+        this.play("frontal")
+        this.body.velocity.y -=this.dx
     }
 
     bottom() {
-        this.play("centro")
-        this.y += 2
+        this.play("frontal")
+        this.body.velocity.y += this.dx
     }
 }

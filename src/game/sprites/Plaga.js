@@ -13,7 +13,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         // Añadir el sprite a la escena
         scene.add.existing(this)
         scene.physics.world.enable(this)
-        this.body.setVelocity(Phaser.Math.Between(30, 40), Phaser.Math.Between(30, 40))
+        this.body.setVelocity(Phaser.Math.Between(20, 30), Phaser.Math.Between(20, 30)) 
         this.body.setBounce(1).setCollideWorldBounds(true)
         this.body.setAllowGravity(false)
         // Configurar propiedades del sprite
