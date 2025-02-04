@@ -12,10 +12,22 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
         this.setScale(1); // Escalar el sprite
         // Crear un Timer que ejecute un callback después de 5 segundos
         scene.time.delayedCall(5000, this.onTimerComplete, [], this);
+
+        this.notificacion = scene.add.text(origen.x, origen.y, "NUEVO", {
+            fontFamily: 'Arial Black', fontSize: 20, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 10,
+            align: 'center'
+        }).setOrigin(0).setDepth(100)
+
+        scene.time.delayedCall(1000, this.onEliminarNotificacion, [], this)
     }
 
     onTimerComplete() {
         this.destroy()
+    }
+
+    onEliminarNotificacion() {
+        this.notificacion.destroy()
     }
 
     createAnimations(scene) {

@@ -6,6 +6,7 @@ import { Punto } from '../classes/Punto'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import { Tanque } from '../classes/Tanque'
 import GameStatus from '../sprites/GameStatus'
+import PotenciadorGroup from '../sprites/PotenciadorGroup'
 
 export class Game extends Scene {
     constructor() {
@@ -18,8 +19,9 @@ export class Game extends Scene {
         this.gameOver = false
         this.hembra = null
         this.tanque = null
-        this.tanqueGroup = null
+        this.potenciadorGroup = null
         this.fumigando = false
+        this.potenciador = null
     }
 
     create() {
@@ -33,7 +35,7 @@ export class Game extends Scene {
         this.group = this.add.group()
         this.addPlagas(20)
 
-        this.tanqueGroup = this.add.group()
+        this.potenciadorGroup = new PotenciadorGroup(this)
 
         this.player = new Player(this, new Punto(100, 100), "player")
         this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 60, 20)
@@ -44,13 +46,28 @@ export class Game extends Scene {
 
         this.physics.add.collider(this.group, this.group, null, this.dejarReproducirse, this)
 
-        this.physics.add.overlap(this.player, this.tanqueGroup, this.llenarTanque, null, this)
+        this.physics.add.overlap(this.player, this.potenciadorGroup, this.llenarTanque, null, this)
+
+        this.physics.add.collider(this.player, this.potenciadorGroup, null, this.debeTemblar, this)
 
         this.input.mouse.disableContextMenu()
 
         this.keyboard = this.input.keyboard.createCursorKeys()
 
         EventBus.emit('current-scene-ready', this);
+    }
+
+    debeTemblar(_, cisterna) {
+        this.tweens.add({
+            targets: cisterna,
+            alpha:0.3,
+            yoyo: true,
+            repeat: -1,
+            onUpdate: () => {
+                this.potenciador = null
+            }
+        })
+        return false
     }
 
     addPlagas(cantidad) {
@@ -105,9 +122,6 @@ export class Game extends Scene {
         this.tanque.vaciar()
         this.gameStatus.setCapacidad(this.tanque.capacidad)
 
-        if (this.tanque.estaVacio()) {
-            this.busquedaTanque = true
-        }
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             speed: 24,
@@ -156,7 +170,7 @@ export class Game extends Scene {
                 const x = Math.random() * base
                 const y = Math.random() * altura
 
-                this.tanqueGroup.add(new TanqueConAgua(this, new Punto(x, y), "tanque"))
+                this.potenciadorGroup.agregar(new TanqueConAgua(this, new Punto(x, y), "tanque"))
                 this.hembra.parido = 0
             }
             this.hembra.parido = this.hembra.parido+1

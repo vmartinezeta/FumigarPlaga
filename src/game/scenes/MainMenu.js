@@ -2,7 +2,6 @@ import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
 
-
 export class MainMenu extends Scene {
 
     constructor() {
