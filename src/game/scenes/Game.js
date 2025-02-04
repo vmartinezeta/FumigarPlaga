@@ -25,7 +25,7 @@ export class Game extends Scene {
     }
 
     create() {
-        this.add.image(512, 384, 'background');
+        this.add.image(512, 384, 'background')
         this.physics.world.setBounds(0, 0, 1024, 600 )
 
         this.gameStatus = new GameStatus(this)
@@ -48,7 +48,7 @@ export class Game extends Scene {
 
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.llenarTanque, null, this)
 
-        this.physics.add.collider(this.player, this.potenciadorGroup, null, this.debeTemblar, this)
+        this.physics.add.collider(this.player, this.potenciadorGroup, null, this.temblar, this)
 
         this.input.mouse.disableContextMenu()
 
@@ -57,7 +57,7 @@ export class Game extends Scene {
         EventBus.emit('current-scene-ready', this);
     }
 
-    debeTemblar(_, cisterna) {
+    temblar(_, cisterna) {
         this.tweens.add({
             targets: cisterna,
             alpha:0.3,
