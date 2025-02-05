@@ -1,7 +1,6 @@
 import PropTypes from "prop-types"
 
 export default function LetraCartel({letra}) {
-    if (!letra) return null
     return <div className="caja" style={{
         left:letra.origen.x-25+45,
         top:letra.origen.y+20
@@ -12,7 +11,7 @@ export default function LetraCartel({letra}) {
 
 LetraCartel.propTypes = {
     letra: PropTypes.shape({
-      origen: PropTypes.string.isRequired,
+      origen: PropTypes.object.isRequired,
       caracter: PropTypes.string.isRequired
     }).isRequired,
   };

@@ -27,7 +27,15 @@ export class MainMenu extends Scene {
     } 
 
     moveLetra(reactCallback) {
-        reactCallback(this.animation.getLetra())
+        if (!this.animation) return
+        if (this.animation.getLetra()) {
+            reactCallback(this.animation.getLetra())
+        }
         this.time.delayedCall(100, this.moveLetra, [reactCallback], this)
+    }
+
+    stop() {
+        this.animation.destroy()
+        this.animation = null
     }
 }

@@ -20,7 +20,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
         // Reproducir animación
         this.play('frontal')
-        this.dx = 10
+        this.dx = 4
     }
 
     createAnimations(scene) {
@@ -50,21 +50,21 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     left() {
         this.play("izq")
-        this.body.velocity.x -=this.dx
+        this.x -=this.dx
     }
 
     right() {
         this.play("der")
-        this.body.velocity.x +=this.dx
+        this.x +=this.dx
     }
 
     top() {
         this.play("frontal")
-        this.body.velocity.y -=this.dx
+        this.y -=this.dx
     }
 
     bottom() {
         this.play("frontal")
-        this.body.velocity.y += this.dx
+        this.y += this.dx
     }
 }

@@ -34,6 +34,7 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
 
     createAnimations(scene) {
         // Crear una animación para el sprite
+        if(scene.anims.exists("fluir")) return
         scene.anims.create({
             key: 'fluir',
             frames: scene.anims.generateFrameNumbers(this.texture, { start: 0, end: 4 }),

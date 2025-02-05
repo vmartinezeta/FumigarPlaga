@@ -32,7 +32,7 @@ export class HowTo extends Scene {
             align: 'center'
         }).setOrigin(0).setDepth(100)
 
-        this.add.text(150, 320, "Presionar shift: Coger el tanque de agua", {
+        this.add.text(150, 320, "Junto a la cisterna + la tecla shift: Llenar la bomba", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'

@@ -7,6 +7,7 @@ import TanqueConAgua from '../sprites/TanqueConAgua'
 import { Tanque } from '../classes/Tanque'
 import GameStatus from '../sprites/GameStatus'
 import PotenciadorGroup from '../sprites/PotenciadorGroup'
+import Potenciador from '../sprites/Potenciador'
 
 export class Game extends Scene {
     constructor() {
@@ -17,7 +18,7 @@ export class Game extends Scene {
         this.emitter = null
         this.zona = null
         this.gameOver = false
-        this.hembra = null
+        this.colision = {ok:false, hembra:null}
         this.tanque = null
         this.potenciadorGroup = null
         this.fumigando = false
@@ -92,10 +93,11 @@ export class Game extends Scene {
     dejarReproducirse(p1, p2) {
         const reproducirse = (p1.hembra && !p2.hembra)
         || (!p1.hembra && p2.hembra)
+        
         if (reproducirse && p1.hembra) {
-            this.hembra = p1
+            this.colision = {hembra:p1, ok:true}
         } else if (reproducirse && p2.hembra) {
-            this.hembra = p2
+            this.colision = {hembra:p2, ok:true}
         }
         return !reproducirse
     }
@@ -106,9 +108,9 @@ export class Game extends Scene {
 
     createPerimetro() {
         this.perimetro = this.add.graphics()
-        this.perimetro.fillStyle(0xffff00, 0)
+        this.perimetro.fillStyle(0xffff00, 1)
         this.perimetro.fillRect(0, 0, 2, 600)
-        this.perimetro.fillRect(0, 0, 1024, 2)
+        this.perimetro.fillRect(0, 0, 1024, 2) //top
         this.perimetro.fillRect(1022, 0, 2, 600)
         this.perimetro.fillRect(0, 598, 1024, 2)
         this.physics.world.enable(this.perimetro)
@@ -162,19 +164,26 @@ export class Game extends Scene {
     update() {
         if (this.gameOver) return
 
-        if (this.hembra){
-            this.addPlagas(2)    
-            if (this.hembra.parido>=2) {
-                const base = this.game.config.width
-                const altura = this.game.config.height
-                const x = Math.random() * base
-                const y = Math.random() * altura
-
-                this.potenciadorGroup.agregar(new TanqueConAgua(this, new Punto(x, y), "tanque"))
-                this.hembra.parido = 0
+        if (this.colision.ok){
+            this.colision.ok = false
+            if (this.group.countActive()<350) {
+                this.addPlagas(2)    
             }
-            this.hembra.parido = this.hembra.parido+1
-            this.hembra = null
+            const {hembra} = this.colision
+            const base = this.game.config.width
+            const altura = this.game.config.height
+            const x = Math.random() * base
+            const y = Math.random() * altura
+
+            if (hembra.puedeDarVida()) {                
+                this.potenciadorGroup.agregar(new Potenciador(this, new Punto(x, y), "vida"))
+            }
+            if (hembra.puedeDarAgua()) {
+                this.potenciadorGroup.agregar(new TanqueConAgua(this, new Punto(x, y), "tanque"))
+                hembra.parido = 0
+            }
+     
+            hembra.parido = hembra.parido+1
         }
 
         if (this.keyboard.left.isDown) {

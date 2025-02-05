@@ -13,7 +13,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         // Añadir el sprite a la escena
         scene.add.existing(this)
         scene.physics.world.enable(this)
-        this.body.setVelocity(Phaser.Math.Between(20, 30), Phaser.Math.Between(20, 30)) 
+        this.body.setVelocity(Phaser.Math.Between(10, 25), Phaser.Math.Between(10, 25)) 
         this.body.setBounce(1).setCollideWorldBounds(true)
         this.body.setAllowGravity(false)
         // Configurar propiedades del sprite
@@ -22,9 +22,22 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
 
         // Crear animación (si es necesario)
         this.createAnimations(scene);
-
+        this.darVida = false
         // Reproducir animación
-        this.play('animacionSprite');
+        this.play('animacionSprite')
+        scene.time.delayedCall(3000, this.onPuedeDarVida, [], this)
+    }
+
+    puedeDarAgua() {
+        return this.parido>2
+    }
+
+    onPuedeDarVida() {
+        this.darVida = true
+    }
+
+    puedeDarVida() {
+        return this.darVida && this.parido>2
     }
 
     rotar() {
@@ -37,6 +50,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
 
     createAnimations(scene) {
         // Crear una animación para el sprite
+        if(scene.anims.exists("animacionSprite")) return
         scene.anims.create({
             key: 'animacionSprite',
             frames: scene.anims.generateFrameNumbers(this.texture, { start: 0, end: 3 }),
