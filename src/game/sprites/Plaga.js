@@ -58,4 +58,8 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
             repeat: -1
         });
     }
+
+    next() {
+        this.parido++
+    }
 }

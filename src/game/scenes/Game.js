@@ -23,6 +23,7 @@ export class Game extends Scene {
         this.potenciadorGroup = null
         this.fumigando = false
         this.potenciador = null
+        this.vidaGroup = null
     }
 
     create() {
@@ -32,6 +33,8 @@ export class Game extends Scene {
         this.gameStatus = new GameStatus(this)
 
         this.createPerimetro()
+
+        this.vidaGroup = this.add.group()
 
         this.group = this.add.group()
         this.addPlagas(20)
@@ -51,11 +54,18 @@ export class Game extends Scene {
 
         this.physics.add.collider(this.player, this.potenciadorGroup, null, this.temblar, this)
 
+        this.physics.add.collider(this.player, this.vidaGroup,  this.collideVida, null, this)
+
         this.input.mouse.disableContextMenu()
 
         this.keyboard = this.input.keyboard.createCursorKeys()
 
         EventBus.emit('current-scene-ready', this);
+    }
+
+    collideVida(player, vida) {
+        player.vida ++
+        vida.destroy()
     }
 
     temblar(_, cisterna) {
@@ -176,14 +186,14 @@ export class Game extends Scene {
             const y = Math.random() * altura
 
             if (hembra.puedeDarVida()) {                
-                this.potenciadorGroup.agregar(new Potenciador(this, new Punto(x, y), "vida"))
+                this.vidaGroup.add(new Potenciador(this, new Punto(x, y), "vida"))
             }
             if (hembra.puedeDarAgua()) {
                 this.potenciadorGroup.agregar(new TanqueConAgua(this, new Punto(x, y), "tanque"))
                 hembra.parido = 0
             }
      
-            hembra.parido = hembra.parido+1
+            hembra.next()
         }
 
         if (this.keyboard.left.isDown) {

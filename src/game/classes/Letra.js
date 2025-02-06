@@ -1,11 +1,11 @@
 export class Letra {
-    constructor(origen, caracter, index) {
+    constructor(origen, caracter, index, lastIndex) {
         this.origen = origen
         this.caracter = caracter
-        this.index = index
+        this.ultima = index === lastIndex
     }
 
-    isPrimera() {
-        return this.index === 0
+    isUltima() {
+        return this.ultima
     }
 }

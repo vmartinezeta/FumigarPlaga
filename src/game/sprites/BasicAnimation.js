@@ -7,35 +7,41 @@ export default class BasicAnimation extends Phaser.GameObjects.Group {
     constructor(scene, children, config) {
         // Llamar al constructor de la clase padre (Phaser.GameObjects.Group)
         super(scene, children, config)
-        this.total = 0
+        this.index = 0
         this.texto = "FUMIGAR"
         this.letra = null        
         // Inicializar propiedades personalizadas
         this.scene = scene // Guardar la escena como propiedad
         this.setup() // Llamar a la configuración inicial
-        scene.time.delayedCall(1000, this.onTimerComplete, [], this)
+        // scene.time.delayedCall(1000, this.onTimerComplete, [], this)
         this.origen = new Punto(350, 200)
         this.plaga = new Plaga(scene, this.origen, "rana")
         this.plaga.rotar()
         this.plaga.disabledBody()
         this.add(this.plaga)
+        this.stop = false
     }
 
-    onTimerComplete() {
-        if (this.total === this.texto.length) {
-            this.total = 0          
-            this.plaga.x = this.origen.x            
-        } else {
-            const actual = this.texto.charAt(this.total)
-            this.letra = new Letra(new Punto(this.plaga.x, this.plaga.y), actual, this.total)
-            this.total ++
-            this.plaga.x += 50
+    parar() {
+        this.stop = true
+    }
+
+    reset() {
+        this.stop = false
+        this.index = 0  
+        this.plaga.x = this.origen.x     
+    }
+
+    getLetra(sceneCallback) {
+        if (this.stop) {
+            return
         }
-        this.scene.time.delayedCall(1000, this.onTimerComplete, [], this)
-    }
-
-    getLetra() {
-        return this.letra
+        const actual = this.texto.charAt(this.index)
+        const {x, y} = this.plaga
+        sceneCallback(new Letra(new Punto(x, y), actual, this.index, this.texto.length-1))
+        this.plaga.x += 50
+        this.index ++
+        this.scene.time.delayedCall(1000, this.getLetra, [sceneCallback], this)
     }
 
     setup() {

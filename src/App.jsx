@@ -10,7 +10,7 @@ function App() {
     const [centroControl, setCentroControl] = useState({ btnPlay: false, btnSalir: true })
     //  References to the PhaserGame component (game and scene are exposed)
     const phaserRef = useRef();
-    const { onToggleMusica, addLetra, reset } = useGame()
+    const { onToggleMusica, addLetra, reset, ultima } = useGame()
 
 
     const changeScene = () => {
@@ -42,16 +42,22 @@ function App() {
 
     const moveLetra = (scene) => {
         if (scene && scene.scene.key === 'MainMenu') {
-            scene.moveLetra(obj => {
-                addLetra(obj)
+            scene.moveLetra(letra => {
+                addLetra(letra)
+                ultima(letra)
             })
         }
+    }
+
+    const onMove = ()=> {
+        const scene = phaserRef.current.scene
+        moveLetra(scene)
     }
 
     return (
         <div id="app">
             <div className="centro">
-                <LetraList />
+                <LetraList move={onMove} />
                 <PhaserGame ref={phaserRef} currentActiveScene={(scene) => {
                     currentScene(scene)
                     moveLetra(scene)

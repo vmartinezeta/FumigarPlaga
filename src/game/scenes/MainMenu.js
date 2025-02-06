@@ -12,9 +12,7 @@ export class MainMenu extends Scene {
     create() {
         this.cameras.main.setBackgroundColor(0x00ff00);
         this.add.image(512, 384, 'background')
-
         this.animation = new BasicAnimation(this)
-
         EventBus.emit('current-scene-ready', this)
     }
 
@@ -27,11 +25,13 @@ export class MainMenu extends Scene {
     } 
 
     moveLetra(reactCallback) {
-        if (!this.animation) return
-        if (this.animation.getLetra()) {
-            reactCallback(this.animation.getLetra())
-        }
-        this.time.delayedCall(100, this.moveLetra, [reactCallback], this)
+        this.animation.reset()
+        this.animation.getLetra((letra) => {
+            reactCallback(letra)
+            if (letra.isUltima()) {
+                this.animation.parar()
+            }
+        })
     }
 
     stop() {
