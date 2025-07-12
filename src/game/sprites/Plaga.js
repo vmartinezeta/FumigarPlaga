@@ -12,7 +12,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.tint = hembra ? 0x00ffff : 0x00ff00 
         scene.add.existing(this)
         scene.physics.world.enable(this)
-        this.body.setVelocity(Phaser.Math.Between(10, 25), Phaser.Math.Between(10, 25))
+        this.body.setVelocity(Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35))
         this.body.setBounce(1).setCollideWorldBounds(true)
         this.body.setAllowGravity(false)
         this.setOrigin(1 / 2)

@@ -7,7 +7,6 @@ import { Tanque } from '../classes/Tanque'
 import PotenciadorGroup from '../sprites/PotenciadorGroup'
 import PlagaGroup from '../sprites/PlagaGroup'
 import BarraEstado from '../sprites/BarraEstado'
-import BorderSolido from '../sprites/BorderSolido'
 import Potenciador from '../sprites/Potenciador'
 
 
@@ -29,19 +28,16 @@ export class Game extends Scene {
         this.add.image(512, 384, 'background')
         this.physics.world.setBounds(0, 0, 1024, 600)
 
-        this.borders = new BorderSolido(this, {
-            width:1024,
-            height:600
-        })
+        this.plano2D()
 
         this.barraEstado = new BarraEstado(this, {
-            x: 100, 
+            x: 100,
             y: 30,
             vida: 10,
             capacidad: 10
         })
 
-        this.plagaGroup = new PlagaGroup(this, this.createPlagas(10))
+        this.plagaGroup = new PlagaGroup(this, this.createPlagas(12))
 
         this.potenciadorGroup = new PotenciadorGroup(this)
 
@@ -57,18 +53,51 @@ export class Game extends Scene {
 
         this.keyboard = this.input.keyboard.createCursorKeys()
 
+        this.keys = this.input.keyboard.addKeys({
+            A: Phaser.Input.Keyboard.KeyCodes.A, //coger el potenciador
+            W: Phaser.Input.Keyboard.KeyCodes.W,
+            S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
+            D: Phaser.Input.Keyboard.KeyCodes.D
+        })
         EventBus.emit('current-scene-ready', this)
     }
 
     collider() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, this.quitarVida, this)
-        // this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this)
+        this.physics.add.collider(this.borders, this.plagaGroup, this.rotar, null, this)
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this)
         this.physics.add.collider(this.player, this.potenciadorGroup, this.llenarTanque, this.activarTanque, this)
     }
 
-    rotar() {
-        console.log("rotar")
+    plano2D() {
+        this.borders = this.physics.add.group()
+        this.createSpriteHorizontal(6, 0, 0, "platform")
+        this.createSpriteVertical(4, 1024, 0, "platform")
+        this.createSpriteHorizontal(6, 0, 600, "platform")
+        this.createSpriteVertical(4, 0, 0, "platform")
+    }
+
+    createSpriteVertical(cantidad, x, y, texture){
+        for (let i = 0; i < cantidad; i++) {
+            const sprite = this.borders.create(x, i * 200+y, texture)
+            sprite.angle = 90
+            sprite.body.allowGravity = false
+            sprite.body.immovable = true
+        }
+    }
+
+    createSpriteHorizontal(cantidad, x, y, texture){
+        for (let i = 0; i < cantidad; i++) {
+            const sprite = this.borders.create(i*200+x, y, texture)
+            sprite.body.allowGravity = false
+            sprite.body.immovable = true
+        }
+    }
+
+    rotar(sprite) {
+        if (sprite instanceof Plaga) {
+            sprite.rotar()
+        }
     }
 
     cogiendo(hembra, macho) {
@@ -83,17 +112,15 @@ export class Game extends Scene {
 
         if (sprite.hembra && !sprite.estaCogiendo) {
             if (this.plagaGroup.countActive() < 350) {
-                for(const p of this.createPlagas(2)) {
-                    this.plagaGroup.addPlaga(p)
-                }
-            }            
+                this.plagaGroup.addMultiple(this.createPlagas(2))
+            }
             sprite.soltar()
-            this.plagaGroup.total ++
+            this.plagaGroup.total++
         }
     }
 
     activarTanque() {
-        if (this.keyboard.shift.isDown) {
+        if (this.keys.A.isDown) {
             return true
         }
         return false
@@ -119,11 +146,11 @@ export class Game extends Scene {
     }
 
     coger(hembra, macho) {
-        let sprite = hembra 
+        let sprite = hembra
         if (!sprite.hembra) {
             sprite = macho
         }
-        const pareja =  hembra.hembra !== macho.hembra
+        const pareja = hembra.hembra !== macho.hembra
         if (pareja) {
             sprite.tienePareja = true
         }
@@ -179,8 +206,8 @@ export class Game extends Scene {
 
     update() {
         if (this.gameOver) return
-        
-        if (this.plagaGroup.total > 5) {
+
+        if (this.plagaGroup.total > this.plagaGroup.countActive() / 2 ) {
             const x = Math.random() * this.game.config.width
             const y = Math.random() * this.game.config.height
             const potenciador = new Potenciador(this, new Punto(x, y), "tanque")
@@ -206,7 +233,7 @@ export class Game extends Scene {
             this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y + 100, 60, 20)
         }
 
-        if (!this.fumigando && this.keyboard.space.isDown) {
+        if (!this.fumigando && this.keys.S.isDown) {
             this.fumigando = true
             this.fumigar()
         } else {

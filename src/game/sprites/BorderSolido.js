@@ -8,12 +8,13 @@ export default class BorderSolido extends Phaser.GameObjects.Graphics {
         this.originY = config.y || 0
         this.width = config.width || scene.scale.width
         this.height = config.height || scene.scale.height
-        this.lineWidth = config.lineWidth || 1
+        this.lineWidth = config.lineWidth || 2
         this.color = config.color !== undefined ? config.color : 0xffffff
         this.alpha = config.alpha !== undefined ? config.alpha : 1
-        scene.add.existing(this)
-        scene.physics.world.enable(this)
         this.drawBorders()
+
+        scene.physics.add.existing(this)
+        this.body.allowGravity = false
     }
 
     drawBorders() {
@@ -24,15 +25,16 @@ export default class BorderSolido extends Phaser.GameObjects.Graphics {
         this.lineStyle(this.lineWidth, this.color, this.alpha);
         
         // Convertir coordenadas cartesianas a coordenadas de pantalla de Phaser
-        const screenOriginX = this.width / 2 + this.originX;
-        const screenOriginY = this.height / 2 - this.originY;
+        // const screenOriginX = this.width / 2 + this.originX;
+        // const screenOriginY = this.height / 2 - this.originY;
         
         // Dibujar los bordes del área visible
-        const left = -this.originX;
-        const right = this.width - this.originX;
-        const top = this.originY;
-        const bottom = this.originY - this.height;
+        // const left = -this.originX;
+        // const right = this.width - this.originX;
+        // const top = this.originY;
+        // const bottom = this.originY - this.height;
         
+
         // Dibujar rectángulo (bordes)
         this.strokeRect(
             this.originX,

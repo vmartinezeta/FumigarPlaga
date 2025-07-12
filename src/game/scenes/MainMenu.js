@@ -17,7 +17,7 @@ export class MainMenu extends Scene {
     }
 
     play() {
-        this.scene.start('Game');
+        this.scene.start('Game')
     }
 
     changeScene() {

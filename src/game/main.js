@@ -29,7 +29,7 @@ const config = {
         GameOver,
         HowTo
     ]
-};
+}
 
 const StartGame = (parent) => {
 
