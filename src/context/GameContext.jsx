@@ -5,6 +5,7 @@ import PropTypes from "prop-types"
 
 
 const GameContext = createContext()
+
 export const useGame = () => {
     const context = useContext(GameContext)
     if (!context) {

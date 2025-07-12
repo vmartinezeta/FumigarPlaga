@@ -1,43 +1,28 @@
 import Phaser  from "phaser"
 
 export default class Plaga extends Phaser.GameObjects.Sprite {
-
     constructor(scene, origen, texture, hembra) {
-        super(scene, origen.x, origen.y, texture, 0); // Llamar al constructor de la clase padre (Sprite)
+        super(scene, origen.x, origen.y, texture, 0)
         this.scene = scene
         this.texture = texture
         this.hembra = hembra
-        this.vida = 10
-        this.parido = 0
+        this.vida = 40
+        this.tienePareja = false
+        this.estaCogiendo = true
         this.tint = hembra ? 0x00ffff : 0x00ff00 
-        // Añadir el sprite a la escena
         scene.add.existing(this)
         scene.physics.world.enable(this)
-        this.body.setVelocity(Phaser.Math.Between(10, 25), Phaser.Math.Between(10, 25)) 
+        this.body.setVelocity(Phaser.Math.Between(10, 25), Phaser.Math.Between(10, 25))
         this.body.setBounce(1).setCollideWorldBounds(true)
         this.body.setAllowGravity(false)
-        // Configurar propiedades del sprite
-        this.setOrigin(0.5, 0.5); // Centrar el punto de origen
-        this.setScale(1); // Escalar el sprite
+        this.setOrigin(1 / 2)
+        this.setScale(1)
 
-        // Crear animación (si es necesario)
-        this.createAnimations(scene);
-        this.darVida = false
-        // Reproducir animación
+        this.createAnimations(scene)
+
         this.play('animacionSprite')
         scene.time.delayedCall(3000, this.onPuedeDarVida, [], this)
-    }
 
-    puedeDarAgua() {
-        return this.parido>2
-    }
-
-    onPuedeDarVida() {
-        this.darVida = true
-    }
-
-    puedeDarVida() {
-        return this.darVida && this.parido>2
     }
 
     rotar() {
@@ -49,7 +34,6 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
     }
 
     createAnimations(scene) {
-        // Crear una animación para el sprite
         if(scene.anims.exists("animacionSprite")) return
         scene.anims.create({
             key: 'animacionSprite',
@@ -59,7 +43,21 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         });
     }
 
-    next() {
-        this.parido++
+    soltar() {
+        this.tienePareja = false
+        this.estaCogiendo = true
+        this.tint = this.hembra ? 0x00ffff : 0x00ff00 
     }
+
+    update() {
+        const time = this.scene.time.now - this.scene.time.startTime
+        if (this.vida > 0 && time > 1600) {
+            this.vida--
+            this.scene.time.startTime = time
+        }
+        
+        if (time > 1000 && this.hembra && this.tienePareja) {
+            this.estaCogiendo = false
+        }
+    }    
 }
