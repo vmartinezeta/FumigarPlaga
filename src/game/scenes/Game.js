@@ -1,13 +1,14 @@
 import { EventBus } from '../EventBus'
 import Phaser, { Scene } from 'phaser'
-import Player from '../sprites/Player'
-import Plaga from '../sprites/Plaga'
 import { Punto } from '../classes/Punto'
 import { Tanque } from '../classes/Tanque'
+import Player from '../sprites/Player'
+import Plaga from '../sprites/Plaga'
 import PotenciadorGroup from '../sprites/PotenciadorGroup'
 import PlagaGroup from '../sprites/PlagaGroup'
 import BarraEstado from '../sprites/BarraEstado'
-import Potenciador from '../sprites/Potenciador'
+import TanqueConAgua from '../sprites/TanqueConAgua'
+import Vida from '../sprites/Vida'
 
 
 export class Game extends Scene {
@@ -37,7 +38,7 @@ export class Game extends Scene {
             capacidad: 10
         })
 
-        this.plagaGroup = new PlagaGroup(this, this.createPlagas(12))
+        this.plagaGroup = new PlagaGroup(this, this.createPlagas(20))
 
         this.potenciadorGroup = new PotenciadorGroup(this)
 
@@ -45,16 +46,16 @@ export class Game extends Scene {
         this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 60, 20)
         this.tanque = new Tanque()
 
-        this.potenciadorGroup = new PotenciadorGroup(this)
+        this.detectarColision()
 
-        this.collider()
+        this.time.delayedCall(6000, this.suministrarVida, [], this);
 
         this.input.mouse.disableContextMenu()
 
         this.keyboard = this.input.keyboard.createCursorKeys()
 
         this.keys = this.input.keyboard.addKeys({
-            A: Phaser.Input.Keyboard.KeyCodes.A, //coger el potenciador
+            A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
             W: Phaser.Input.Keyboard.KeyCodes.W,
             S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
             D: Phaser.Input.Keyboard.KeyCodes.D
@@ -62,11 +63,11 @@ export class Game extends Scene {
         EventBus.emit('current-scene-ready', this)
     }
 
-    collider() {
-        this.physics.add.collider(this.player, this.plagaGroup, this.morir, this.quitarVida, this)
-        this.physics.add.collider(this.borders, this.plagaGroup, this.rotar, null, this)
-        this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this)
-        this.physics.add.collider(this.player, this.potenciadorGroup, this.llenarTanque, this.activarTanque, this)
+    detectarColision() {
+        this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this)
+        this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this)
+        this.physics.add.collider(this.plagaGroup.getPasivos(), this.plagaGroup.getPasivos(), this.cogiendo, this.coger, this)
+        this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this)
     }
 
     plano2D() {
@@ -77,18 +78,18 @@ export class Game extends Scene {
         this.createSpriteVertical(4, 0, 0, "platform")
     }
 
-    createSpriteVertical(cantidad, x, y, texture){
+    createSpriteVertical(cantidad, x, y, texture) {
         for (let i = 0; i < cantidad; i++) {
-            const sprite = this.borders.create(x, i * 200+y, texture)
+            const sprite = this.borders.create(x, i * 200 + y, texture)
             sprite.angle = 90
             sprite.body.allowGravity = false
             sprite.body.immovable = true
         }
     }
 
-    createSpriteHorizontal(cantidad, x, y, texture){
+    createSpriteHorizontal(cantidad, x, y, texture) {
         for (let i = 0; i < cantidad; i++) {
-            const sprite = this.borders.create(i*200+x, y, texture)
+            const sprite = this.borders.create(i * 200 + x, y, texture)
             sprite.body.allowGravity = false
             sprite.body.immovable = true
         }
@@ -100,26 +101,68 @@ export class Game extends Scene {
         }
     }
 
-    cogiendo(hembra, macho) {
-        macho.x = hembra.x
-        macho.y = hembra.y
-
-        let sprite = hembra
-        if (!sprite.hembra) {
-            sprite = macho
+    coger(izq, der) {
+        let hembra = izq
+        if (!hembra.hembra) {
+            hembra = der
         }
-        sprite.update()
 
-        if (sprite.hembra && !sprite.estaCogiendo) {
-            if (this.plagaGroup.countActive() < 350) {
-                this.plagaGroup.addMultiple(this.createPlagas(2))
-            }
-            sprite.soltar()
-            this.plagaGroup.total++
+        const pareja = izq.hembra !== der.hembra
+        if (pareja && !hembra.inicio) {
+            hembra.coger()
         }
+        return hembra.inicio
     }
 
-    activarTanque() {
+    cogiendo(izq, der) {
+        let hembra = izq
+        if (!hembra.hembra) {
+            hembra = der
+        }
+
+        if (!hembra.inicio) {
+            return
+        }
+        const macho = hembra.hembra!==izq.hembra?izq:der
+
+        hembra.inicio = false
+        hembra.detener()
+        macho.detener()
+        hembra.x = macho.x
+        hembra.y = macho.y        
+        macho.setTint(0xff0000)
+        
+        if (macho.body.angle<0 && hembra.body.angle>0) {
+            macho.rotar()
+        } else if(hembra.body.angle<0 && macho.body.angle>0){
+            hembra.rotar()
+        }
+
+        this.tweens.add({
+            targets: hembra,
+            scaleX: { from: .6, to: 1 },
+            scaleY: { from: .6, to: 1 },
+            duration: 1000,
+            ease: 'Back.out',
+            onComplete: () => {
+                if (hembra instanceof Plaga || macho instanceof Plaga) {
+                    this.dejarCoger(hembra, macho)
+                }
+            }
+        })
+
+    }
+
+    dejarCoger(hembra, macho) {
+        if (this.plagaGroup.countActive() < 300) {
+            this.plagaGroup.addMultiple(this.createPlagas(2))
+        }
+        hembra.soltar()
+        macho.soltar()
+        this.plagaGroup.total++
+    }
+
+    activarPotenciador() {
         if (this.keys.A.isDown) {
             return true
         }
@@ -139,36 +182,40 @@ export class Game extends Scene {
         return plagas
     }
 
-    llenarTanque(_, tanque) {
-        this.potenciadorGroup.remove(tanque, true, true)
-        this.tanque.reset()
-        this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad)
-    }
+    aplicarPotenciador(player, potenciador) {
+        if (potenciador instanceof TanqueConAgua) {
+            this.tanque.reset()
+        } else if (potenciador instanceof Vida) {
+            this.player.vida += 2
+        }
 
-    coger(hembra, macho) {
-        let sprite = hembra
-        if (!sprite.hembra) {
-            sprite = macho
-        }
-        const pareja = hembra.hembra !== macho.hembra
-        if (pareja) {
-            sprite.tienePareja = true
-        }
-        return sprite.tienePareja && sprite.estaCogiendo
+        this.tweens.add({
+            targets: player,
+            scaleX: { from: .6, to: 1 },
+            scaleY: { from: .6, to: 1 },
+            duration: 1000,
+            ease: 'Back.out',
+        })
+        this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad)
+        this.potenciadorGroup.remove(potenciador, true, true)
     }
 
     fumigar() {
-        if (this.tanque.estaVacio()) return
-
+        if (this.tanque.estaVacio()) {
+            return
+        }
+        
         const zona = { type: 'edge', source: this.zona, quantity: 42 }
         this.tanque.vaciar()
         this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad)
 
+        const lifespan = (this.tanque.capacidad*1500)/this.tanque.capacidadMax
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             speed: 24,
-            lifespan: 1500,
-            quantity: 10,
+            lifespan,
+            quantity: 2,
+            frequency: 0,
             scale: { start: 0.4, end: 0 },
             emitZone: zona,
             duration: 500,
@@ -176,10 +223,6 @@ export class Game extends Scene {
         })
 
         this.emitter.start(2000)
-    }
-
-    quitarVida() {
-        return true
     }
 
     morir(player, rana) {
@@ -204,15 +247,28 @@ export class Game extends Scene {
         this.zona = null
     }
 
+    suministrarVida() {
+        const x = Math.random() * this.game.config.width
+        const y = Math.random() * this.game.config.height
+        const potenciador = new Vida(this, new Punto(x, y), "vida")
+        this.potenciadorGroup.addPotenciador(potenciador)
+        this.time.delayedCall(6000, this.suministrarVida, [], this);
+    }
+
+    createTanque() {
+        if (this.potenciadorGroup.countActive() > 300) return
+        const x = Math.random() * this.game.config.width
+        const y = Math.random() * this.game.config.height
+        const potenciador = new TanqueConAgua(this, new Punto(x, y), "tanque")
+        this.potenciadorGroup.addPotenciador(potenciador)
+    }
+
     update() {
         if (this.gameOver) return
 
-        if (this.plagaGroup.total > this.plagaGroup.countActive() / 2 ) {
-            const x = Math.random() * this.game.config.width
-            const y = Math.random() * this.game.config.height
-            const potenciador = new Potenciador(this, new Punto(x, y), "tanque")
-            this.potenciadorGroup.addPotenciador(potenciador)
+        if (this.plagaGroup.total > 5) {
             this.plagaGroup.total = 0
+            this.createTanque()
         }
 
         if (this.keyboard.left.isDown) {
@@ -233,23 +289,18 @@ export class Game extends Scene {
             this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y + 100, 60, 20)
         }
 
-        if (!this.fumigando && this.keys.S.isDown) {
-            this.fumigando = true
+        if (!this.tanque.estaVacio() && this.keys.S.isDown) {
             this.fumigar()
-        } else {
-            this.fumigando = false
         }
 
         if (this.emitter) {
             this.plagaGroup.getChildren().forEach(plaga => {
                 const plagas = this.emitter.overlap(plaga.body)
                 if (plagas.length > 0) {
-                    plaga.update()
-                    if (plaga.vida === 0) {
-                        this.plagaGroup.remove(plaga, true, true)
-                    }
+                    this.plagaGroup.remove(plaga, true, true)
                 }
             })
+            this.emitter = null
         }
 
         if (this.plagaGroup.countActive() === 0) {

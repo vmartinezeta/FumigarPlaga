@@ -20,19 +20,19 @@ export class HowTo extends Scene {
         }).setOrigin(0.5).setDepth(100)
 
 
-        this.add.text(150, 200, "Barra espaciadora: fumigar", {
+        this.add.text(150, 200, "Tecla A: Llenar el tanque con agua", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'
         }).setOrigin(0).setDepth(100)
 
-        this.add.text(150, 260, "Teclas direccionales: mover al jugador", {
+        this.add.text(150, 260, "Teclas direccionales: Mover al jugador", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'
         }).setOrigin(0).setDepth(100)
 
-        this.add.text(150, 320, "Junto a la cisterna + la tecla shift: Llenar la bomba", {
+        this.add.text(150, 320, "Tecla S: Fumigar las plagas", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'

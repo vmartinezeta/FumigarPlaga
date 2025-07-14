@@ -6,7 +6,6 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
         this.scene = scene
         this.config = config
         this.total = 0
-        this.cantidadMax = 6
         this.scene.physics.add.existing(this, true)
     }
 
@@ -15,4 +14,7 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
         this.add(plaga)
     }
 
+    getPasivos() {
+        return this.getChildren().filter(p => !p.inicio)
+    }
 }

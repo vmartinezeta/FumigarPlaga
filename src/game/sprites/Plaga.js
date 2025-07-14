@@ -1,28 +1,29 @@
 import Phaser  from "phaser"
+import { Punto } from "../classes/Punto"
 
 export default class Plaga extends Phaser.GameObjects.Sprite {
     constructor(scene, origen, texture, hembra) {
-        super(scene, origen.x, origen.y, texture, 0)
+        super(scene, origen.x, origen.y, texture)
         this.scene = scene
         this.texture = texture
         this.hembra = hembra
-        this.vida = 40
-        this.tienePareja = false
-        this.estaCogiendo = true
+        this.vida = 30
         this.tint = hembra ? 0x00ffff : 0x00ff00 
         scene.add.existing(this)
-        scene.physics.world.enable(this)
-        this.body.setVelocity(Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35))
-        this.body.setBounce(1).setCollideWorldBounds(true)
-        this.body.setAllowGravity(false)
-        this.setOrigin(1 / 2)
-        this.setScale(1)
+        scene.physics.add.existing(this)
+        this.velocidad = new Punto(Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35))
+        this.body.setVelocity(this.velocidad.x, this.velocidad.y)
+        this.body.setBounce(1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setAllowGravity(false);
+        this.setOrigin(1 / 2);
+        this.setScale(1);
+        this.inicio = false;
+        this.cogiendo = false;
+        this.finalizo = false;
+        this.createAnimations(scene);
 
-        this.createAnimations(scene)
-
-        this.play('animacionSprite')
-        scene.time.delayedCall(3000, this.onPuedeDarVida, [], this)
-
+        this.play('run');
     }
 
     rotar() {
@@ -34,30 +35,31 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
     }
 
     createAnimations(scene) {
-        if(scene.anims.exists("animacionSprite")) return
+        if(scene.anims.exists("run")) return
         scene.anims.create({
-            key: 'animacionSprite',
+            key: 'run',
             frames: scene.anims.generateFrameNumbers(this.texture, { start: 0, end: 3 }),
             frameRate: 12,
             repeat: -1
         });
     }
 
-    soltar() {
-        this.tienePareja = false
-        this.estaCogiendo = true
-        this.tint = this.hembra ? 0x00ffff : 0x00ff00 
+    coger() {
+        this.inicio = true
+        this.cogiendo = true
     }
 
-    update() {
-        const time = this.scene.time.now - this.scene.time.startTime
-        if (this.vida > 0 && time > 1600) {
-            this.vida--
-            this.scene.time.startTime = time
-        }
-        
-        if (time > 1000 && this.hembra && this.tienePareja) {
-            this.estaCogiendo = false
-        }
-    }    
+    detener() {
+        this.body.setEnable(false)
+    }
+
+    soltar() {
+        this.inicio = false;
+        this.cogiendo = false;
+        this.finalizo = false;
+        // this.body.setVelocity(this.velocidad.x, this.velocidad.y);
+        this.body.setEnable(true)
+        this.tint = this.hembra ? 0x00ffff : 0x00ff00 ;
+    }
+
 }

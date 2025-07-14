@@ -1,6 +1,8 @@
 export class Tanque {
-    constructor() {
-        this.capacidad = 10
+    constructor(capacidad) {
+        this.capacidad = capacidad || 20
+        this.capacidadMax = this.capacidad
+        this.cache = structuredClone(this)
     }
 
     vaciar() {
@@ -12,6 +14,6 @@ export class Tanque {
     }
 
     reset() {
-        this.capacidad = 10
+        this.capacidad = this.cache.capacidad
     }
 }

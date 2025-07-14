@@ -2,7 +2,7 @@ import Phaser from "phaser"
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(scene, origen, texture) {
-        super(scene, origen.x, origen.y, texture, 0)
+        super(scene, origen.x, origen.y, texture)
         this.texture = texture
         this.vida = 10
         this.scene = scene
