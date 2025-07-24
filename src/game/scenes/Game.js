@@ -30,6 +30,7 @@ export class Game extends Scene {
         this.physics.world.setBounds(0, 0, 1024, 600)
 
         this.plano2D()
+        
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
@@ -102,12 +103,8 @@ export class Game extends Scene {
     }
 
     coger(izq, der) {
-        let hembra = izq
-        if (!hembra.hembra) {
-            hembra = der
-        }
-
-        const pareja = izq.hembra !== der.hembra
+        const [hembra, macho] = this.fijarPareja(izq, der)
+        const pareja = hembra.hembra && !macho.hembra
         if (pareja && !hembra.inicio) {
             hembra.coger()
         }
@@ -115,51 +112,29 @@ export class Game extends Scene {
     }
 
     cogiendo(izq, der) {
+        const [hembra, macho] = this.fijarPareja(izq, der)
+        if (!hembra.inicio) return
+        hembra.cogiendo(macho, this.dejarCoger.bind(this))
+    }
+
+    fijarPareja(izq, der) {
         let hembra = izq
+        let macho = der
         if (!hembra.hembra) {
             hembra = der
+            macho = izq
         }
-
-        if (!hembra.inicio) {
-            return
-        }
-        const macho = hembra.hembra!==izq.hembra?izq:der
-
-        hembra.inicio = false
-        hembra.detener()
-        macho.detener()
-        hembra.x = macho.x
-        hembra.y = macho.y        
-        macho.setTint(0xff0000)
-        
-        if (macho.body.angle<0 && hembra.body.angle>0) {
-            macho.rotar()
-        } else if(hembra.body.angle<0 && macho.body.angle>0){
-            hembra.rotar()
-        }
-
-        this.tweens.add({
-            targets: hembra,
-            scaleX: { from: .6, to: 1 },
-            scaleY: { from: .6, to: 1 },
-            duration: 1000,
-            ease: 'Back.out',
-            onComplete: () => {
-                if (hembra instanceof Plaga || macho instanceof Plaga) {
-                    this.dejarCoger(hembra, macho)
-                }
-            }
-        })
-
+        return [hembra, macho]
     }
 
     dejarCoger(hembra, macho) {
         if (this.plagaGroup.countActive() < 300) {
-            this.plagaGroup.addMultiple(this.createPlagas(2))
+            this.plagaGroup.addMultiple(this.createPlagas(2));
         }
-        hembra.soltar()
-        macho.soltar()
-        this.plagaGroup.total++
+
+        hembra.soltar();
+        macho.soltar();
+        this.plagaGroup.total++;
     }
 
     activarPotenciador() {
@@ -204,12 +179,12 @@ export class Game extends Scene {
         if (this.tanque.estaVacio()) {
             return
         }
-        
+
         const zona = { type: 'edge', source: this.zona, quantity: 42 }
         this.tanque.vaciar()
         this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad)
 
-        const lifespan = (this.tanque.capacidad*1500)/this.tanque.capacidadMax
+        const lifespan = (this.tanque.capacidad * 1500) / this.tanque.capacidadMax
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             speed: 24,
@@ -226,7 +201,7 @@ export class Game extends Scene {
     }
 
     morir(player, rana) {
-        rana.destroy()
+        rana.morir()
         player.vida--
         this.barraEstado.actualizar(player.vida, this.tanque.capacidad)
         if (player.vida === 0) {
@@ -256,7 +231,8 @@ export class Game extends Scene {
     }
 
     createTanque() {
-        if (this.potenciadorGroup.countActive() > 300) return
+        this.plagaGroup.total = 0
+        if (this.potenciadorGroup.countActive() > 500) return
         const x = Math.random() * this.game.config.width
         const y = Math.random() * this.game.config.height
         const potenciador = new TanqueConAgua(this, new Punto(x, y), "tanque")
@@ -267,7 +243,6 @@ export class Game extends Scene {
         if (this.gameOver) return
 
         if (this.plagaGroup.total > 5) {
-            this.plagaGroup.total = 0
             this.createTanque()
         }
 
