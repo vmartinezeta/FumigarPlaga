@@ -9,6 +9,7 @@ import PlagaGroup from '../sprites/PlagaGroup'
 import BarraEstado from '../sprites/BarraEstado'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import Vida from '../sprites/Vida'
+import NotificacionTextual from '../sprites/NotificacionTextual'
 
 
 export class Game extends Scene {
@@ -29,8 +30,7 @@ export class Game extends Scene {
         this.add.image(512, 384, 'background')
         this.physics.world.setBounds(0, 0, 1024, 600)
 
-        this.plano2D()
-        
+        this.plano2D();        
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
