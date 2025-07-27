@@ -9,7 +9,6 @@ import PlagaGroup from '../sprites/PlagaGroup'
 import BarraEstado from '../sprites/BarraEstado'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import Vida from '../sprites/Vida'
-import NotificacionTextual from '../sprites/NotificacionTextual'
 
 
 export class Game extends Scene {
@@ -19,48 +18,46 @@ export class Game extends Scene {
         this.borders = null
         this.player = null
         this.emitter = null
-        this.zona = null
         this.gameOver = false
         this.tanque = null
         this.potenciadorGroup = null
-        this.fumigando = false
     }
 
     create() {
-        this.add.image(512, 384, 'background')
-        this.physics.world.setBounds(0, 0, 1024, 600)
+        this.add.image(512, 384, 'background');
+        this.physics.world.setBounds(0, 0, 1024, 600);
 
-        this.plano2D();        
+        this.plano2D();
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
             y: 30,
             vida: 10,
             capacidad: 10
-        })
+        });
 
-        this.plagaGroup = new PlagaGroup(this, this.createPlagas(20))
+        this.plagaGroup = new PlagaGroup(this, this.createPlagas(20));
 
-        this.potenciadorGroup = new PotenciadorGroup(this)
+        this.potenciadorGroup = new PotenciadorGroup(this);
 
-        this.player = new Player(this, new Punto(100, 100), "player")
-        this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y, 60, 20)
-        this.tanque = new Tanque()
+        this.player = new Player(this, new Punto(100, 100), "player");
+        this.tanque = new Tanque();
 
-        this.detectarColision()
+        this.detectarColision();
 
         this.time.delayedCall(6000, this.suministrarVida, [], this);
 
-        this.input.mouse.disableContextMenu()
+        this.input.mouse.disableContextMenu();
 
-        this.keyboard = this.input.keyboard.createCursorKeys()
+        this.keyboard = this.input.keyboard.createCursorKeys();
 
         this.keys = this.input.keyboard.addKeys({
             A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
             W: Phaser.Input.Keyboard.KeyCodes.W,
             S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
             D: Phaser.Input.Keyboard.KeyCodes.D
-        })
+        });
+
         EventBus.emit('current-scene-ready', this)
     }
 
@@ -176,15 +173,12 @@ export class Game extends Scene {
     }
 
     fumigar() {
-        if (this.tanque.estaVacio()) {
-            return
-        }
+        if (this.tanque.estaVacio()) return;
+        const zona = { type: 'edge', source: this.player.destino, quantity: 42 };
+        this.tanque.vaciar();
+        this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad);
 
-        const zona = { type: 'edge', source: this.zona, quantity: 42 }
-        this.tanque.vaciar()
-        this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad)
-
-        const lifespan = (this.tanque.capacidad * 1500) / this.tanque.capacidadMax
+        const lifespan = (this.tanque.capacidad * 1500) / this.tanque.capacidadMax;
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             speed: 24,
@@ -195,9 +189,9 @@ export class Game extends Scene {
             emitZone: zona,
             duration: 500,
             emitting: false
-        })
+        });
 
-        this.emitter.start(2000)
+        this.emitter.start(2000);
     }
 
     morir(player, rana) {
@@ -240,48 +234,40 @@ export class Game extends Scene {
     }
 
     update() {
-        if (this.gameOver) return
+        if (this.gameOver) return;
 
         if (this.plagaGroup.total > 5) {
-            this.createTanque()
+            this.createTanque();
         }
 
-        if (this.keyboard.left.isDown) {
-            this.player.left()
-            if (!this.zona) return
-            this.zona = new Phaser.Geom.Rectangle(this.player.x - 160, this.player.y, 60, 20)
+        if (this.keyboard.up.isDown) {
+            this.player.top();
         } else if (this.keyboard.right.isDown) {
-            this.player.right()
-            if (!this.zona) return
-            this.zona = new Phaser.Geom.Rectangle(this.player.x + 100, this.player.y, 60, 20)
-        } else if (this.keyboard.up.isDown) {
-            this.player.top()
-            if (!this.zona) return
-            this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y - 120, 60, 20)
+            this.player.right();
         } else if (this.keyboard.down.isDown) {
-            this.player.bottom()
-            if (!this.zona) return
-            this.zona = new Phaser.Geom.Rectangle(this.player.x, this.player.y + 100, 60, 20)
+            this.player.bottom();
+        } else if (this.keyboard.left.isDown) {
+            this.player.left();
         }
 
         if (!this.tanque.estaVacio() && this.keys.S.isDown) {
-            this.fumigar()
+            this.fumigar();
         }
 
         if (this.emitter) {
             this.plagaGroup.getChildren().forEach(plaga => {
-                const plagas = this.emitter.overlap(plaga.body)
+                const plagas = this.emitter.overlap(plaga.body);
                 if (plagas.length > 0) {
-                    this.plagaGroup.remove(plaga, true, true)
+                    this.plagaGroup.remove(plaga, true, true);
                 }
-            })
-            this.emitter = null
+            });
+            this.emitter = null;
         }
 
-        if (this.plagaGroup.countActive() === 0) {
-            this.gameOver = true
-            this.reset()
-            this.scene.start('GameOver')
+        if (this.plagaGroup.estaVacio()) {
+            this.gameOver = true;
+            this.reset();
+            this.scene.start('GameOver');
         }
     }
 }

@@ -1,26 +1,25 @@
 import Phaser from 'phaser';
 
 export default class NotificacionTextual extends Phaser.GameObjects.Container {
-    constructor(scene, config, callback) {
+    constructor(scene, texto, x, y, width, height, callback, context) {
         super(scene);
         this.scene = scene;
-        this.config = config;
         this.callback = callback;
-        const {x, y, texto} = config;
+        this.context = context;
 
         this.textual = scene.add.text(
             x, y, texto, {
             fontFamily: 'Arial Black', fontSize: 20, color: '#ffffff',
             stroke: '#000000', strokeThickness: 10,
             align: 'center'
-        })
-        this.textual.setOrigin(0.5);
+        });
+        this.textual.setOrigin(1/2);
         this.add(this.textual);
         this.bringToTop(this.textual);
 
         this.forma = scene.add.graphics();
         this.forma.fillStyle(0x000000, 1);
-        this.forma.fillRect(this.textual.x - 300, this.textual.y-25, 600, 50);
+        this.forma.fillRect(this.textual.x - width/2, this.textual.y- height/2, width, height);
         this.add(this.forma);
         this.sendToBack(this.forma);
 
@@ -43,7 +42,7 @@ export default class NotificacionTextual extends Phaser.GameObjects.Container {
     onEliminar(forma, textual) {
         this.remove(textual, true, true);
         this.remove(forma, true, true);
-        this.callback(this);
+        this.callback.call(this.context, this);
     }
 
     finalizar() {

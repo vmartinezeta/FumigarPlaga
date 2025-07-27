@@ -5,34 +5,38 @@ import "./estilos.css"
 import LetraList from './Components/LetraList';
 
 function App() {
-    // The sprite can only be moved in the MainMenu Scene
-    // const [canMoveSprite, setCanMoveSprite] = useState(true);
     const [centroControl, setCentroControl] = useState({ btnPlay: false, btnSalir: true })
-    //  References to the PhaserGame component (game and scene are exposed)
-    const phaserRef = useRef();
     const { onToggleMusica, addLetra, reset, ultima } = useGame()
+    const [scene, setScene] = useState(null);
+    const phaserRef = useRef();
 
-
-    const changeScene = () => {
-        const scene = phaserRef.current.scene
-
-        if (scene) {
-            scene.changeScene()
-            reset()
-        }
-    }
 
     const play = () => {
-        const scene = phaserRef.current.scene
-        if (scene && scene.scene.key === "MainMenu") {
-            scene.stop()
-            reset()
-            scene.play()
-        }
+        if (!scene) return;
+        reset();
+        scene.cancelAnimation();
+        scene.changeScene("Game");
     }
 
-    // Event emitted from the PhaserGame component
+    const cerrar = () =>{
+        if (!scene) return;
+        scene.changeScene("MainMenu");
+    }
+
+    const howTo = () => {
+        if (!scene) return;
+        reset();
+        setScene(anterior => {
+            if (anterior.scene.key === "MainMenu") {
+                return scene.changeScene("HowTo");
+            }
+            return scene.changeScene("MainMenu");
+        })
+    }
+
+
     const currentScene = (scene) => {
+        setScene(scene);
         if (scene.scene.key === "MainMenu") {
             setCentroControl({ btnPlay: false, btnSalir: true })
         } else if (scene.scene.key === "Game" || scene.scene.key === "GameOver") {
@@ -59,8 +63,8 @@ function App() {
             <div className="centro">
                 <LetraList move={onMove} />
                 <PhaserGame ref={phaserRef} currentActiveScene={(scene) => {
-                    currentScene(scene)
-                    moveLetra(scene)
+                    currentScene(scene);
+                    moveLetra(scene);
                 }} />
             </div>
             <div>
@@ -68,13 +72,13 @@ function App() {
                     <button disabled={centroControl.btnPlay} className="button" onClick={play}>Play</button>
                 </div>
                 <div>
-                    <button disabled={centroControl.btnSalir} className="button" onClick={changeScene}>Salir</button>
+                    <button disabled={centroControl.btnSalir} className="button" onClick={cerrar}>Salir</button>
                 </div>
                 <div>
                     <button className="button" onClick={() => onToggleMusica()}>Toggle Musíca</button>
                 </div>
                 <div>
-                    <button className="button" onClick={changeScene}>HowTo</button>
+                    <button className="button" onClick={howTo}>HowTo</button>
                 </div>
             </div>
         </div>

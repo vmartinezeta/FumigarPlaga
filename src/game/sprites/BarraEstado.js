@@ -20,18 +20,18 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
             align: 'center'
         }).setOrigin(1 / 2).setDepth(100)
 
-        this.add(this.rotuloVida)
-        this.add(this.rotuloCapacidad)
-        this.scene.physics.add.existing(this, true)
+        this.add(this.rotuloVida);
+        this.add(this.rotuloCapacidad);
+        this.scene.add.existing(this);
     }
 
     actualizar(vida, capacidad) {
-        if (this.vida !== vida && this.vida > 0) {
+        if (this.vida !== vida && this.vida >= 0) {
             this.vida = vida
             this.rotuloVida.setText("Vida: " + vida)
         }
 
-        if (this.capacidad !== capacidad && capacidad > 0) {
+        if (this.capacidad !== capacidad && capacidad >= 0) {
             this.capacidad = capacidad
             this.rotuloCapacidad.setText("Capacidad: "+capacidad)
         }        

@@ -1,22 +1,21 @@
 import Phaser from "phaser"
 
 export default class Player extends Phaser.GameObjects.Sprite {
-    constructor(scene, origen, texture) {
-        super(scene, origen.x, origen.y, texture)
-        this.texture = texture
-        this.vida = 10
-        this.scene = scene
-        scene.add.existing(this)
-        scene.physics.world.enable(this)
-        this.body.setCollideWorldBounds(true)
+    constructor(scene, origen, texture, vida) {
+        super(scene, origen.x, origen.y, texture);
+        this.scene = scene;
+        this.texture = texture;
+        this.vida = vida || 10;
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+        this.body.setCollideWorldBounds(true);
+        this.setOrigin(1 / 2);
+        this.setScale(1);
 
-        this.setOrigin(1 / 2)
-        this.setScale(1)
-
-        this.createAnimations(scene)
-
-        this.play('frontal')
-        this.dx = 6
+        this.createAnimations(scene);
+        this.play('frontal');
+        this.dx = 6;
+        this.destino = null;
     }
 
     createAnimations(scene) {
@@ -43,23 +42,28 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     }
 
-    left() {
-        this.play("izq")
-        this.x -=this.dx
+    top() {
+        this.play("frontal");
+        this.y -= this.dx;
+        this.destino = new Phaser.Geom.Rectangle(this.x, this.y - 120, 60, 20);
     }
 
     right() {
-        this.play("der")
-        this.x +=this.dx
-    }
-
-    top() {
-        this.play("frontal")
-        this.y -=this.dx
+        this.play("der");
+        this.x += this.dx;
+        this.destino = new Phaser.Geom.Rectangle(this.x + 100, this.y, 60, 20);
     }
 
     bottom() {
-        this.play("frontal")
-        this.y += this.dx
+        this.play("frontal");
+        this.y += this.dx;
+        this.destino = new Phaser.Geom.Rectangle(this.x, this.y + 100, 60, 20);
     }
+
+    left() {
+        this.play("izq");
+        this.x -= this.dx;
+        this.destino = new Phaser.Geom.Rectangle(this.x - 160, this.y, 60, 20);
+    }
+
 }

@@ -2,9 +2,7 @@ import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 
 
-
 export class HowTo extends Scene {
-
     constructor() {
         super('HowTo')
     }
@@ -41,7 +39,9 @@ export class HowTo extends Scene {
         EventBus.emit('current-scene-ready', this)
     }
 
-    changeScene() {
-        this.scene.start('MainMenu');
-    } 
+    changeScene(key) {
+        this.scene.start(key);
+        return this.scene.manager.getScene(key);
+    }
+
 }

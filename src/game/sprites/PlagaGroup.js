@@ -17,4 +17,8 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
     getPasivos() {
         return this.getChildren().filter(p => !p.inicio)
     }
+
+    estaVacio() {
+        return this.countActive() === 0;
+    }
 }

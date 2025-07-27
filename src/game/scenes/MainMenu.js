@@ -16,12 +16,9 @@ export class MainMenu extends Scene {
         EventBus.emit('current-scene-ready', this)
     }
 
-    play() {
-        this.scene.start('Game')
-    }
-
-    changeScene() {
-        this.scene.start('HowTo');  
+    changeScene(key) {
+        this.scene.start(key);
+        return this.scene.manager.getScene(key)
     } 
 
     moveLetra(reactCallback) {
@@ -34,7 +31,7 @@ export class MainMenu extends Scene {
         })
     }
 
-    stop() {
+    cancelAnimation() {
         this.animation.destroy()
         this.animation = null
     }
