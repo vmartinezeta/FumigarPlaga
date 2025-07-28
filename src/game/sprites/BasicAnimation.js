@@ -1,52 +1,45 @@
-import Phaser from "phaser"
+import Phaser from "phaser";
 import Plaga from "./Plaga";
 import { Punto } from "../classes/Punto";
 import { Letra } from "../classes/Letra";
 
 export default class BasicAnimation extends Phaser.GameObjects.Group {
-    constructor(scene, children, config) {
-        // Llamar al constructor de la clase padre (Phaser.GameObjects.Group)
-        super(scene, children, config)
-        this.index = 0
-        this.texto = "FUMIGAR"
-        this.letra = null        
-        // Inicializar propiedades personalizadas
-        this.scene = scene // Guardar la escena como propiedad
-        this.setup() // Llamar a la configuración inicial
-        // scene.time.delayedCall(1000, this.onTimerComplete, [], this)
-        this.origen = new Punto(350, 200)
-        this.plaga = new Plaga(scene, this.origen, "rana")
-        this.plaga.rotar()
-        this.plaga.disabledBody()
-        this.add(this.plaga)
-        this.stop = false
+    constructor(scene, x, y, texto, deltaX) {
+        super(scene);
+        this.scene = scene;
+        this.index = 0;
+        this.texto = texto;
+        this.deltaX = deltaX;
+        this.letra = null;
+        scene.physics.add.existing(this, true);
+        this.origen = new Punto(x, y);
+        this.plaga = new Plaga(scene, this.origen, "rana");
+        this.plaga.rotar();
+        this.plaga.disabledBody();
+        this.add(this.plaga);
+        this.siguienteLetra = null;
     }
 
-    parar() {
-        this.stop = true
+    cancelar() {
+        if (!this.siguienteLetra) return;
+        this.scene.time.removeEvent(this.siguienteLetra);
+        this.index = 0;
+        this.siguienteLetra = null;
+        this.plaga.x = this.origen.x;
     }
 
-    reset() {
-        this.stop = false
-        this.index = 0  
-        this.plaga.x = this.origen.x     
+    iniciar(reactCallback, context) {
+        const actual = this.texto.charAt(this.index);
+        reactCallback.call(context, new Letra(this.plaga.actual(), actual, this.index, this.texto.length - 1));
+        this.plaga.x += this.deltaX;
+        this.index++;
+        if (this.index === this.texto.length) return;
+        this.siguienteLetra = this.scene.time.delayedCall(1000, this.iniciar, [reactCallback, context], this);
     }
 
-    getLetra(sceneCallback) {
-        if (this.stop) {
-            return
-        }
-        const actual = this.texto.charAt(this.index)
-        const {x, y} = this.plaga
-        sceneCallback(new Letra(new Punto(x, y), actual, this.index, this.texto.length-1))
-        this.plaga.x += 50
-        this.index ++
-        this.scene.time.delayedCall(1000, this.getLetra, [sceneCallback], this)
+    reiniciar(reactCallback, context) {
+        this.cancelar();
+        this.iniciar(reactCallback, context);
     }
 
-    setup() {
-        // Configuración inicial del grupo
-        // Por ejemplo, añadir físicas, eventos, etc.
-        this.scene.physics.add.existing(this, true) // Añadir físicas al grupo (opcional)
-    }
 }

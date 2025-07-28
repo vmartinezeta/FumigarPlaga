@@ -1,17 +1,9 @@
-import PropTypes from "prop-types"
 
 export default function LetraCartel({letra}) {
-    return <div className="caja" style={{
+    return <div className="rotulo-ppal__letra" style={{
         left:letra.origen.x-25+45,
         top:letra.origen.y+20
     }}>
-        <h1 className="titulo">{letra.caracter}</h1>
+        <h1 className="rotulo-ppal__simbolo">{letra.caracter}</h1>
     </div>
 }
-
-LetraCartel.propTypes = {
-    letra: PropTypes.shape({
-      origen: PropTypes.object.isRequired,
-      caracter: PropTypes.string.isRequired
-    }).isRequired,
-  };

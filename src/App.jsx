@@ -1,88 +1,69 @@
-import { useRef, useState } from 'react'
-import { PhaserGame } from './game/PhaserGame'
-import { useGame } from './context/GameContext'
-import "./estilos.css"
+import { useEffect, useRef, useState } from 'react';
+import { PhaserGame } from './game/PhaserGame';
+import { useGame } from './context/GameContext';
 import LetraList from './Components/LetraList';
+import CentroControl from './Components/CentroControl';
+import "./estilos.css";
+
 
 function App() {
-    const [centroControl, setCentroControl] = useState({ btnPlay: false, btnSalir: true })
-    const { onToggleMusica, addLetra, reset, ultima } = useGame()
+    const { addLetra,letras, cancelarAnimacion } = useGame();
     const [scene, setScene] = useState(null);
     const phaserRef = useRef();
+    const [index, setIndex] = useState(0);
+    const time = useRef(1000);
 
-
-    const play = () => {
-        if (!scene) return;
-        reset();
-        scene.cancelAnimation();
-        scene.changeScene("Game");
-    }
-
-    const cerrar = () =>{
-        if (!scene) return;
-        scene.changeScene("MainMenu");
-    }
-
-    const howTo = () => {
-        if (!scene) return;
-        reset();
-        setScene(anterior => {
-            if (anterior.scene.key === "MainMenu") {
-                return scene.changeScene("HowTo");
+    useEffect(()=> {
+        const letra = letras[letras.length-1];
+        if ((letra && !letra.ultima) || (scene && scene.scene.key !== "MainMenu")) return;
+        const interval = setInterval(() => {
+            if (index === 0) {
+                setIndex(index + 1);
+            } else if (index === 1) {
+                cancelarAnimacion();
+                setIndex(index + 1);
+                time.current = 100;
+            } else if (index === 2) {
+                scene.reiniciar();            
+                setIndex(0);
+                time.current = 1000;
             }
-            return scene.changeScene("MainMenu");
-        })
-    }
+        }, time.current);
 
+        return () => {
+            clearInterval(interval);
+        }
+    },[letras, index]);
 
     const currentScene = (scene) => {
         setScene(scene);
-        if (scene.scene.key === "MainMenu") {
-            setCentroControl({ btnPlay: false, btnSalir: true })
-        } else if (scene.scene.key === "Game" || scene.scene.key === "GameOver") {
-            setCentroControl({ btnPlay: true, btnSalir: false })
-        }
     }
 
-    const moveLetra = (scene) => {
-        if (scene && scene.scene.key === 'MainMenu') {
-            scene.moveLetra(letra => {
-                addLetra(letra)
-                ultima(letra)
-            })
-        }
+    const moverLetra = (scene) => {
+        if (!scene || scene.scene.key !== "MainMenu") return;
+        scene.moverLetra(letra => {
+            addLetra(letra);
+        });
     }
 
-    const onMove = ()=> {
-        const scene = phaserRef.current.scene
-        moveLetra(scene)
-    }
+    const onMover = () => moverLetra(scene)
 
-    return (
-        <div id="app">
-            <div className="centro">
-                <LetraList move={onMove} />
-                <PhaserGame ref={phaserRef} currentActiveScene={(scene) => {
-                    currentScene(scene);
-                    moveLetra(scene);
-                }} />
+    return <div className="columna">
+        <div className="columna__par">
+            <div className="columna__izq">
+                <div className="columna__render">
+                    <LetraList onMover={onMover} />
+                    <PhaserGame ref={phaserRef} currentActiveScene={(scene) => {
+                        currentScene(scene);
+                        moverLetra(scene);
+                    }} />
+                </div>
             </div>
-            <div>
-                <div>
-                    <button disabled={centroControl.btnPlay} className="button" onClick={play}>Play</button>
-                </div>
-                <div>
-                    <button disabled={centroControl.btnSalir} className="button" onClick={cerrar}>Salir</button>
-                </div>
-                <div>
-                    <button className="button" onClick={() => onToggleMusica()}>Toggle Musíca</button>
-                </div>
-                <div>
-                    <button className="button" onClick={howTo}>HowTo</button>
-                </div>
+            <div className="columna__der">
+                <CentroControl scene={scene} onChangeScene={setScene} />
             </div>
         </div>
-    )
+    </div>
 }
 
-export default App
+export default App;

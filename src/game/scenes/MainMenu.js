@@ -5,15 +5,21 @@ import BasicAnimation from '../sprites/BasicAnimation';
 export class MainMenu extends Scene {
 
     constructor() {
-        super('MainMenu')
-        this.animation = null        
+        super('MainMenu');
+        this.animacion = null;
+        this.letra = null;
+        this.reactCallback = null;
     }
 
     create() {
         this.cameras.main.setBackgroundColor(0x00ff00);
-        this.add.image(512, 384, 'background')
-        this.animation = new BasicAnimation(this)
-        EventBus.emit('current-scene-ready', this)
+        this.add.image(512, 384, 'background');
+        this.animacion = new BasicAnimation(this, 350, 200, "FUMIGAR", 50);
+        EventBus.emit('current-scene-ready', this);
+    }
+
+    siguiente(letra) {
+        this.reactCallback(letra);
     }
 
     changeScene(key) {
@@ -21,18 +27,17 @@ export class MainMenu extends Scene {
         return this.scene.manager.getScene(key)
     } 
 
-    moveLetra(reactCallback) {
-        this.animation.reset()
-        this.animation.getLetra((letra) => {
-            reactCallback(letra)
-            if (letra.isUltima()) {
-                this.animation.parar()
-            }
-        })
+    moverLetra(reactCallback) {
+        this.reactCallback = reactCallback;
+        this.animacion.iniciar(this.siguiente, this);
     }
 
     cancelAnimation() {
-        this.animation.destroy()
-        this.animation = null
+        this.animacion.cancelar();
+        this.animacion.destroy();
+    }
+
+    reiniciar() {
+        this.animacion.reiniciar(this.siguiente, this);
     }
 }

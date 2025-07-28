@@ -14,7 +14,7 @@ export default class PotenciadorGroup extends Phaser.GameObjects.Group {
             tanque: 3,
             vida: 3,
         };
-        this.y0 = 60;
+        this.y0 = 10;
         this.marginBottom = 60;
     }
 

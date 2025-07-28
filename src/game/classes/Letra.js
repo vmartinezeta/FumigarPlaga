@@ -5,7 +5,4 @@ export class Letra {
         this.ultima = index === lastIndex
     }
 
-    isUltima() {
-        return this.ultima
-    }
 }

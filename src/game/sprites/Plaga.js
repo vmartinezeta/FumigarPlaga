@@ -81,4 +81,8 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
     morir() {
         this.destroy()
     }
+
+    actual() {
+        return new Punto(this.x, this.y);
+    }
 }
