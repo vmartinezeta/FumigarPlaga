@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
 import { GameProvider } from './context/GameContext.jsx';
+import App from './App.jsx';
 
 function Main() {
     return <GameProvider>

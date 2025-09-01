@@ -1,10 +1,14 @@
 export class Punto {
     constructor(x, y) {
-        this.x = x
-        this.y = y
+        this.x = x;
+        if (y === undefined) {
+            this.y = x;
+        } else {
+            this.y = y;
+        }
     }
 
     toString() {
-        return `${this.x},${this.y}`
+        return `${this.x},${this.y}`;
     }
 }

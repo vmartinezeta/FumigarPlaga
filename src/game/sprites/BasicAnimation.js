@@ -14,7 +14,6 @@ export default class BasicAnimation extends Phaser.GameObjects.Group {
         scene.physics.add.existing(this, true);
         this.origen = new Punto(x, y);
         this.plaga = new Plaga(scene, this.origen, "rana");
-        this.plaga.rotar();
         this.plaga.disabledBody();
         this.add(this.plaga);
         this.siguienteLetra = null;

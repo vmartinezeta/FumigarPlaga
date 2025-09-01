@@ -3,31 +3,31 @@ import Phaser, { Scene } from 'phaser'
 import { Punto } from '../classes/Punto'
 import { Tanque } from '../classes/Tanque'
 import Player from '../sprites/Player'
-import Plaga from '../sprites/Plaga'
 import PotenciadorGroup from '../sprites/PotenciadorGroup'
 import PlagaGroup from '../sprites/PlagaGroup'
 import BarraEstado from '../sprites/BarraEstado'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import Vida from '../sprites/Vida'
+import BorderSolido from '../sprites/BorderSolido'
 
 
 export class Game extends Scene {
     constructor() {
-        super('Game')
-        this.plagaGroup = null
-        this.borders = null
-        this.player = null
-        this.emitter = null
-        this.gameOver = false
-        this.tanque = null
-        this.potenciadorGroup = null
+        super('Game');
+        this.plagaGroup = null;
+        this.borders = null;
+        this.player = null;
+        this.emitter = null;
+        this.gameOver = false;
+        this.tanque = null;
+        this.potenciadorGroup = null;
     }
 
     create() {
         this.add.image(512, 384, 'background');
         this.physics.world.setBounds(0, 0, 1024, 600);
 
-        this.plano2D();
+        this.borders = new BorderSolido(this);
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
@@ -36,7 +36,7 @@ export class Game extends Scene {
             capacidad: 10
         });
 
-        this.plagaGroup = new PlagaGroup(this, this.createPlagas(20));
+        this.plagaGroup = new PlagaGroup(this);
 
         this.potenciadorGroup = new PotenciadorGroup(this);
 
@@ -68,50 +68,23 @@ export class Game extends Scene {
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this)
     }
 
-    plano2D() {
-        this.borders = this.physics.add.group()
-        this.createSpriteHorizontal(6, 0, 0, "platform")
-        this.createSpriteVertical(4, 1024, 0, "platform")
-        this.createSpriteHorizontal(6, 0, 600, "platform")
-        this.createSpriteVertical(4, 0, 0, "platform")
-    }
-
-    createSpriteVertical(cantidad, x, y, texture) {
-        for (let i = 0; i < cantidad; i++) {
-            const sprite = this.borders.create(x, i * 200 + y, texture)
-            sprite.angle = 90
-            sprite.body.allowGravity = false
-            sprite.body.immovable = true
-        }
-    }
-
-    createSpriteHorizontal(cantidad, x, y, texture) {
-        for (let i = 0; i < cantidad; i++) {
-            const sprite = this.borders.create(i * 200 + x, y, texture)
-            sprite.body.allowGravity = false
-            sprite.body.immovable = true
-        }
-    }
-
     rotar(sprite) {
-        if (sprite instanceof Plaga) {
-            sprite.rotar()
-        }
+        sprite.rotar();
     }
 
     coger(izq, der) {
-        const [hembra, macho] = this.fijarPareja(izq, der)
-        const pareja = hembra.hembra && !macho.hembra
+        const [hembra, macho] = this.fijarPareja(izq, der);
+        const pareja = hembra.hembra && !macho.hembra;
         if (pareja && !hembra.inicio) {
-            hembra.coger()
+            hembra.coger();
         }
-        return hembra.inicio
+        return hembra.inicio;
     }
 
     cogiendo(izq, der) {
-        const [hembra, macho] = this.fijarPareja(izq, der)
-        if (!hembra.inicio) return
-        hembra.cogiendo(macho, this.dejarCoger.bind(this))
+        const [hembra, macho] = this.fijarPareja(izq, der);
+        if (!hembra.inicio) return;
+        hembra.cogiendo(macho, this.dejarCoger, this);
     }
 
     fijarPareja(izq, der) {
@@ -126,7 +99,7 @@ export class Game extends Scene {
 
     dejarCoger(hembra, macho) {
         if (this.plagaGroup.countActive() < 300) {
-            this.plagaGroup.addMultiple(this.createPlagas(2));
+            this.plagaGroup.agregar(this, 2);
         }
 
         hembra.soltar();
@@ -141,24 +114,11 @@ export class Game extends Scene {
         return false
     }
 
-    createPlagas(cantidad) {
-        const base = this.game.config.width
-        const altura = this.game.config.height
-        const plagas = []
-        for (let i = 1; i <= cantidad; i++) {
-            const x = Math.random() * base
-            const y = Math.random() * altura
-            const hembra = Math.floor(Math.random() * 2)
-            plagas.push(new Plaga(this, new Punto(x, y), "rana", Boolean(hembra)))
-        }
-        return plagas
-    }
-
     aplicarPotenciador(player, potenciador) {
         if (potenciador instanceof TanqueConAgua) {
-            this.tanque.reset()
+            this.tanque.reset();
         } else if (potenciador instanceof Vida) {
-            this.player.vida += 2
+            this.player.vida += 2;
         }
 
         this.tweens.add({
@@ -167,9 +127,9 @@ export class Game extends Scene {
             scaleY: { from: .6, to: 1 },
             duration: 1000,
             ease: 'Back.out',
-        })
-        this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad)
-        this.potenciadorGroup.remove(potenciador, true, true)
+        });
+        this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad);
+        this.potenciadorGroup.remove(potenciador, true, true);
     }
 
     fumigar() {
