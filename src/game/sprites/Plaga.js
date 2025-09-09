@@ -35,10 +35,16 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
     }
 
     createAnimations(scene) {
-        if (scene.anims.exists("run")) return
         scene.anims.create({
             key: 'run',
             frames: scene.anims.generateFrameNumbers(this.texture, { start: 0, end: 3 }),
+            frameRate: 12,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'coger',
+            frames: scene.anims.generateFrameNumbers("rana2", { start: 0, end: 2 }),
             frameRate: 12,
             repeat: -1
         });
@@ -52,21 +58,9 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.inicio = false;
         this.detener();
         macho.detener();
-
-        if (this.body.velocity.x < 0 && macho.body.velocity.x>0
-            || this.body.velocity.x > 0 && macho.body.velocity.x < 0
-        ) {
-            macho.body.velocity.x *=-1;
-            macho.rotar();
-        }
-        if (this.body.velocity.x < 0 && macho.body.velocity.x>0) {
-            macho.x = this.x + 2;
-        } else if (this.body.velocity.x > 0 && macho.body.velocity.x < 0) {
-            macho.x = this.x - 2;
-        }
-        macho.y = this.y;
-        this.setTint(0xff0505);
-        macho.setTint(0x0e02b7);
+        this.setTexture("rana2");
+        macho.visible = false;
+        this.play("coger")
 
         this.scene.add.tween({
             targets: this,
@@ -88,9 +82,12 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.inicio = false;
         this.finalizo = false;
         if (this.body) {
-            this.body.setEnable(true)
+            this.body.setEnable(true);
         }
         this.tint = this.hembra ? 0x00ffff : 0x00ff00;
+        this.setTexture("rana");
+        this.visible = true;
+        this.play("run");
     }
 
     morir() {

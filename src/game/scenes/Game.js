@@ -51,6 +51,7 @@ export class Game extends Scene {
 
         this.keyboard = this.input.keyboard.createCursorKeys();
 
+        
         this.keys = this.input.keyboard.addKeys({
             A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
             W: Phaser.Input.Keyboard.KeyCodes.W,
