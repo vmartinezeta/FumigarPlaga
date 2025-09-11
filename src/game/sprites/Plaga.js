@@ -60,7 +60,9 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         macho.detener();
         this.setTexture("rana2");
         macho.visible = false;
-        this.play("coger")
+        if (this.scene.anims.exists("coger")) {
+            this.play("coger");
+        }
 
         this.scene.add.tween({
             targets: this,
@@ -87,7 +89,9 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.tint = this.hembra ? 0x00ffff : 0x00ff00;
         this.setTexture("rana");
         this.visible = true;
-        this.play("run");
+        if (this.scene.anims.exists("run")) {
+            this.play("run");
+        }
     }
 
     morir() {

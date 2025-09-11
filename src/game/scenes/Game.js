@@ -33,7 +33,8 @@ export class Game extends Scene {
             x: 100,
             y: 30,
             vida: 10,
-            capacidad: 10
+            capacidad: 10,
+            boquilla: 1
         });
 
         this.plagaGroup = new PlagaGroup(this);
@@ -56,7 +57,9 @@ export class Game extends Scene {
             A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
             W: Phaser.Input.Keyboard.KeyCodes.W,
             S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
-            D: Phaser.Input.Keyboard.KeyCodes.D
+            D: Phaser.Input.Keyboard.KeyCodes.D,
+            UNO: Phaser.Input.Keyboard.KeyCodes.ONE,
+            DOS: Phaser.Input.Keyboard.KeyCodes.TWO            
         });
 
         EventBus.emit('current-scene-ready', this)
@@ -209,6 +212,14 @@ export class Game extends Scene {
             this.player.bottom();
         } else if (this.keyboard.left.isDown) {
             this.player.left();
+        } 
+        
+        if (this.keys.UNO.isDown) {
+            this.player.setBoquilla(1);
+            this.barraEstado.setBoquilla(1);            
+        } else if(this.keys.DOS.isDown) {
+            this.player.setBoquilla(2);
+            this.barraEstado.setBoquilla(2);
         }
 
         if (!this.tanque.estaVacio() && this.keys.S.isDown) {

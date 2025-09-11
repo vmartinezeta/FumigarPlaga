@@ -1,4 +1,7 @@
 import Phaser from "phaser"
+import { ControlDireccional } from "../classes/ControlDireccional";
+import { Punto } from "../classes/Punto";
+import { Direccional } from "../../../../dude/src/game/classes/Direccional";
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(scene, origen, texture, vida) {
@@ -6,16 +9,21 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.texture = texture;
         this.vida = vida || 10;
+        this.setOrigin(1 / 2);
+        this.setScale(1);
+        this.control = new ControlDireccional([
+            new Direccional(1, "top", new Punto(0, -1)),
+            new Direccional(2, "right", new Punto(1, 0)),
+            new Direccional(3, "bottom", new Punto(0, 1)),
+            new Direccional(4, "left", new Punto(-1, 0)),
+        ], new Punto(1, 0));
+        this.destino = null;
+        this.boquilla = 1;
+        this.createAnimations(scene);
+        this.play('frontal');
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setCollideWorldBounds(true);
-        this.setOrigin(1 / 2);
-        this.setScale(1);
-
-        this.createAnimations(scene);
-        this.play('frontal');
-        this.dx = 6;
-        this.destino = null;
     }
 
     createAnimations(scene) {
@@ -42,28 +50,71 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     }
 
+    mover(vector, modulo) {
+        this.x += modulo * vector.x
+        this.y += modulo * vector.y;
+    }
+
     top() {
         this.play("frontal");
-        this.y -= this.dx;
-        this.destino = new Phaser.Geom.Rectangle(this.x, this.y - 120, 60, 20);
+        const vector = this.control.fromInt(1);
+        this.mover(vector, 6);
+        if (this.boquilla === 1) {
+            this.destino = new Phaser.Geom.Line(this.x,this.y-30,this.x,this.y-200);
+        } else if (this.boquilla === 2) {
+            this.destino = new Phaser.Geom.Rectangle(this.x, this.y - 120, 60, 20);
+        }
     }
 
     right() {
         this.play("der");
-        this.x += this.dx;
-        this.destino = new Phaser.Geom.Rectangle(this.x + 100, this.y, 60, 20);
+        const vector = this.control.fromInt(2);
+        this.mover(vector, 6);
+        if (this.boquilla === 1) {
+            this.destino = new Phaser.Geom.Line(this.x + 30,this.y,this.x+200,this.y);
+        } else if (this.boquilla === 2) {
+            this.destino = new Phaser.Geom.Rectangle(this.x + 100, this.y, 60, 20);
+        }
     }
 
     bottom() {
         this.play("frontal");
-        this.y += this.dx;
-        this.destino = new Phaser.Geom.Rectangle(this.x, this.y + 100, 60, 20);
+        const vector = this.control.fromInt(3);
+        this.mover(vector, 6);
+        if (this.boquilla === 1) {
+            this.destino = new Phaser.Geom.Line(this.x,this.y+30,this.x,this.y+200);
+        } else if (this.boquilla === 2) {
+            this.destino = new Phaser.Geom.Rectangle(this.x, this.y + 100, 60, 20);
+        }
     }
 
     left() {
         this.play("izq");
-        this.x -= this.dx;
-        this.destino = new Phaser.Geom.Rectangle(this.x - 160, this.y, 60, 20);
+        const vector = this.control.fromInt(4);
+        this.mover(vector, 6);
+        if (this.boquilla === 1) {
+            this.destino = new Phaser.Geom.Line(this.x - 30,this.y,this.x-200,this.y);
+        } else if (this.boquilla === 2) {
+            this.destino = new Phaser.Geom.Rectangle(this.x - 160, this.y, 60, 20);
+        }
+    }
+
+
+    updateBoquilla() {
+        if (this.control.top()) {
+            this.top();
+        } else if (this.control.right()) {
+            this.right();
+        } else if (this.control.bottom()) {
+            this.bottom();
+        } else if (this.control.left()) {
+            this.left();
+        }
+    }
+
+    setBoquilla(boquilla) {
+        this.boquilla = boquilla;
+        this.updateBoquilla();
     }
 
 }
