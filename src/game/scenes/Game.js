@@ -9,6 +9,7 @@ import BarraEstado from '../sprites/BarraEstado'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import Vida from '../sprites/Vida'
 import BorderSolido from '../sprites/BorderSolido'
+import DockCentro from '../sprites/DockCentro'
 
 
 export class Game extends Scene {
@@ -21,6 +22,7 @@ export class Game extends Scene {
         this.gameOver = false;
         this.tanque = null;
         this.potenciadorGroup = null;
+        this.dock = null;
     }
 
     create() {
@@ -48,11 +50,12 @@ export class Game extends Scene {
 
         this.time.delayedCall(6000, this.suministrarVida, [], this);
 
+        this.dock = new DockCentro(this);
+
         this.input.mouse.disableContextMenu();
 
         this.keyboard = this.input.keyboard.createCursorKeys();
 
-        
         this.keys = this.input.keyboard.addKeys({
             A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
             W: Phaser.Input.Keyboard.KeyCodes.W,
@@ -62,13 +65,13 @@ export class Game extends Scene {
             DOS: Phaser.Input.Keyboard.KeyCodes.TWO            
         });
 
-        EventBus.emit('current-scene-ready', this)
+        EventBus.emit('current-scene-ready', this);
     }
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this)
         this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this)
-        this.physics.add.collider(this.plagaGroup.getPasivos(), this.plagaGroup.getPasivos(), this.cogiendo, this.coger, this)
+        this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this)
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this)
     }
 
@@ -88,7 +91,7 @@ export class Game extends Scene {
     cogiendo(izq, der) {
         const [hembra, macho] = this.fijarPareja(izq, der);
         if (!hembra.inicio) return;
-        hembra.cogiendo(macho, this.dejarCoger, this);
+        hembra.cogiendo(macho, "rana2", this.dejarCoger, this);
     }
 
     fijarPareja(izq, der) {
@@ -105,7 +108,7 @@ export class Game extends Scene {
         if (this.plagaGroup.countActive() < 300) {
             this.plagaGroup.agregar(this, 2);
         }
-
+        if (!hembra.body || !macho.body) return;
         hembra.soltar();
         macho.soltar();
         this.plagaGroup.total++;
@@ -159,11 +162,11 @@ export class Game extends Scene {
     }
 
     morir(player, rana) {
-        rana.morir()
-        player.vida--
-        this.barraEstado.actualizar(player.vida, this.tanque.capacidad)
+        rana.morir();
+        player.vida--;
+        this.barraEstado.actualizar(player.vida, this.tanque.capacidad);
         if (player.vida === 0) {
-            this.scene.start('GameOver')
+            this.scene.start('GameOver');
         }
     }
 
@@ -217,9 +220,11 @@ export class Game extends Scene {
         if (this.keys.UNO.isDown) {
             this.player.setBoquilla(1);
             this.barraEstado.setBoquilla(1);            
+            this.dock.updateDock(1);
         } else if(this.keys.DOS.isDown) {
             this.player.setBoquilla(2);
             this.barraEstado.setBoquilla(2);
+            this.dock.updateDock(2);
         }
 
         if (!this.tanque.estaVacio() && this.keys.S.isDown) {

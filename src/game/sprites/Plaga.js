@@ -2,103 +2,102 @@ import Phaser from "phaser"
 import { Punto } from "../classes/Punto"
 
 export default class Plaga extends Phaser.GameObjects.Sprite {
-    constructor(scene, origen, texture, hembra) {
-        super(scene, origen.x, origen.y, texture);
+    constructor(scene, x, y, texture, hembra) {
+        super(scene, x, y, texture);
         this.scene = scene;
         this.texture = texture;
         this.hembra = hembra;
         this.vida = 30;
-        this.tint = hembra ? 0x00ffff : 0x00ff00;
+        this.setTint(hembra ? 0x00ffff : 0x00ff00);
         this.setOrigin(1 / 2);
         this.setScale(1);
         this.inicio = false;
         this.finalizo = false;
+        this.onComplete = null;
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.velocidad = new Punto(Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));
+        this.velocidad = new Punto(-1*Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));
         this.body.setVelocity(this.velocidad.x, this.velocidad.y);
-        this.rotar();
         this.body.setBounce(1);
         this.body.setCollideWorldBounds(true);
         this.body.setAllowGravity(false);
-        this.body.setSize(30,30);
-        this.createAnimations(scene);
+        this.body.setSize(30, 30);
+        if (!this.existe("run")) {
+            this.animate({
+                key: 'run',
+                frames: this.getFrames(texture, 0, 3),
+                frameRate: 12,
+                repeat: -1
+            });
+        }
         this.play('run');
+    }
+
+    existe(key) {
+        return this.scene.anims.exists(key);
+    }
+
+    getFrames(texture, start, end) {
+        return this.scene.anims.generateFrameNumbers(texture, { start, end });
     }
 
     rotar() {
         this.flipX = !this.flipX;
     }
 
-    disabledBody() {
-        this.body.setEnable(false)
+    habilitar(ajuste) {
+        this.body.setEnable(ajuste);
     }
 
-    createAnimations(scene) {
-        scene.anims.create({
-            key: 'run',
-            frames: scene.anims.generateFrameNumbers(this.texture, { start: 0, end: 3 }),
-            frameRate: 12,
-            repeat: -1
-        });
+    parar() {
+        this.habilitar(false);
+    }
 
-        scene.anims.create({
-            key: 'coger',
-            frames: scene.anims.generateFrameNumbers("rana2", { start: 0, end: 2 }),
-            frameRate: 12,
-            repeat: -1
-        });
+    animate(config) {
+        return this.scene.anims.create(config);
     }
 
     coger() {
-        this.inicio = true
+        this.inicio = true;
     }
 
-    cogiendo(macho, completeCallback, context) {
+    cogiendo(macho, texture, completeCallback, context) {
         this.inicio = false;
-        this.detener();
-        macho.detener();
-        this.setTexture("rana2");
-        macho.visible = false;
-        if (this.scene.anims.exists("coger")) {
-            this.play("coger");
+        this.parar();
+        macho.parar();
+        this.setTexture(texture);
+        if (!this.existe("coger")) {
+            this.animate({
+                key: 'coger',
+                frames: this.getFrames(texture, 0, 2),
+                frameRate: 12,
+                repeat: -1
+            });
         }
+        this.setTint(0xff0000);
+        macho.visible = false;
+        this.play("coger");
 
-        this.scene.add.tween({
-            targets: this,
-            scaleX: { from: .6, to: 1 },
-            scaleY: { from: .6, to: 1 },
-            duration: 1000,
-            ease: 'Back.out',
-            onComplete: () => {
-                completeCallback.call(context, this, macho);
-            }
-        });
-    }
-
-    detener() {
-        this.body.setEnable(false);
+        this.onComplete = this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
     }
 
     soltar() {
         this.inicio = false;
         this.finalizo = false;
-        if (this.body) {
-            this.body.setEnable(true);
-        }
-        this.tint = this.hembra ? 0x00ffff : 0x00ff00;
-        this.setTexture("rana");
+        this.setTint(this.hembra ? 0x00ffff : 0x00ff00);
+        this.habilitar(true);
+        this.setTexture(this.texture);
         this.visible = true;
-        if (this.scene.anims.exists("run")) {
-            this.play("run");
-        }
+        this.play("run");
     }
 
     morir() {
+        this.scene.time.removeEvent(this.onComplete);
         this.destroy();
     }
 
     actual() {
         return new Punto(this.x, this.y);
     }
+
 }
