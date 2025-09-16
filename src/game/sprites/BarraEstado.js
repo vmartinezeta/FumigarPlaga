@@ -2,9 +2,9 @@ import Phaser from "phaser"
 
 export default class BarraEstado extends Phaser.GameObjects.Group {
     constructor(scene, config) {
-        super(scene)
-        this.scene = scene
-        this.config = config
+        super(scene);
+        this.scene = scene;
+        this.config = config;
         const { x, y, vida, capacidad, boquilla } = config;
         this.vida = vida;
         this.capacidad = capacidad;
@@ -13,19 +13,19 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(1 / 2).setDepth(100)
+        }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
 
         this.rotuloCapacidad = this.scene.add.text(x + 130, y, "Capacidad: "+this.capacidad, {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(1 / 2).setDepth(100)
+        }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
 
         this.rotuloBoquilla = this.scene.add.text(x + 270, y, "Boquilla: "+this.boquilla, {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(1 / 2).setDepth(100);
+        }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
 
         this.add(this.rotuloVida);
         this.add(this.rotuloCapacidad);

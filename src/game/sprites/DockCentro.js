@@ -12,10 +12,12 @@ export default class DockCentro extends Phaser.GameObjects.Group {
         this.izq.setOrigin(1 / 2);
         this.izq.setTint(0x00ff00);
         this.izq.setDepth(10);
+        this.izq.setScrollFactor(0);
         this.add(this.izq);
         this.der = this.create(xmedia + margen, ymedia, "tecla-2");
         this.der.setOrigin(1 / 2);
         this.der.setDepth(10);
+        this.der.setScrollFactor(0);
         this.add(this.der);
         this.setVisible(false);
     }
@@ -57,6 +59,7 @@ export default class DockCentro extends Phaser.GameObjects.Group {
         this.grafico.fillPoints(hitArea.points, true);
         this.grafico.setPosition(x, y);
         this.grafico.setDepth(1);
+        this.grafico.setScrollFactor(0);
         this.add(this.grafico);
     }
 
