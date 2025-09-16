@@ -27,6 +27,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setCollideWorldBounds(true);
+        this.body.setBounce(1);
     }
 
 
@@ -134,17 +135,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.moverse = false;
         this.updateBoquilla();
         this.moverse = true;
-    }
-
-    update() {
-        // Limitar en X (no salir de los bordes izquierdo/derecho del mundo)
-        this.x = Phaser.Math.Clamp(this.x, 50, this.gameWidth - 50);
-        // Limitar en Y (solo en el área del suelo)
-        const groundLevel = this.gameHeight - 300;
-        if (this.y < groundLevel) {
-            this.y = groundLevel;
-            this.body.setVelocityY(0);
-        }
     }
 
 }

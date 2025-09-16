@@ -9,6 +9,7 @@ import BarraEstado from '../sprites/BarraEstado'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import Vida from '../sprites/Vida'
 import DockCentro from '../sprites/DockCentro'
+import BorderSolido from '../sprites/BorderSolido'
 
 
 export class Game extends Scene {
@@ -61,6 +62,8 @@ export class Game extends Scene {
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
         this.tanque = new Tanque();
 
+        this.borders = new BorderSolido(this);
+
         this.detectarColision();
 
         this.time.delayedCall(6000, this.suministrarVida, [], this);
@@ -84,11 +87,11 @@ export class Game extends Scene {
     }
 
     detectarColision() {
-        this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this)
-        // this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this)
-        this.physics.add.collider(this.player, this.suelo);
-        this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this)
-        this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this)
+        this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
+        this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this);
+        this.physics.add.collider(this.player, this.borders);
+        this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
+        this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
     }
 
     rotar(sprite) {
@@ -221,8 +224,8 @@ export class Game extends Scene {
 
         this.nube.tilePositionX += .5;
 
-        this.plagaGroup.update();
-        this.player.update();
+        // this.plagaGroup.update();
+        // this.player.update();
 
         if (this.plagaGroup.total > 5) {
             this.createTanque();

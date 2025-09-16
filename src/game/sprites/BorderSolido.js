@@ -6,12 +6,12 @@ export default class BorderSolido extends Phaser.GameObjects.Group {
     constructor(scene) {
         super(scene);
         this.scene = scene;
+        this.AgregarSpriteHorizontal(24, 0, 300, "platform");
+        this.AgregarSpriteVertical(2, 3584, 300, "platform");
+        this.AgregarSpriteHorizontal(24, 0, 600, "platform");
+        this.AgregarSpriteVertical(2, 0, 300, "platform");
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.AgregarSpriteHorizontal(6, 0, 0, "platform");
-        this.AgregarSpriteVertical(4, 1024, 0, "platform");
-        this.AgregarSpriteHorizontal(6, 0, 600, "platform");
-        this.AgregarSpriteVertical(4, 0, 0, "platform");
     }
 
     AgregarSpriteVertical(cantidad, x, y, texture) {
