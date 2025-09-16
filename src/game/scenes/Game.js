@@ -8,7 +8,6 @@ import PlagaGroup from '../sprites/PlagaGroup'
 import BarraEstado from '../sprites/BarraEstado'
 import TanqueConAgua from '../sprites/TanqueConAgua'
 import Vida from '../sprites/Vida'
-import BorderSolido from '../sprites/BorderSolido'
 import DockCentro from '../sprites/DockCentro'
 
 
@@ -28,7 +27,6 @@ export class Game extends Scene {
     }
 
     create() {
-        // this.add.image(512, 384, 'background');
         const width = 3584;
         const height = 600;
         this.bg = this.add.tileSprite(0, 0, width, height, "bg");
@@ -39,10 +37,13 @@ export class Game extends Scene {
         this.suelo.setOrigin(0);
         this.bg.setScrollFactor(0);
 
+        this.nube = this.add.tileSprite(0, 150, 5000, 200, "nube");
+        this.nube.setScrollFactor(.5);
+        this.nube.setAlpha(.9);
+
         this.cameras.main.setBounds(0, 0, width, height);
         this.physics.world.setBounds(0, 0, width, height);
 
-        // this.borders = new BorderSolido(this);
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
@@ -217,6 +218,8 @@ export class Game extends Scene {
 
     update() {
         if (this.gameOver) return;
+
+        this.nube.tilePositionX += .5;
 
         this.plagaGroup.update();
         this.player.update();

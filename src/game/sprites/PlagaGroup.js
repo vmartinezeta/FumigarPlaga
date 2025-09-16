@@ -41,7 +41,7 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
             const groundLevel = this.gameHeight - 300;
             if (frog.y < groundLevel) {
                 frog.y = groundLevel;
-                frog.body.setVelocityY(0);
+                frog.body.setVelocityYx*=-1;
             }
         })
     }
