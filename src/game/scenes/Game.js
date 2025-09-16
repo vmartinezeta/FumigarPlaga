@@ -221,11 +221,8 @@ export class Game extends Scene {
 
     update() {
         if (this.gameOver) return;
-
+        this.player.update();
         this.nube.tilePositionX += .5;
-
-        // this.plagaGroup.update();
-        // this.player.update();
 
         if (this.plagaGroup.total > 5) {
             this.createTanque();
