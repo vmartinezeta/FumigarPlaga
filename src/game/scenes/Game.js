@@ -23,13 +23,26 @@ export class Game extends Scene {
         this.tanque = null;
         this.potenciadorGroup = null;
         this.dock = null;
+        this.gameWidth = 4000;
+        this.gameHeight = 600;
     }
 
     create() {
-        this.add.image(512, 384, 'background');
-        this.physics.world.setBounds(0, 0, 1024, 600);
+        // this.add.image(512, 384, 'background');
+        const width = 3584;
+        const height = 600;
+        this.bg = this.add.tileSprite(0, 0, width, height, "bg");
+        this.bg.setOrigin(0);
+        this.bg.setScrollFactor(0);
 
-        this.borders = new BorderSolido(this);
+        this.suelo = this.add.tileSprite(0, 300, width, 300, "platform");
+        this.suelo.setOrigin(0);
+        this.bg.setScrollFactor(0);
+
+        this.cameras.main.setBounds(0, 0, width, height);
+        this.physics.world.setBounds(0, 0, width, height);
+
+        // this.borders = new BorderSolido(this);
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
@@ -43,7 +56,8 @@ export class Game extends Scene {
 
         this.potenciadorGroup = new PotenciadorGroup(this);
 
-        this.player = new Player(this, new Punto(100, 100), "player");
+        this.player = new Player(this, 100, 560, "player");
+        this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
         this.tanque = new Tanque();
 
         this.detectarColision();
@@ -70,7 +84,8 @@ export class Game extends Scene {
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this)
-        this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this)
+        // this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this)
+        this.physics.add.collider(this.player, this.suelo);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this)
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this)
     }
@@ -194,14 +209,17 @@ export class Game extends Scene {
     createTanque() {
         this.plagaGroup.total = 0
         if (this.potenciadorGroup.countActive() > 500) return
-        const x = Math.random() * this.game.config.width
-        const y = Math.random() * this.game.config.height
+        const x = Phaser.Math.Between(100, this.gameWidth - 100);
+        const y = this.gameHeight - 200;
         const potenciador = new TanqueConAgua(this, new Punto(x, y), "tanque")
         this.potenciadorGroup.addPotenciador(potenciador)
     }
 
     update() {
         if (this.gameOver) return;
+
+        this.plagaGroup.update();
+        this.player.update();
 
         if (this.plagaGroup.total > 5) {
             this.createTanque();

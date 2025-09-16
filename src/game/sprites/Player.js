@@ -4,8 +4,8 @@ import { Punto } from "../classes/Punto";
 import { Direccional } from "../../../../dude/src/game/classes/Direccional";
 
 export default class Player extends Phaser.GameObjects.Sprite {
-    constructor(scene, origen, texture, vida) {
-        super(scene, origen.x, origen.y, texture);
+    constructor(scene, x, y, texture, vida) {
+        super(scene, x, y, texture);
         this.scene = scene;
         this.texture = texture;
         this.vida = vida || 10;
@@ -21,6 +21,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.destino = null;
         this.boquilla = 1;
         this.animate(scene);
+        this.gameWidth = 4000;
+        this.gameHeight = 600;
         this.play('frontal');
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -115,7 +117,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-
     updateBoquilla() {
         if (this.control.top()) {
             this.top();
@@ -133,6 +134,17 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.moverse = false;
         this.updateBoquilla();
         this.moverse = true;
+    }
+
+    update() {
+        // Limitar en X (no salir de los bordes izquierdo/derecho del mundo)
+        this.x = Phaser.Math.Clamp(this.x, 50, this.gameWidth - 50);
+        // Limitar en Y (solo en el área del suelo)
+        const groundLevel = this.gameHeight - 300;
+        if (this.y < groundLevel) {
+            this.y = groundLevel;
+            this.body.setVelocityY(0);
+        }
     }
 
 }
