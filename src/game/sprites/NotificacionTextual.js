@@ -14,12 +14,14 @@ export default class NotificacionTextual extends Phaser.GameObjects.Container {
             align: 'center'
         });
         this.textual.setOrigin(1/2);
+        this.textual.setScrollFactor(0);
         this.add(this.textual);
         this.bringToTop(this.textual);
 
         this.forma = scene.add.graphics();
         this.forma.fillStyle(0x000000, 1);
         this.forma.fillRect(this.textual.x - width/2, this.textual.y- height/2, width, height);
+        this.forma.setScrollFactor(0);
         this.add(this.forma);
         this.sendToBack(this.forma);
 
