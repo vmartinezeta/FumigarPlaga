@@ -34,9 +34,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.play('run');
 
         // Opcional: barra de salud visual
-        // this.healthBar = null;
         if (this.puedeCoger) {
-
             this.healthBar = scene.add.graphics();
             this.updateHealthBar();
         }
@@ -102,11 +100,8 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
 
     morir() {
         this.scene.time.removeEvent(this.onComplete);
-        this.destroy();
-        // Animación de muerte, sonido, etc.
-        if (this.healthBar) {
-            this.healthBar.destroy();
-        }
+        this.healthBar.destroy();
+        this.destroy();    
     }
 
     actual() {

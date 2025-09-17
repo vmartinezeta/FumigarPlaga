@@ -22,6 +22,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.boquilla = 1;
         this.animate(scene);
         this.play('frontal');
+        this.updateBoquilla();
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setCollideWorldBounds(true);

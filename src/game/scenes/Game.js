@@ -55,7 +55,7 @@ export class Game extends Scene {
         });
 
         this.plagaGroup = new PlagaGroup(this);
-        
+
         this.potenciadorGroup = new PotenciadorGroup(this);
 
         this.player = new Player(this, 100, 560, "player");
@@ -256,13 +256,15 @@ export class Game extends Scene {
 
         if (this.emitter) {
             this.plagaGroup.getChildren().forEach(plaga => {
-                const plagas = this.emitter.overlap(plaga.body);
-                if (plagas.length > 0) {
-                    // plaga.vida --;
+                const particulas = this.emitter.overlap(plaga.body);
+                particulas.forEach(particle => {
+                    particle.kill();
+                    plaga.vida --;
+                });
 
-                    this.plagaGroup.remove(plaga, true, true);
-                    // if (plaga.vida ===0) {
-                    // }
+
+                if (plaga.vida <= 0) {
+                    plaga.morir();
                 }
             });
             this.emitter = null;
