@@ -10,6 +10,8 @@ import TanqueConAgua from '../sprites/TanqueConAgua'
 import Vida from '../sprites/Vida'
 import DockCentro from '../sprites/DockCentro'
 import BorderSolido from '../sprites/BorderSolido'
+import { BujillaLinear } from '../classes/BujillaLinear'
+import { BujillaRadial } from '../classes/BujillaRadial'
 
 
 export class Game extends Scene {
@@ -241,11 +243,11 @@ export class Game extends Scene {
         } 
         
         if (this.keys.UNO.isDown) {
-            this.player.setBoquilla(1);
-            this.barraEstado.setBoquilla(1);            
+            this.player.setBoquilla(new BujillaLinear());
+            this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
         } else if(this.keys.DOS.isDown) {
-            this.player.setBoquilla(2);
+            this.player.setBoquilla(new BujillaRadial());
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
         }
@@ -261,7 +263,6 @@ export class Game extends Scene {
                     particle.kill();
                     plaga.vida --;
                 });
-
 
                 if (plaga.vida <= 0) {
                     plaga.morir();
