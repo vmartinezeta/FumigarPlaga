@@ -33,8 +33,8 @@ export class Game extends Scene {
         this.bg = this.add.tileSprite(0, 0, width, height, "bg");
         this.bg.setOrigin(0);
         this.bg.setScrollFactor(0);
-
-        this.suelo = this.add.tileSprite(0, 300, width, 300, "platform");
+        this.frontera = 300;
+        this.suelo = this.add.tileSprite(0, this.frontera, width, this.frontera, "platform");
         this.suelo.setOrigin(0);
         this.bg.setScrollFactor(0);
 
@@ -55,7 +55,7 @@ export class Game extends Scene {
         });
 
         this.plagaGroup = new PlagaGroup(this);
-
+        
         this.potenciadorGroup = new PotenciadorGroup(this);
 
         this.player = new Player(this, 100, 560, "player");
@@ -221,8 +221,10 @@ export class Game extends Scene {
 
     update() {
         if (this.gameOver) return;
-        this.player.update();
         this.nube.tilePositionX += .5;
+
+        this.player.permanecerAbajo(this.frontera);
+        this.plagaGroup.update();
 
         if (this.plagaGroup.total > 5) {
             this.createTanque();
@@ -256,7 +258,11 @@ export class Game extends Scene {
             this.plagaGroup.getChildren().forEach(plaga => {
                 const plagas = this.emitter.overlap(plaga.body);
                 if (plagas.length > 0) {
+                    // plaga.vida --;
+
                     this.plagaGroup.remove(plaga, true, true);
+                    // if (plaga.vida ===0) {
+                    // }
                 }
             });
             this.emitter = null;

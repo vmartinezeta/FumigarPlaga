@@ -2,21 +2,22 @@ import Phaser from "phaser"
 import { Punto } from "../classes/Punto"
 
 export default class Plaga extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, hembra) {
+    constructor(scene, x, y, texture, hembra, puedeCoger) {
         super(scene, x, y, texture);
         this.scene = scene;
         this.texture = texture;
         this.hembra = hembra;
-        this.vida = 30;
+        this.vida = hembra ? 30 : 50;
         this.setTint(hembra ? 0x00ffff : 0x00ff00);
         this.setOrigin(1 / 2);
         this.setScale(1);
         this.inicio = false;
+        this.puedeCoger = puedeCoger;
         this.finalizo = false;
         this.onComplete = null;
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.velocidad = new Punto(-1*Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));
+        this.velocidad = new Punto(-1 * Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));
         this.body.setVelocity(this.velocidad.x, this.velocidad.y);
         this.body.setBounce(1);
         this.body.setCollideWorldBounds(true);
@@ -31,6 +32,14 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
             });
         }
         this.play('run');
+
+        // Opcional: barra de salud visual
+        // this.healthBar = null;
+        if (this.puedeCoger) {
+
+            this.healthBar = scene.add.graphics();
+            this.updateHealthBar();
+        }
     }
 
     existe(key) {
@@ -94,10 +103,40 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
     morir() {
         this.scene.time.removeEvent(this.onComplete);
         this.destroy();
+        // Animación de muerte, sonido, etc.
+        if (this.healthBar) {
+            this.healthBar.destroy();
+        }
     }
 
     actual() {
         return new Punto(this.x, this.y);
     }
+
+    takeDamage(damage) {
+        this.vida -= damage;
+        this.updateHealthBar();
+
+        // Efecto visual de daño
+        this.setTint(0xff0000);
+        this.scene.time.delayedCall(100, () => { this.clearTint(); });
+
+        if (this.vida <= 0) {
+            this.morir();
+        }
+    }
+
+    updateHealthBar() {
+        this.healthBar.clear();    
+        // Fondo barra roja
+        this.healthBar.fillStyle(0xff0000, 0.5);
+        this.healthBar.fillRect(this.x - 20, this.y - 40, 40, 5);
+        
+        // Salud actual verde
+        const healthWidth = (this.health / this.maxHealth) * 40;
+        this.healthBar.fillStyle(0x00ff00, 0.8);
+        this.healthBar.fillRect(this.x - 20, this.y - 40, healthWidth, 5);
+    }
+
 
 }

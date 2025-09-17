@@ -21,15 +21,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.destino = null;
         this.boquilla = 1;
         this.animate(scene);
-        this.gameWidth = 4000;
-        this.gameHeight = 600;
         this.play('frontal');
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setCollideWorldBounds(true);
-        // this.body.setBounce(1);
     }
-
 
     animate(scene) {
         if (!scene.anims.exists("izq")) {
@@ -137,13 +133,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.moverse = true;
     }
 
-
-    update() {
-        const groundLevel = 300; // Altura del suelo
-        if (this.y < groundLevel) {
-            this.y = groundLevel;
-            this.body.setVelocityY(0); // Detener movimiento vertical
-        }
+    permanecerAbajo(y) {
+        if (this.y > y) return;
+        this.y = y;
+        this.body.setVelocityY(0);
     }
 
 }

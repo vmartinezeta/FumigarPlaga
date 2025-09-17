@@ -3,7 +3,8 @@
 ¡Destruye las ranas antes de que se reproduzcan! 
 
 ## 🎮 Controles:
-- **ESPACIO:** Fumigar
+- **Tecla A:** Coger potenciador
+- **Tecla S:** Fumigar
 - **Teclas 1, 2, 3:** Cambiar boquillas
 - **FLECHAS:** Moverse
 

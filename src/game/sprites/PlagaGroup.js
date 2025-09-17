@@ -18,7 +18,7 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
             const x = Phaser.Math.Between(100, this.gameWidth - 100);
             const y = this.gameHeight - 200;
             const hembra = Math.floor(Math.random() * 2);
-            this.add(new Plaga(scene, x, y, "rana", Boolean(hembra)));
+            this.add(new Plaga(scene, x, y, "rana", Boolean(hembra), true));
         }
     }
 
@@ -32,18 +32,9 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
     }
 
     update() {
-        // Para cada rana, limitar su movimiento al área del mundo
-        this.getChildren().forEach(frog => {
-            // Limitar en X (no salir de los bordes izquierdo/derecho del mundo)
-            frog.x = Phaser.Math.Clamp(frog.x, 50, this.gameWidth - 50);
-
-            // Limitar en Y (solo en el área del suelo)
-            const groundLevel = this.gameHeight - 300;
-            if (frog.y < groundLevel) {
-                frog.y = groundLevel;
-                frog.body.setVelocityYx*=-1;
-            }
-        })
+        this.getChildren().forEach(rana => {
+            rana.updateHealthBar();
+        });
     }
 
 }
