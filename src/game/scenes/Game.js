@@ -46,16 +46,19 @@ export class Game extends Scene {
         this.clouds.setScrollFactor(.5);
         this.clouds.setAlpha(.9);
 
+        this.nextClouds = this.add.tileSprite(0, 100, 5000, 200, this.cloudTextures[1]);
+        this.nextClouds.setScrollFactor(.5);
+        this.nextClouds.setAlpha(0);
 
         // Timer para cambiar texturas
         this.textureTimer = this.time.addEvent({
-            delay: 8000, // Cambiar cada 8 segundos
-            callback: this.rotateCloudTexture,
+            delay: 10000,
+            callback: this.smoothTextureTransition,
             callbackScope: this,
             loop: true
         });
 
-        this.currentTextureIndex = 0;
+        this.textureIndex = 0;
 
         // this.time.addEvent({
         //     delay: 5000,
@@ -108,6 +111,33 @@ export class Game extends Scene {
         EventBus.emit('current-scene-ready', this);
     }
 
+    smoothTextureTransition() {
+        // 1. Preparar siguiente textura
+        this.textureIndex = (this.textureIndex + 1) % this.cloudTextures.length;
+        this.nextClouds.setTexture(this.cloudTextures[this.textureIndex]);
+
+        // 2. Animación de crossfade (3 segundos)
+        this.tweens.add({
+            targets: this.clouds,
+            alpha: 0,
+            duration: 3000,
+            ease: 'Sine.easeInOut'
+        });
+
+        this.tweens.add({
+            targets: this.nextClouds,
+            alpha: 1,
+            duration: 3000,
+            ease: 'Sine.easeInOut',
+            onComplete: () => {
+                // 3. Intercambiar roles
+                const temp = this.clouds;
+                this.clouds = this.nextClouds;
+                this.nextClouds = temp;
+                this.nextClouds.setAlpha(0);
+            }
+        });
+    }
 
     rotateCloudTexture() {
         // Avanzar al siguiente índice (circular)
