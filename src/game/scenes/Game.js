@@ -40,15 +40,22 @@ export class Game extends Scene {
         this.suelo.setOrigin(0);
         this.bg.setScrollFactor(0);
 
+        this.bosque = this.add.tileSprite(0, 256, width, 200, "bosque");
+        this.bosque.setOrigin(1/2);
+        this.bosque.setScale(.6)
+        this.bosque.setScrollFactor(0);
+
         this.cloudTextures = ["nube", "nube-2"];
 
-        this.clouds = this.add.tileSprite(0, 100, 5000, 200, this.cloudTextures[0]);
+        this.clouds = this.add.tileSprite(0, 100, 6000, 200, this.cloudTextures[0]);
         this.clouds.setScrollFactor(.5);
         this.clouds.setAlpha(.9);
+        this.clouds.setScale(.8);
 
-        this.nextClouds = this.add.tileSprite(0, 100, 5000, 200, this.cloudTextures[1]);
+        this.nextClouds = this.add.tileSprite(0, 100, 6000, 200, this.cloudTextures[1]);
         this.nextClouds.setScrollFactor(.5);
         this.nextClouds.setAlpha(0);
+        this.nextClouds.setScale(.8);
 
         // Timer para cambiar texturas
         this.textureTimer = this.time.addEvent({
