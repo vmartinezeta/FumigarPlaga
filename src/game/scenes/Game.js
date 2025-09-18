@@ -82,7 +82,7 @@ export class Game extends Scene {
             S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
             D: Phaser.Input.Keyboard.KeyCodes.D,
             UNO: Phaser.Input.Keyboard.KeyCodes.ONE,
-            DOS: Phaser.Input.Keyboard.KeyCodes.TWO            
+            DOS: Phaser.Input.Keyboard.KeyCodes.TWO
         });
 
         EventBus.emit('current-scene-ready', this);
@@ -167,21 +167,48 @@ export class Game extends Scene {
         this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad);
 
         const factor = this.tanque.capacidad / this.tanque.capacidadMax;
-        const frequency = this.player.boquilla.range*(1-factor);
+        const frequency = this.player.boquilla.range * (1 - factor);
+        const angle = this.getAngle();
 
         this.emitter = this.add.particles(0, 0, 'particle', {
-            lifespan: 1000,
+            lifespan: 800,
             speed: this.player.boquilla.rate,
             frequency,
             quantity: 2,
-            angle: this.player.boquilla.angle,
+            angle,
             scale: { start: 0.4, end: 0 },
+            // alpha: { start: 1, end: 0.3 },
+            // Trayectoria curvada (efecto arco)
+            // blendMode: 'SCREEN',
+            // gravityY:300,
+            // moveToX: Phaser.Math.Between(-20, 20),
+            // moveToY: Phaser.Math.Between(-50, -20),
             emitZone: zona,
             duration: 500,
             emitting: false
         });
 
         this.emitter.start(2000);
+    }
+
+    deltaTheta(ejeRef, angulo) {
+        return {
+            min: ejeRef - angulo,
+            max: ejeRef + angulo
+        }
+    }
+
+    getAngle() {
+        const angulo = this.player.boquilla.angle;
+        if (this.player.control.top()) {
+            return this.deltaTheta(270, angulo);
+        } else if (this.player.control.right()) {
+            return this.deltaTheta(0, angulo);
+        } else if (this.player.control.bottom()) {
+            return this.deltaTheta(90, angulo);
+        } else if (this.player.control.left()) {
+            return this.deltaTheta(180, angulo);
+        }
     }
 
     morir(player, rana) {
@@ -229,6 +256,7 @@ export class Game extends Scene {
         if (this.gameOver) return;
         this.nube.tilePositionX += .5;
 
+
         this.player.permanecerAbajo(this.frontera);
         this.plagaGroup.update();
 
@@ -244,13 +272,13 @@ export class Game extends Scene {
             this.player.bottom();
         } else if (this.keyboard.left.isDown) {
             this.player.left();
-        } 
-        
+        }
+
         if (this.keys.UNO.isDown) {
             this.player.setBoquilla(new BujillaLinear());
             this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
-        } else if(this.keys.DOS.isDown) {
+        } else if (this.keys.DOS.isDown) {
             this.player.setBoquilla(new BujillaRadial());
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
@@ -261,16 +289,16 @@ export class Game extends Scene {
         }
 
         if (this.emitter) {
+
             this.plagaGroup.getChildren().forEach(plaga => {
                 const particulas = this.emitter.overlap(plaga.body);
-                particulas.forEach(particle => {
-                    particle.kill();
-                    plaga.vida --;
-                });
+
+                const damage = this.player.boquilla.damage * particulas.length;
+                for (const p of particulas) p.kill();
+                plaga.takeDamage(damage);
 
                 if (plaga.vida <= 0) {
                     this.barraEstado.setPuntuacion(plaga.vidaMax);
-                    plaga.morir();
                 }
             });
             this.emitter = null;
@@ -282,4 +310,5 @@ export class Game extends Scene {
             this.scene.start('GameOver');
         }
     }
+
 }

@@ -14,8 +14,9 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.setScale(1);
         this.inicio = false;
         this.puedeCoger = puedeCoger;
-        this.finalizo = false;
+        this.finalizo = false;        
         this.onComplete = null;
+        this.furia = false;
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.velocidad = new Punto(-1 * Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));
@@ -100,6 +101,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
 
     morir() {
         this.scene.time.removeEvent(this.onComplete);
+        
         this.healthBar.destroy();
 
         this.destroy();
@@ -127,11 +129,12 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         // Fondo barra roja
         this.healthBar.fillStyle(0xff0000, 0.5);
         this.healthBar.fillRect(this.x - 20, this.y - 40, 40, 5);
-        
+
         const factor = this.vida / this.vidaMax;
-        if (factor<.5) {
-            this.velocidad.x *= 2;
-            this.velocidad.y *= 2;
+        if (!this.furia && factor<0.5) {
+            this.furia = true;
+            this.velocidad.x *= 3;
+            this.velocidad.y *= 3;
             this.body.setVelocity(this.velocidad.x, this.velocidad.y);
         }
         // Salud actual verde

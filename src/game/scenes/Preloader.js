@@ -37,10 +37,10 @@ export class Preloader extends Scene
         this.load.spritesheet("player", "dude.png", {frameWidth:32, frameHeight:48});
         this.load.image('tecla-1', 'tecla-1.png');
         this.load.image('tecla-2', 'tecla-2.png');
+        this.load.image('tecla-3', 'tecla-3.png');
         this.load.image('particle', 'particle.png');
         this.load.image('logo', 'logo.png');
         this.load.image('bg', 'bg2.png');
-        // this.load.image('nube', 'nube.png');
         this.load.image('nube', 'nube-patron.png');
         this.load.image('star', 'star.png');
         this.load.image('platform', 'platform.png');

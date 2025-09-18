@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import Icono from "./Icono";
 
 export default class DockCentro extends Phaser.GameObjects.Group {
     constructor(scene) {
@@ -6,40 +7,41 @@ export default class DockCentro extends Phaser.GameObjects.Group {
         this.scene = scene;
         const xmedia = scene.game.config.width / 2;
         const ymedia = scene.game.config.height / 2;
-        const margen = 50;
+        const margen = 100;
+        this.iconos = []
         this.grafico = null;
-        this.izq = this.create(xmedia - margen, ymedia, "tecla-1");
-        this.izq.setOrigin(1 / 2);
-        this.izq.setTint(0x00ff00);
-        this.izq.setDepth(10);
-        this.izq.setScrollFactor(0);
-        this.add(this.izq);
-        this.der = this.create(xmedia + margen, ymedia, "tecla-2");
-        this.der.setOrigin(1 / 2);
-        this.der.setDepth(10);
-        this.der.setScrollFactor(0);
-        this.add(this.der);
-        this.setVisible(false);
+        const t1 = new Icono(scene, xmedia - margen, ymedia, 1, "tecla-1", false);
+        this.iconos.push(t1);
+        this.add(t1);
+
+        const t2 = new Icono(scene, xmedia, ymedia, 2, "tecla-2", false)
+        this.iconos.push(t2);
+        this.add(t2);
+
+        const t3 = new Icono(scene, xmedia + margen, ymedia, 3, "tecla-3", false);
+        this.iconos.push(t3);
+        this.add(t3);
     }
 
     updateDock(ajuste) {
         this.setVisible(true);
-        const xmedia = this.scene.game.config.width / 2;
+        const xmedia = (this.scene.game.config.width / 2)-150;
         const ymedia = this.scene.game.config.height / 2;
-        this.drawHitArea(xmedia-100, ymedia-50, this.createPoints(200, 100));
+        this.drawHitArea(xmedia, ymedia - 50, this.createPoints(300, 100));
         this.scene.time.delayedCall(600, this.ocultar, [], this);
-        if (ajuste === 1) {
-            this.izq.setTint(0x00ff00);
-            this.der.setTint(0xffffff);
-        } else if (ajuste === 2) {
-            this.izq.setTint(0xffffff);
-            this.der.setTint(0x00ff00);
+        this.iconos.map(icono => icono.setTint(0xffffff));
+
+        const icono = this.iconos.find(icono => icono.id === ajuste);
+        if (icono) {
+            icono.setTint(0x00ff00);
         }
     }
 
+
+
     ocultar() {
         this.setVisible(false);
-        this.remove(this.grafico,true,true);
+        this.remove(this.grafico, true, true);
     }
 
     createPoints(width, height) {

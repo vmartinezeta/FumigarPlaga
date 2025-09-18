@@ -9,7 +9,6 @@ export class HowTo extends Scene {
 
     create() {
         this.cameras.main.setBackgroundColor(0x00ff00);
-        this.add.image(512, 384, 'background')
 
         this.add.text(240, 140, "Controles del Teclado", {
             fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
