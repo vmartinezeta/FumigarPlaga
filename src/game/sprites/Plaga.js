@@ -9,7 +9,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.hembra = hembra;
         this.vida = hembra ? 30 : 50;
         this.vidaMax = hembra ? 30 : 50;
-        this.setTint(hembra ? 0x00ffff : 0x00ff00);
+        this.setTint(hembra ? 0xff88ff : 0x8888ff);
         this.setOrigin(1 / 2);
         this.setScale(1);
         this.inicio = false;
@@ -91,7 +91,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
     soltar() {
         this.inicio = false;
         this.finalizo = false;
-        this.setTint(this.hembra ? 0x00ffff : 0x00ff00);
+        this.setTint(this.hembra ? 0xff88ff : 0x8888ff);
         this.habilitar(true);
         this.setTexture(this.texture);
         this.visible = true;
@@ -128,8 +128,14 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.healthBar.fillStyle(0xff0000, 0.5);
         this.healthBar.fillRect(this.x - 20, this.y - 40, 40, 5);
         
+        const factor = this.vida/ this.vidaMax;
+        if (factor<.5) {
+            this.velocidad.x *= 2;
+            this.velocidad.y *= 2;
+            this.body.setVelocity(this.velocidad.x, this.velocidad.y);
+        }
         // Salud actual verde
-        const healthWidth = (this.vida / this.vidaMax) * 40;
+        const healthWidth = factor * 40;
         this.healthBar.fillStyle(0x00ff00, 0.8);
         this.healthBar.fillRect(this.x - 20, this.y - 40, healthWidth, 5);
     }

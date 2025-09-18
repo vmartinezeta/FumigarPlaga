@@ -183,8 +183,10 @@ export class Game extends Scene {
     }
 
     morir(player, rana) {
+        this.barraEstado.setPuntuacion(rana.vidaMax);
         rana.morir();
         player.vida--;
+
         this.barraEstado.actualizar(player.vida, this.tanque.capacidad);
         if (player.vida === 0) {
             this.scene.start('GameOver');
@@ -265,6 +267,7 @@ export class Game extends Scene {
                 });
 
                 if (plaga.vida <= 0) {
+                    this.barraEstado.setPuntuacion(plaga.vidaMax);
                     plaga.morir();
                 }
             });
