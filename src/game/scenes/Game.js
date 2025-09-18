@@ -40,9 +40,29 @@ export class Game extends Scene {
         this.suelo.setOrigin(0);
         this.bg.setScrollFactor(0);
 
-        this.nube = this.add.tileSprite(0, 150, 5000, 200, "nube");
-        this.nube.setScrollFactor(.5);
-        this.nube.setAlpha(.9);
+        this.cloudTextures = ["nube", "nube-2"];
+
+        this.clouds = this.add.tileSprite(0, 100, 5000, 200, this.cloudTextures[0]);
+        this.clouds.setScrollFactor(.5);
+        this.clouds.setAlpha(.9);
+
+
+        // Timer para cambiar texturas
+        this.textureTimer = this.time.addEvent({
+            delay: 8000, // Cambiar cada 8 segundos
+            callback: this.rotateCloudTexture,
+            callbackScope: this,
+            loop: true
+        });
+
+        this.currentTextureIndex = 0;
+
+        // this.time.addEvent({
+        //     delay: 5000,
+        //     callback: this.randomizeTilePosition,
+        //     callbackScope: this,
+        //     loop: true
+        // });
 
         this.cameras.main.setBounds(0, 0, width, height);
         this.physics.world.setBounds(0, 0, width, height);
@@ -86,6 +106,47 @@ export class Game extends Scene {
         });
 
         EventBus.emit('current-scene-ready', this);
+    }
+
+
+    rotateCloudTexture() {
+        // Avanzar al siguiente índice (circular)
+        this.currentTextureIndex = (this.currentTextureIndex + 1) % this.cloudTextures.length;
+
+        // Obtener nueva textura
+        const newTexture = this.cloudTextures[this.currentTextureIndex];
+
+        // ¡Aquí está la magia! Cambiar la textura
+        this.clouds.setTexture(newTexture);
+
+        // Efecto visual suave de transición
+        this.animateTextureChange();
+    }
+
+    animateTextureChange() {
+        // Efecto de fade in/out para suavizar el cambio
+        this.tweens.add({
+            targets: this.clouds,
+            alpha: 0.3,
+            duration: 500,
+            yoyo: true,
+            onComplete: () => {
+                this.clouds.alpha = 1;
+            }
+        });
+    }
+
+    randomizeTilePosition() {
+        // Saltar a una posición aleatoria del tileSprite
+        this.nube.tilePositionX = Phaser.Math.Between(0, 4000);
+
+        // Ocultar brevemente para disimular el "salto"
+        this.tweens.add({
+            targets: this.nube,
+            alpha: 0.3,
+            duration: 200,
+            yoyo: true
+        });
     }
 
     detectarColision() {
@@ -254,7 +315,7 @@ export class Game extends Scene {
 
     update() {
         if (this.gameOver) return;
-        this.nube.tilePositionX += .5;
+        this.clouds.tilePositionX += .2;
 
 
         this.player.permanecerAbajo(this.frontera);
