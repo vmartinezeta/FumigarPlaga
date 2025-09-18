@@ -128,7 +128,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.healthBar.fillStyle(0xff0000, 0.5);
         this.healthBar.fillRect(this.x - 20, this.y - 40, 40, 5);
         
-        const factor = this.vida/ this.vidaMax;
+        const factor = this.vida / this.vidaMax;
         if (factor<.5) {
             this.velocidad.x *= 2;
             this.velocidad.y *= 2;

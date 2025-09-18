@@ -166,13 +166,15 @@ export class Game extends Scene {
         this.tanque.vaciar();
         this.barraEstado.actualizar(this.player.vida, this.tanque.capacidad);
 
-        const lifespan = (this.tanque.capacidad * 1500) / this.tanque.capacidadMax;
+        const factor = this.tanque.capacidad / this.tanque.capacidadMax;
+        const frequency = this.player.boquilla.range*(1-factor);
 
         this.emitter = this.add.particles(0, 0, 'particle', {
-            speed: 24,
-            lifespan,
+            lifespan: 1000,
+            speed: this.player.boquilla.rate,
+            frequency,
             quantity: 2,
-            frequency: 0,
+            angle: this.player.boquilla.angle,
             scale: { start: 0.4, end: 0 },
             emitZone: zona,
             duration: 500,
