@@ -116,8 +116,8 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.updateHealthBar();
 
         // Efecto visual de daño
-        this.setTint(0xff0000);
-        this.scene.time.delayedCall(100, () => { this.clearTint(); });
+        // this.setTint(0xff0000);
+        // this.scene.time.delayedCall(100, () => { this.clearTint(); });
 
         if (this.vida <= 0) {
             this.morir();

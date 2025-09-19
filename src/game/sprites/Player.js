@@ -5,6 +5,7 @@ import { Direccional } from "../../../../dude/src/game/classes/Direccional";
 
 import { BujillaLinear } from "../classes/BujillaLinear";
 import { BujillaRadial } from "../classes/BujillaRadial";
+import { BujillaAvanico } from "../classes/BujillaAvanico";
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, texture, vida) {
@@ -74,7 +75,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x, this.y - 30, this.x, this.y - 200);
-        } else if (this.boquilla instanceof BujillaRadial) {
+        } else if (this.boquilla instanceof BujillaRadial || this.boquilla instanceof BujillaAvanico) {
             this.destino = new Phaser.Geom.Rectangle(this.x, this.y - 120, 60, 20);
         }
     }
@@ -87,7 +88,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x + 30, this.y, this.x + 200, this.y);
-        } else if (this.boquilla  instanceof BujillaRadial) {
+        } else if (this.boquilla  instanceof BujillaRadial|| this.boquilla instanceof BujillaAvanico) {
             this.destino = new Phaser.Geom.Rectangle(this.x + 100, this.y, 60, 20);
         }
     }
@@ -100,7 +101,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x, this.y + 30, this.x, this.y + 200);
-        } else if (this.boquilla instanceof BujillaRadial) {
+        } else if (this.boquilla instanceof BujillaRadial|| this.boquilla instanceof BujillaAvanico) {
             this.destino = new Phaser.Geom.Rectangle(this.x, this.y + 100, 60, 20);
         }
     }
@@ -113,7 +114,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x - 30, this.y, this.x - 200, this.y);
-        } else if (this.boquilla instanceof BujillaRadial) {
+        } else if (this.boquilla instanceof BujillaRadial|| this.boquilla instanceof BujillaAvanico) {
             this.destino = new Phaser.Geom.Rectangle(this.x - 160, this.y, 60, 20);
         }
     }

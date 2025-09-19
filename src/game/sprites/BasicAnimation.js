@@ -13,7 +13,7 @@ export default class BasicAnimation extends Phaser.GameObjects.Group {
         this.letra = null;
         scene.physics.add.existing(this, true);
         this.origen = new Punto(x, y);
-        this.plaga = new Plaga(scene, x, y, "rana", true, false);
+        this.plaga = new Plaga(scene, x, y, "rana", false, false);
         this.plaga.rotar();
         this.plaga.habilitar(false);
         this.add(this.plaga);

@@ -9,12 +9,13 @@ import "./estilos.css";
 function App() {
     const { addLetra,letras, cancelarAnimacion } = useGame();
     const [scene, setScene] = useState(null);
-    const phaserRef = useRef();
     const [index, setIndex] = useState(0);
+    const phaserRef = useRef();
     const time = useRef(1000);
 
     useEffect(()=> {
         const letra = letras[letras.length-1];
+        if (!scene) return;
         if ((letra && !letra.ultima) || (scene && scene.scene.key !== "MainMenu")) return;
         const interval = setInterval(() => {
             if (index === 0) {

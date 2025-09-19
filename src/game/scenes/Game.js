@@ -12,6 +12,7 @@ import DockCentro from '../sprites/DockCentro'
 import BorderSolido from '../sprites/BorderSolido'
 import { BujillaLinear } from '../classes/BujillaLinear'
 import { BujillaRadial } from '../classes/BujillaRadial'
+import { BujillaAvanico } from '../classes/BujillaAvanico'
 
 
 export class Game extends Scene {
@@ -41,7 +42,7 @@ export class Game extends Scene {
         this.bg.setScrollFactor(0);
 
         this.bosque = this.add.tileSprite(0, 256, width, 200, "bosque");
-        this.bosque.setOrigin(1/2);
+        this.bosque.setOrigin(1 / 2);
         this.bosque.setScale(.6)
         this.bosque.setScrollFactor(0);
 
@@ -66,13 +67,6 @@ export class Game extends Scene {
         });
 
         this.textureIndex = 0;
-
-        // this.time.addEvent({
-        //     delay: 5000,
-        //     callback: this.randomizeTilePosition,
-        //     callbackScope: this,
-        //     loop: true
-        // });
 
         this.cameras.main.setBounds(0, 0, width, height);
         this.physics.world.setBounds(0, 0, width, height);
@@ -112,7 +106,9 @@ export class Game extends Scene {
             S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
             D: Phaser.Input.Keyboard.KeyCodes.D,
             UNO: Phaser.Input.Keyboard.KeyCodes.ONE,
-            DOS: Phaser.Input.Keyboard.KeyCodes.TWO
+            DOS: Phaser.Input.Keyboard.KeyCodes.TWO,
+            TRES: Phaser.Input.Keyboard.KeyCodes.THREE
+
         });
 
         EventBus.emit('current-scene-ready', this);
@@ -143,46 +139,6 @@ export class Game extends Scene {
                 this.nextClouds = temp;
                 this.nextClouds.setAlpha(0);
             }
-        });
-    }
-
-    rotateCloudTexture() {
-        // Avanzar al siguiente índice (circular)
-        this.currentTextureIndex = (this.currentTextureIndex + 1) % this.cloudTextures.length;
-
-        // Obtener nueva textura
-        const newTexture = this.cloudTextures[this.currentTextureIndex];
-
-        // ¡Aquí está la magia! Cambiar la textura
-        this.clouds.setTexture(newTexture);
-
-        // Efecto visual suave de transición
-        this.animateTextureChange();
-    }
-
-    animateTextureChange() {
-        // Efecto de fade in/out para suavizar el cambio
-        this.tweens.add({
-            targets: this.clouds,
-            alpha: 0.3,
-            duration: 500,
-            yoyo: true,
-            onComplete: () => {
-                this.clouds.alpha = 1;
-            }
-        });
-    }
-
-    randomizeTilePosition() {
-        // Saltar a una posición aleatoria del tileSprite
-        this.nube.tilePositionX = Phaser.Math.Between(0, 4000);
-
-        // Ocultar brevemente para disimular el "salto"
-        this.tweens.add({
-            targets: this.nube,
-            alpha: 0.3,
-            duration: 200,
-            yoyo: true
         });
     }
 
@@ -380,6 +336,10 @@ export class Game extends Scene {
             this.player.setBoquilla(new BujillaRadial());
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
+        } else if(this.keys.TRES.isDown) {
+            this.player.setBoquilla(new BujillaAvanico());
+            this.barraEstado.setBoquilla(3);
+            this.dock.updateDock(3);
         }
 
         if (!this.tanque.estaVacio() && this.keys.S.isDown) {
