@@ -21,9 +21,24 @@ export class MainMenu extends Scene {
         }
     }
 
+
+    createConfetti() {
+        // Crear emitter con tiempo de vida automático
+        this.confetti = this.add.particles(this.game.config.width/2, 300, 'confetti', {
+            speed: { min: 100, max: 200 },
+            scale: { start: 0.5, end: 0 },
+            lifespan: 2000, // 2 segundos de vida
+            quantity: 20,
+            on: false
+        });
+
+        // Explotar y autodestruirse
+        this.confetti.explode(2000); // Explota y se destruye después de 2 segundos
+    }
+
     unlockAchievement(key) {
         // Lluvia de confeti (partículas)
-        this.confetti = this.add.particles(this.game.config.width/2, 160, 'particle', {
+        this.confetti = this.add.particles(this.game.config.width / 2, 160, 'particle', {
             speed: { min: 100, max: 200 },
             angle: { min: 60, max: 120 },
             scale: { start: 0.3, end: 0 },
@@ -52,7 +67,7 @@ export class MainMenu extends Scene {
 
         if (this.animar) {
             this.animar = false;
-            this.unlockAchievement();
+            this.createConfetti();
         }
 
         this.add.text(740, 100, 'Nuevo Record: ', {
