@@ -10,19 +10,62 @@ export class MainMenu extends Scene {
         this.letra = null;
         this.reactCallback = null;
         this.record = 0;
+        this.animar = false;
     }
 
     init(data) {
         if (!data.record) return;
-        this.record  = data.record;
+        if (data.record > this.record) {
+            this.record = data.record;
+            this.animar = true;
+        }
+    }
+
+    unlockAchievement(key) {
+        // Lluvia de confeti (partículas)
+        this.confetti = this.add.particles(this.game.config.width/2, 160, 'particle', {
+            speed: { min: 100, max: 200 },
+            angle: { min: 60, max: 120 },
+            scale: { start: 0.3, end: 0 },
+            alpha: { start: 1, end: 0 },
+            lifespan: 2000,
+            quantity: 10,
+            blendMode: 'ADD'
+        });
+
+        // Destello de luz
+        this.flash = this.add.rectangle(400, 300, 800, 600, 0xffffff)
+            .setAlpha(0)
+            .setDepth(999);
+
+        this.tweens.add({
+            targets: this.flash,
+            alpha: 0.3,
+            duration: 200,
+            yoyo: true,
+            onComplete: () => this.flash.destroy()
+        });
     }
 
     create() {
         this.animacion = new BasicAnimation(this, 350, 200, "FUMIGAR", 50);
 
-        this.add.text(740, 100, 'Nuevo Record: '+this.record, {
+        if (this.animar) {
+            this.animar = false;
+            this.unlockAchievement();
+        }
+
+        this.add.text(740, 100, 'Nuevo Record: ', {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+            stroke: '#000000', strokeThickness: 4,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
+
+        // this.add.rectangle(900, 100, 100, 40, 0x0A0A2A);
+
+        this.add.text(860, 100, this.record, {
+            fontFamily: 'Arial Black', fontSize: 24, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 10,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
@@ -36,7 +79,7 @@ export class MainMenu extends Scene {
     changeScene(key) {
         this.scene.start(key);
         return this.scene.manager.getScene(key)
-    } 
+    }
 
     moverLetra(reactCallback) {
         this.reactCallback = reactCallback;

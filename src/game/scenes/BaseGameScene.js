@@ -12,6 +12,64 @@ export class BaseGameScene extends Phaser.Scene {
         this.keys = null;
     }
 
+    // En tu BaseScene.js
+    init() {
+        this.achievements = {
+            firstBlood: {
+                unlocked: false,
+                text: '¡Primera rana eliminada!',
+                score: 0
+            },
+            score100: {
+                unlocked: false,
+                text: '¡100 puntos alcanzados!',
+                score: 100
+            },
+            score500: {
+                unlocked: false,
+                text: '¡500 puntos! Eres un experto',
+                score: 500
+            },
+            nightHunter: {
+                unlocked: false,
+                text: 'Cazador nocturno desbloqueado',
+                score: 300
+            }
+        };
+    }
+
+    checkAchievements() {
+        Object.keys(this.achievements).forEach(key => {
+            const achievement = this.achievements[key];
+
+            if (!achievement.unlocked && this.score >= achievement.score) {
+                this.unlockAchievement(key);
+            }
+        });
+    }
+
+    unlockAchievement(key) {
+        this.achievements[key].unlocked = true;
+
+        // Mostrar animación
+        const achievementPopup = new Achievement(this, this.achievements[key]);
+        achievementPopup.show();
+
+        // Efectos de sonido
+        this.sound.play('achievement-sound', { volume: 0.7 });
+
+        // Guardar en localStorage
+        this.saveAchievements();
+    }
+
+    saveAchievements() {
+        const unlocked = {};
+        Object.keys(this.achievements).forEach(key => {
+            unlocked[key] = this.achievements[key].unlocked;
+        });
+        localStorage.setItem('gameAchievements', JSON.stringify(unlocked));
+    }
+
     create() {
         this.width = 3584;
         this.height = 600;
