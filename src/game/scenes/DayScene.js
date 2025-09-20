@@ -55,7 +55,7 @@ export class DayScene extends BaseGameScene {
             loop: true
         });
         this.forestAmbience.play();
-
+        // this.forestAmbience.stopBy()
         this.createCreepySounds();
 
 

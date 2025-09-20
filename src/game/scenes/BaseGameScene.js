@@ -40,6 +40,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     changeScene() {
+        this.sound.stopAll();
         this.scene.start('MainMenu');
     }
 
