@@ -1,13 +1,13 @@
 import { useGame } from "../context/GameContext";
 
 export default function CentroControl({scene, onChangeScene}) {
-    const { onToggleMusica, cancelarAnimacion} = useGame()
+    const { onToggleMusica, cancelarAnimacion} = useGame();
 
-    const play = () => {
+    const day = () => {
         if (!scene) return;
         cancelarAnimacion();
         scene.cancelAnimation();
-        onChangeScene(scene.changeScene("Game"));
+        onChangeScene(scene.changeScene("DayScene"));
     }
 
     const night = () => {
@@ -37,24 +37,25 @@ export default function CentroControl({scene, onChangeScene}) {
         })
     }
 
-    if (scene && (scene.scene.key === "Game" || scene.scene.key==="NightScene" || scene.scene.key === "GameOver")) {
+    if (!scene) return null;
+    const {key} = scene.scene;
+
+    if (key === "DayScene" || key==="NightScene" || key === "GameOver") {
         return <div className="columna__control">
             <button className="button" onClick={cerrar}>Salir</button>
             <button className="button" onClick={() => onToggleMusica()}>Toggle Musíca</button>
         </div>
-    } else if (scene && scene.scene.key === "MainMenu") {
+    } else if (key === "MainMenu") {
         return <div className="columna__control">
-            <button disabled={false} className="button" onClick={play}>Dia</button>
+            <button disabled={false} className="button" onClick={day}>Dia</button>
             <button disabled={false} className="button" onClick={night} >Noche</button>
             <button className="button" onClick={() => onToggleMusica()}>Toggle Musíca</button>
             <button className="button" onClick={howTo}>HowTo</button>
         </div>
-    } else if (scene && scene.scene.key === "HowTo") {
+    } else if (key === "HowTo") {
         return <div className="columna__control">
             <button className="button" onClick={() => onToggleMusica()}>Toggle Musíca</button>
             <button className="button" onClick={howTo}>HowTo</button>
         </div>
     }
-
-    return null;
 }

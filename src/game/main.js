@@ -1,11 +1,11 @@
 import { Boot } from './scenes/Boot';
-import { Game } from './scenes/Game';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import Phaser from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import { HowTo } from './scenes/HowTo';
 import { NightScene } from './scenes/NightScene';
+import { DayScene } from './scenes/DayScene';
 
 // Find out more information about the Game Config at:
 // https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -14,7 +14,7 @@ const config = {
     width: 1024,
     height: 600,
     parent: 'game-container',
-    backgroundColor: '#028af8',
+    backgroundColor: '#00f94f',
     physics: {
         default: 'arcade',
         arcade: {
@@ -26,7 +26,7 @@ const config = {
         Boot,
         Preloader,
         MainMenu,
-        Game,
+        DayScene,
         NightScene,
         GameOver,
         HowTo

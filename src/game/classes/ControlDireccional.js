@@ -1,13 +1,7 @@
-import { Punto } from "./Punto"
-
 export class ControlDireccional {
-    constructor(direccionales, vector) {
+    constructor(direccionales, selectedIndex) {
         this.direccionales = direccionales || [];
-        this.vector = vector || new Punto(0);
-    }
-
-    setVector(vector) {
-        this.vector = vector;
+        this.direccional = direccionales[selectedIndex];
     }
 
     fromInt(numero) {
@@ -16,32 +10,29 @@ export class ControlDireccional {
         }
         const direccional = this.direccionales.find(({id}) => id === numero);
         if (direccional) {
-            this.vector = direccional.vector;
+            this.direccional = direccional;
         }
-        return this.vector;
+        return this.direccional;
     }
 
     top() {
-        return this.direccionales.find(({vector, id}) => vector.toString() === this.vector.toString() && id === 1) !== undefined;
+        return this.direccionales.find(({id}) => this.direccional.id === id && id === 1) !== undefined;
     }
 
     right() {
-        return this.direccionales.find(({vector, id}) => vector.toString() === this.vector.toString() && id === 2) !== undefined;
+        return this.direccionales.find(({id}) => this.direccional.id === id && id === 2) !== undefined;
     }
 
     bottom() {
-        return this.direccionales.find(({vector, id}) => vector.toString() === this.vector.toString() && id === 3) !== undefined;
+        return this.direccionales.find(({id}) => this.direccional.id === id && id === 3) !== undefined;
     }
 
     left() {
-        return this.direccionales.find(({vector, id})=> vector.toString() === this.vector.toString() && id === 4) !== undefined;
+        return this.direccionales.find(({id})=> this.direccional.id === id && id === 4) !== undefined;
     }
 
     toVectorArray() {
         return this.direccionales.map(({vector}) => vector);
     }
 
-    newInstance() {
-        return new ControlDireccional(this.direccionales, this.vector);
-    }
 }

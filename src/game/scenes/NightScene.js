@@ -9,12 +9,11 @@ export class NightScene extends BaseGameScene {
 
     create() {
         // Ambiente nocturno
-        this.setup();
+        super.create();
         this.createNightEnvironment();
-        
         // Player nocturno (con linterna)
         this.createNightPlayer();
-        
+        this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
         // Sistema de iluminación
         // this.setupLightingSystem();
         
@@ -34,7 +33,7 @@ export class NightScene extends BaseGameScene {
     }
 
     createStars() {}
-    
+
     createNightPlayer() {
         // Player con linterna integrada
         this.player = new Player(this, 100, 560, "player");

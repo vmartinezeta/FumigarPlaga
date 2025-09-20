@@ -11,7 +11,19 @@ export class BaseGameScene extends Phaser.Scene {
         this.keys = null;
     }
 
-    setup() {
+    create() {
+        this.width = 3584;
+        this.height = 600;
+        this.bg = this.add.tileSprite(0, 0, this.width, this.height, "bg");
+        this.bg.setOrigin(0);
+        this.bg.setScrollFactor(0);
+        this.frontera = 300;
+        this.suelo = this.add.tileSprite(0, this.frontera, this.width, this.frontera, "platform");
+        this.suelo.setOrigin(0);
+        this.suelo.setScrollFactor(0);
+
+        this.cameras.main.setBounds(0, 0, this.width, this.height);
+        this.physics.world.setBounds(0, 0, this.width, this.height);
         this.input.mouse.disableContextMenu();
 
         this.keyboard = this.input.keyboard.createCursorKeys();
@@ -30,9 +42,6 @@ export class BaseGameScene extends Phaser.Scene {
     changeScene() {
         this.scene.start('MainMenu');
     }
-
-    crearSuelo() { }
-
 
     // activarPotenciador() {}
 

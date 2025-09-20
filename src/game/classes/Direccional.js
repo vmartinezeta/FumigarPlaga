@@ -1,7 +1,7 @@
 export class Direccional {
-    constructor(id, nombre, vector) {
+    constructor(id, anguloEnGrados, vector) {
         this.id = id;
-        this.nombre = nombre;
+        this.angulo = anguloEnGrados;
         this.vector = vector;
     }
 }

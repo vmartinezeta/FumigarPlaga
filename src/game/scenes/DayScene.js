@@ -1,5 +1,5 @@
 import { EventBus } from '../EventBus'
-import Phaser, { Scene } from 'phaser'
+import Phaser from 'phaser'
 import { Punto } from '../classes/Punto'
 import { Tanque } from '../classes/Tanque'
 import Player from '../sprites/Player'
@@ -16,9 +16,9 @@ import { BujillaAvanico } from '../classes/BujillaAvanico'
 import { BaseGameScene } from './BaseGameScene'
 
 
-export class Game extends BaseGameScene {
+export class DayScene extends BaseGameScene {
     constructor() {
-        super('Game');
+        super('DayScene');
         this.plagaGroup = null;
         this.borders = null;
         this.player = null;
@@ -32,17 +32,8 @@ export class Game extends BaseGameScene {
     }
 
     create() {
-        const width = 3584;
-        const height = 600;
-        this.bg = this.add.tileSprite(0, 0, width, height, "bg");
-        this.bg.setOrigin(0);
-        this.bg.setScrollFactor(0);
-        this.frontera = 300;
-        this.suelo = this.add.tileSprite(0, this.frontera, width, this.frontera, "platform");
-        this.suelo.setOrigin(0);
-        this.bg.setScrollFactor(0);
-
-        this.bosque = this.add.tileSprite(0, 256, width, 200, "bosque");
+        super.create();
+        this.bosque = this.add.tileSprite(0, 256, this.width, 200, "bosque");
         this.bosque.setOrigin(1 / 2);
         this.bosque.setScale(.6)
         this.bosque.setScrollFactor(0);
@@ -69,9 +60,6 @@ export class Game extends BaseGameScene {
 
         this.textureIndex = 0;
 
-        this.cameras.main.setBounds(0, 0, width, height);
-        this.physics.world.setBounds(0, 0, width, height);
-
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
@@ -96,8 +84,7 @@ export class Game extends BaseGameScene {
         this.time.delayedCall(6000, this.suministrarVida, [], this);
 
         this.dock = new DockCentro(this);
-
-        this.setup();
+            
         EventBus.emit('current-scene-ready', this);
     }
 
@@ -209,7 +196,8 @@ export class Game extends BaseGameScene {
 
         const factor = this.tanque.capacidad / this.tanque.capacidadMax;
         const frequency = this.player.boquilla.range * (1 - factor);
-        const angle = this.getAngle();
+
+        const angle = this.getAngle(this.player.control.direccional.angulo, this.player.boquilla.angle);
 
         this.emitter = this.add.particles(0, 0, 'particle', {
             lifespan: 800,
@@ -218,12 +206,6 @@ export class Game extends BaseGameScene {
             quantity: 2,
             angle,
             scale: { start: 0.4, end: 0 },
-            // alpha: { start: 1, end: 0.3 },
-            // Trayectoria curvada (efecto arco)
-            // blendMode: 'SCREEN',
-            // gravityY:300,
-            // moveToX: Phaser.Math.Between(-20, 20),
-            // moveToY: Phaser.Math.Between(-50, -20),
             emitZone: zona,
             duration: 500,
             emitting: false
@@ -232,23 +214,10 @@ export class Game extends BaseGameScene {
         this.emitter.start(2000);
     }
 
-    deltaTheta(ejeRef, angulo) {
+    getAngle(ejeRef, angulo) {
         return {
             min: ejeRef - angulo,
             max: ejeRef + angulo
-        }
-    }
-
-    getAngle() {
-        const angulo = this.player.boquilla.angle;
-        if (this.player.control.top()) {
-            return this.deltaTheta(270, angulo);
-        } else if (this.player.control.right()) {
-            return this.deltaTheta(0, angulo);
-        } else if (this.player.control.bottom()) {
-            return this.deltaTheta(90, angulo);
-        } else if (this.player.control.left()) {
-            return this.deltaTheta(180, angulo);
         }
     }
 
@@ -319,7 +288,7 @@ export class Game extends BaseGameScene {
             this.player.setBoquilla(new BujillaRadial());
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
-        } else if(this.keys.TRES.isDown) {
+        } else if (this.keys.TRES.isDown) {
             this.player.setBoquilla(new BujillaAvanico());
             this.barraEstado.setBoquilla(3);
             this.dock.updateDock(3);

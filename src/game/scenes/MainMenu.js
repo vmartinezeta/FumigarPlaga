@@ -12,7 +12,6 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(0x00f94f);
         this.animacion = new BasicAnimation(this, 350, 200, "FUMIGAR", 50);
         EventBus.emit('current-scene-ready', this);
     }

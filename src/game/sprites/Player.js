@@ -1,7 +1,7 @@
 import Phaser from "phaser"
-import { ControlDireccional } from "../classes/ControlDireccional";
 import { Punto } from "../classes/Punto";
-import { Direccional } from "../../../../dude/src/game/classes/Direccional";
+import { ControlDireccional } from "../classes/ControlDireccional";
+import { Direccional } from "../classes/Direccional";
 
 import { BujillaLinear } from "../classes/BujillaLinear";
 import { BujillaRadial } from "../classes/BujillaRadial";
@@ -17,11 +17,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.setScale(1);
         this.moverse = true;
         this.control = new ControlDireccional([
-            new Direccional(1, "top", new Punto(0, -1)),
-            new Direccional(2, "right", new Punto(1, 0)),
-            new Direccional(3, "bottom", new Punto(0, 1)),
-            new Direccional(4, "left", new Punto(-1, 0)),
-        ], new Punto(1, 0));
+            new Direccional(1, 270, new Punto(0, -1)),
+            new Direccional(2, 0, new Punto(1, 0)),
+            new Direccional(3, 90, new Punto(0, 1)),
+            new Direccional(4, 180, new Punto(-1, 0)),
+        ], 1);
         this.destino = null;
         this.boquilla = new BujillaLinear();
         this.animate(scene);
@@ -69,9 +69,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     top() {
         this.play("frontal");
-        const vector = this.control.fromInt(1);
+        const direccional = this.control.fromInt(1);
         if (this.moverse) {
-            this.mover(vector, 6);
+            this.mover(direccional.vector, 6);
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x, this.y - 30, this.x, this.y - 200);
@@ -82,9 +82,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     right() {
         this.play("der");
-        const vector = this.control.fromInt(2);
+        const direccional = this.control.fromInt(2);
         if (this.moverse) {
-            this.mover(vector, 6);
+            this.mover(direccional.vector, 6);
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x + 30, this.y, this.x + 200, this.y);
@@ -95,9 +95,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     bottom() {
         this.play("frontal");
-        const vector = this.control.fromInt(3);
+        const direccional = this.control.fromInt(3);
         if (this.moverse) {
-            this.mover(vector, 6);
+            this.mover(direccional.vector, 6);
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x, this.y + 30, this.x, this.y + 200);
@@ -108,9 +108,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     left() {
         this.play("izq");
-        const vector = this.control.fromInt(4);
+        const direccional = this.control.fromInt(4);
         if (this.moverse) {
-            this.mover(vector, 6);
+            this.mover(direccional.vector, 6);
         }
         if (this.boquilla instanceof BujillaLinear) {
             this.destino = new Phaser.Geom.Line(this.x - 30, this.y, this.x - 200, this.y);
