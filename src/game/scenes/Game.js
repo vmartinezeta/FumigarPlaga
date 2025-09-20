@@ -13,9 +13,10 @@ import BorderSolido from '../sprites/BorderSolido'
 import { BujillaLinear } from '../classes/BujillaLinear'
 import { BujillaRadial } from '../classes/BujillaRadial'
 import { BujillaAvanico } from '../classes/BujillaAvanico'
+import { BaseGameScene } from './BaseGameScene'
 
 
-export class Game extends Scene {
+export class Game extends BaseGameScene {
     constructor() {
         super('Game');
         this.plagaGroup = null;
@@ -96,21 +97,7 @@ export class Game extends Scene {
 
         this.dock = new DockCentro(this);
 
-        this.input.mouse.disableContextMenu();
-
-        this.keyboard = this.input.keyboard.createCursorKeys();
-
-        this.keys = this.input.keyboard.addKeys({
-            A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
-            W: Phaser.Input.Keyboard.KeyCodes.W,
-            S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
-            D: Phaser.Input.Keyboard.KeyCodes.D,
-            UNO: Phaser.Input.Keyboard.KeyCodes.ONE,
-            DOS: Phaser.Input.Keyboard.KeyCodes.TWO,
-            TRES: Phaser.Input.Keyboard.KeyCodes.THREE
-
-        });
-
+        this.setup();
         EventBus.emit('current-scene-ready', this);
     }
 
@@ -274,10 +261,6 @@ export class Game extends Scene {
         if (player.vida === 0) {
             this.scene.start('GameOver');
         }
-    }
-
-    changeScene() {
-        this.scene.start('MainMenu')
     }
 
     reset() {
