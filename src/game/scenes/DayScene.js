@@ -51,10 +51,14 @@ export class DayScene extends BaseGameScene {
         this.nextClouds.setScale(.8);
 
         this.forestAmbience = this.sound.add('bosque-tenebroso', {
-                volume: 0.4,
-                loop: true
+            volume: 0.4,
+            loop: true
         });
         this.forestAmbience.play();
+
+        this.createCreepySounds();
+
+
         // Timer para cambiar texturas
         this.textureTimer = this.time.addEvent({
             delay: 10000,
@@ -64,7 +68,6 @@ export class DayScene extends BaseGameScene {
         });
 
         this.textureIndex = 0;
-
 
         this.barraEstado = new BarraEstado(this, {
             x: 100,
@@ -89,8 +92,49 @@ export class DayScene extends BaseGameScene {
         this.time.delayedCall(6000, this.suministrarVida, [], this);
 
         this.dock = new DockCentro(this);
-            
+
         EventBus.emit('current-scene-ready', this);
+    }
+
+    createCreepySounds() {
+        // Viento aullante cada 20-30 segundos
+        this.time.addEvent({
+            delay: Phaser.Math.Between(20000, 30000),
+            callback: () => {
+                this.sound.play('efecto-1', { volume: 0.3 });
+            },
+            loop: true
+        });
+
+        // Lechuza cada 15-25 segundos  
+        this.time.addEvent({
+            delay: Phaser.Math.Between(15000, 25000),
+            callback: () => {
+                this.sound.play('efecto-2', { volume: 0.2 });
+            },
+            loop: true
+        });
+
+        // Rama quebrada aleatoria
+        this.time.addEvent({
+            delay: Phaser.Math.Between(10000, 40000),
+            callback: () => {
+                this.sound.play('efecto-3', { volume: 0.25 });
+            },
+            loop: true
+        });
+
+        // Croar de ranas tenebroso
+        this.time.addEvent({
+            delay: Phaser.Math.Between(5000, 15000),
+            callback: () => {
+                this.sound.play('efecto-3', {
+                    volume: 0.15,
+                    detune: Phaser.Math.Between(-200, -400) // Más grave
+                });
+            },
+            loop: true
+        });
     }
 
     smoothTextureTransition() {
@@ -258,7 +302,7 @@ export class DayScene extends BaseGameScene {
         this.plagaGroup.total = 0
         if (this.potenciadorGroup.countActive() > 500) return
         const x = Phaser.Math.Between(100, this.gameWidth - 100);
-        const y = this.gameHeight - 200;
+        const y = Phaser.Math.Between(300, this.game.config.width);
         const potenciador = new TanqueConAgua(this, new Punto(x, y), "tanque")
         this.potenciadorGroup.addPotenciador(potenciador)
     }

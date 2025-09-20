@@ -133,6 +133,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         const factor = this.vida / this.vidaMax;
         if (!this.furia && factor<0.5) {
             this.furia = true;
+            this.setTint(0xff0000);
             this.velocidad.x *= 3;
             this.velocidad.y *= 3;
             this.body.setVelocity(this.velocidad.x, this.velocidad.y);
