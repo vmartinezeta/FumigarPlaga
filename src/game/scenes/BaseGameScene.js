@@ -7,6 +7,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.player = null;
         this.barraEstado = null;
         this.potenciadorGroup = null;
+        this.barraEstado = null;
         this.keyboard = null;
         this.keys = null;
     }
@@ -41,7 +42,9 @@ export class BaseGameScene extends Phaser.Scene {
 
     changeScene() {
         this.sound.stopAll();
-        this.scene.start('MainMenu');
+        this.scene.start('MainMenu', {
+            record: this.barraEstado.puntuacion
+        });
     }
 
     // activarPotenciador() {}

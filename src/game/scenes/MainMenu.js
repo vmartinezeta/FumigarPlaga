@@ -9,10 +9,23 @@ export class MainMenu extends Scene {
         this.animacion = null;
         this.letra = null;
         this.reactCallback = null;
+        this.record = 0;
+    }
+
+    init(data) {
+        if (!data.record) return;
+        this.record  = data.record;
     }
 
     create() {
         this.animacion = new BasicAnimation(this, 350, 200, "FUMIGAR", 50);
+
+        this.add.text(740, 100, 'Nuevo Record: '+this.record, {
+            fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
+
         EventBus.emit('current-scene-ready', this);
     }
 
