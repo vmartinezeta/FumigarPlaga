@@ -10,6 +10,13 @@ export default function CentroControl({scene, onChangeScene}) {
         onChangeScene(scene.changeScene("Game"));
     }
 
+    const night = () => {
+        if (!scene) return;
+        cancelarAnimacion();
+        scene.cancelAnimation();
+        onChangeScene(scene.changeScene("NightScene"));
+    }
+
     const cerrar = () => {
         if (!scene) return;
         scene.changeScene("MainMenu");
@@ -30,15 +37,15 @@ export default function CentroControl({scene, onChangeScene}) {
         })
     }
 
-
-    if (scene && (scene.scene.key === "Game" || scene.scene.key === "GameOver")) {
+    if (scene && (scene.scene.key === "Game" || scene.scene.key==="NightScene" || scene.scene.key === "GameOver")) {
         return <div className="columna__control">
             <button className="button" onClick={cerrar}>Salir</button>
             <button className="button" onClick={() => onToggleMusica()}>Toggle Musíca</button>
         </div>
     } else if (scene && scene.scene.key === "MainMenu") {
         return <div className="columna__control">
-            <button disabled={false} className="button" onClick={play}>Play</button>
+            <button disabled={false} className="button" onClick={play}>Dia</button>
+            <button disabled={false} className="button" onClick={night} >Noche</button>
             <button className="button" onClick={() => onToggleMusica()}>Toggle Musíca</button>
             <button className="button" onClick={howTo}>HowTo</button>
         </div>
