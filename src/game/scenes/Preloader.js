@@ -76,6 +76,7 @@ export class Preloader extends Scene {
         this.load.image('platform', 'platform.png');
         this.load.spritesheet('tanque', 'cisterna.png', { frameWidth: 17, frameHeight: 21 });
         this.load.spritesheet('vida', 'vida.png', { frameWidth: 32, frameHeight: 27 });
+        this.load.audio("bosque-tenebroso", ["bosque-tenebroso.wav"]);
     }
 
     create() {

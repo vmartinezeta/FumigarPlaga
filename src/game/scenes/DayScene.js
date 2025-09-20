@@ -50,6 +50,11 @@ export class DayScene extends BaseGameScene {
         this.nextClouds.setAlpha(0);
         this.nextClouds.setScale(.8);
 
+        this.forestAmbience = this.sound.add('bosque-tenebroso', {
+                volume: 0.4,
+                loop: true
+        });
+        this.forestAmbience.play();
         // Timer para cambiar texturas
         this.textureTimer = this.time.addEvent({
             delay: 10000,
