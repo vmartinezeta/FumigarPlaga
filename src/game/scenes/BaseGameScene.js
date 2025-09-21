@@ -100,8 +100,12 @@ export class BaseGameScene extends Phaser.Scene {
 
     changeScene() {
         this.sound.stopAll();
+        let record = 0;
+        if (this.barraEstado) {
+            record = this.barraEstado.puntuacion;
+        }
         this.scene.start('MainMenu', {
-            record: this.barraEstado.puntuacion
+            record 
         });
     }
 
