@@ -10,14 +10,13 @@ export class MainMenu extends Scene {
         this.letra = null;
         this.reactCallback = null;
         this.record = 0;
-        this.animar = false;
     }
 
     init(data) {
         if (!data.record) return;
         if (data.record > this.record) {
             this.record = data.record;
-            this.animar = true;
+            this.createConfetti();
         }
     }
 
@@ -36,11 +35,11 @@ export class MainMenu extends Scene {
         this.confetti.explode(2000); // Explota y se destruye después de 2 segundos
     }
 
-    unlockAchievement(key) {
-        // Lluvia de confeti (partículas)
-        this.confetti = this.add.particles(this.game.config.width / 2, 160, 'particle', {
+    emitterEterno() {
+        const xmedio = this.game.config.width/2 
+        this.chorro = this.add.particles(xmedio-70, 100, 'particle', {
             speed: { min: 100, max: 200 },
-            angle: { min: 60, max: 120 },
+            angle: { min: 30, max: 90 },
             scale: { start: 0.3, end: 0 },
             alpha: { start: 1, end: 0 },
             lifespan: 2000,
@@ -49,40 +48,30 @@ export class MainMenu extends Scene {
         });
 
         // Destello de luz
-        this.flash = this.add.rectangle(400, 300, 800, 600, 0xffffff)
-            .setAlpha(0)
-            .setDepth(999);
+        // this.flash = this.add.rectangle(width/2, 260, 420, 300, 0xffffff)
+        //     .setAlpha(0)
+        //     .setDepth(999);
 
-        this.tweens.add({
-            targets: this.flash,
-            alpha: 0.3,
-            duration: 200,
-            yoyo: true,
-            onComplete: () => this.flash.destroy()
-        });
+        // this.tweens.add({
+        //     targets: this.flash,
+        //     alpha: 0.3,
+        //     duration: 200,
+        //     yoyo: true,
+        //     onComplete: () => this.flash.destroy()
+        // });
     }
 
     create() {
-        this.animacion = new BasicAnimation(this, 350, 200, "FUMIGAR", 50);
+        this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
 
-        if (this.animar) {
-            this.animar = false;
-            this.createConfetti();
-        }
+        this.emitterEterno();
 
-        this.add.text(740, 100, 'Nuevo Record: ', {
+        this.add.text(740, 100, 'Nuevo Record: '+this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 4,
+            stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
-        // this.add.rectangle(900, 100, 100, 40, 0x0A0A2A);
-
-        this.add.text(860, 100, this.record, {
-            fontFamily: 'Arial Black', fontSize: 24, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 10,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
 
         EventBus.emit('current-scene-ready', this);
     }
