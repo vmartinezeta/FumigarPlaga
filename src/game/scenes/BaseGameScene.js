@@ -117,6 +117,13 @@ export class BaseGameScene extends Phaser.Scene {
         this.time.delayedCall(6000, this.suministrarVida, [], this);
 
         this.dock = new DockCentro(this);
+
+        this.fluidParticles = this.physics.add.group({
+            defaultKey: 'particle',
+            collideWorldBounds: true,
+            bounceX: 0.3,
+            bounceY: 0.3
+        });
     }
 
     changeScene() {
@@ -225,6 +232,45 @@ export class BaseGameScene extends Phaser.Scene {
         this.emitter.start(2000);
     }
 
+    createParticle(x, y) {
+        const particle = this.fluidParticles.create(x, y, 'particle')
+            .setScale(0.3)
+            .setAlpha(1)
+            .setBounce(0.2, 0.2)
+            .setDrag(10, 10);
+
+        // Velocidad inicial
+        const speed = 300;
+        const angle = this.player.flipX ? 160 : 20; // Dirección según player
+
+        particle.setVelocity(
+            Math.cos(Phaser.Math.DegToRad(angle)) * speed,
+            Math.sin(Phaser.Math.DegToRad(angle)) * speed
+        );
+
+        // Autodestrucción después de tiempo
+        this.time.delayedCall(2000, () => {
+            if (particle.active) particle.destroy();
+        });
+
+        return particle;
+    }
+
+
+    startLiquido() {
+        for(let i =0; i<10; i++) {
+            this.createParticle(this.player.x, this.player.y);
+        }
+    }
+
+    handleParticleCollision(particle, frog) {
+        particle.destroy();
+        frog.takeDamage(10);
+
+        // Efecto de salpicadura
+        this.createSplashEffect(particle.x, particle.y);
+    }
+
     getAngle(ejeRef, angulo) {
         return {
             min: ejeRef - angulo,
@@ -303,24 +349,25 @@ export class BaseGameScene extends Phaser.Scene {
         }
 
         if (!this.tanque.estaVacio() && this.keys.S.isDown) {
-            this.fumigar();
+            // this.fumigar();
+            this.startLiquido();
         }
 
-        if (this.emitter) {
+        // if (this.emitter) {
 
-            this.plagaGroup.getChildren().forEach(plaga => {
-                const particulas = this.emitter.overlap(plaga.body);
+        //     this.plagaGroup.getChildren().forEach(plaga => {
+        //         const particulas = this.emitter.overlap(plaga.body);
 
-                const damage = this.player.boquilla.damage * particulas.length;
-                for (const p of particulas) p.kill();
-                plaga.takeDamage(damage);
+        //         const damage = this.player.boquilla.damage * particulas.length;
+        //         for (const p of particulas) p.kill();
+        //         plaga.takeDamage(damage);
 
-                if (plaga.vida <= 0) {
-                    this.barraEstado.setPuntuacion(plaga.vidaMax);
-                }
-            });
-            this.emitter = null;
-        }
+        //         if (plaga.vida <= 0) {
+        //             this.barraEstado.setPuntuacion(plaga.vidaMax);
+        //         }
+        //     });
+        //     this.emitter = null;
+        // }
 
         if (this.plagaGroup.estaVacio()) {
             this.gameOver = true;
