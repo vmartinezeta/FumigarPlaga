@@ -6,6 +6,9 @@ import BorderSolido from "../sprites/BorderSolido";
 import { Tanque } from "../classes/Tanque";
 import Vida from "../sprites/Vida";
 import TanqueConAgua from "../sprites/TanqueConAgua";
+import { BujillaLinear } from "../classes/BujillaLinear";
+import { BujillaRadial } from "../classes/BujillaRadial";
+import { BujillaAvanico } from "../classes/BujillaAvanico";
 
 export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
