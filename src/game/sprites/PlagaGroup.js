@@ -1,5 +1,6 @@
 import Phaser from "phaser"
-import Plaga from "./Plaga";
+import Rana from "./Rana";
+import RanaSaltarina from "./RanaSaltarina";
 
 export default class PlagaGroup extends Phaser.GameObjects.Group {
     constructor(scene) {
@@ -18,7 +19,12 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
             const x = Phaser.Math.Between(100, this.gameWidth - 100);
             const y = this.gameHeight - 200;
             const hembra = Math.floor(Math.random() * 2);
-            this.add(new Plaga(scene, x, y, "rana", Boolean(hembra), true));
+            const type = Math.floor(Math.random() * 3);
+            if (type === 0) {
+                this.add(new Rana(scene, x, y, "rana", Boolean(hembra), true));
+            } else if (type === 1) {
+                this.add(new RanaSaltarina(scene, x, y, "rana", Boolean(hembra), true));
+            }
         }
     }
 

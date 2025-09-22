@@ -1,11 +1,11 @@
-import Phaser from "phaser"
-import { Punto } from "../classes/Punto"
+import Phaser from "phaser";
+import { Punto } from "../classes/Punto";
 
-export default class Plaga extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, hembra, puedeCoger) {
-        super(scene, x, y, texture);
+export default class Rana extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, imageKey, hembra, puedeCoger) {
+        super(scene, x, y, imageKey);
         this.scene = scene;
-        this.texture = texture;
+        this.imageKey = imageKey;
         this.hembra = hembra;
         this.vida = hembra ? 30 : 50;
         this.vidaMax = hembra ? 30 : 50;
@@ -14,7 +14,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.setScale(1);
         this.inicio = false;
         this.puedeCoger = puedeCoger;
-        this.finalizo = false;        
+        this.finalizo = false;
         this.onComplete = null;
         this.furia = false;
         scene.add.existing(this);
@@ -28,7 +28,7 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         if (!this.existe("run")) {
             this.animate({
                 key: 'run',
-                frames: this.getFrames(texture, 0, 3),
+                frames: this.getFrames(imageKey, 0, 3),
                 frameRate: 12,
                 repeat: -1
             });
@@ -45,8 +45,8 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         return this.scene.anims.exists(key);
     }
 
-    getFrames(texture, start, end) {
-        return this.scene.anims.generateFrameNumbers(texture, { start, end });
+    getFrames(imageKey, start, end) {
+        return this.scene.anims.generateFrameNumbers(imageKey, { start, end });
     }
 
     rotar() {
@@ -69,15 +69,15 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.inicio = true;
     }
 
-    cogiendo(macho, texture, completeCallback, context) {
+    cogiendo(macho, imageKey, completeCallback, context) {
         this.inicio = false;
         this.parar();
         macho.parar();
-        this.setTexture(texture);
+        this.setTexture(imageKey);
         if (!this.existe("coger")) {
             this.animate({
                 key: 'coger',
-                frames: this.getFrames(texture, 0, 2),
+                frames: this.getFrames(imageKey, 0, 2),
                 frameRate: 12,
                 repeat: -1
             });
@@ -94,14 +94,14 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         this.finalizo = false;
         this.setTint(this.hembra ? 0xff88ff : 0x8888ff);
         this.habilitar(true);
-        this.setTexture(this.texture);
+        this.setTexture(this.imageKey);
         this.visible = true;
         this.play("run");
     }
 
     morir() {
         this.scene.time.removeEvent(this.onComplete);
-        
+
         this.healthBar.destroy();
 
         this.destroy();
@@ -125,13 +125,13 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
     }
 
     updateHealthBar() {
-        this.healthBar.clear();    
+        this.healthBar.clear();
         // Fondo barra roja
         this.healthBar.fillStyle(0xff0000, 0.5);
         this.healthBar.fillRect(this.x - 20, this.y - 40, 40, 5);
 
         const factor = this.vida / this.vidaMax;
-        if (!this.furia && factor<0.5) {
+        if (!this.furia && factor < 0.5) {
             this.furia = true;
             this.setTint(0xff0000);
             this.velocidad.x *= 3;
@@ -142,6 +142,21 @@ export default class Plaga extends Phaser.GameObjects.Sprite {
         const healthWidth = factor * 40;
         this.healthBar.fillStyle(0x00ff00, 0.8);
         this.healthBar.fillRect(this.x - 20, this.y - 40, healthWidth, 5);
+    }
+
+    createImpactEffect(x, y) {
+        // Emitter de salpicadura
+        const splash = this.add.particles(x, y, 'splash', {
+            speed: { min: 50, max: 150 },
+            scale: { start: 0.3, end: 0 },
+            lifespan: 500,
+            quantity: 5
+        });
+        splash.explode(5);
+
+        // Tinte rojo de daño en la rana
+        frog.setTint(0xff0000);
+        this.time.delayedCall(100, () => frog.clearTint());
     }
 
 }

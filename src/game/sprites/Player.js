@@ -8,10 +8,10 @@ import { BujillaRadial } from "../classes/BujillaRadial";
 import { BujillaAvanico } from "../classes/BujillaAvanico";
 
 export default class Player extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, vida) {
-        super(scene, x, y, texture);
+    constructor(scene, x, y, imageKey, vida) {
+        super(scene, x, y, imageKey);
         this.scene = scene;
-        this.texture = texture;
+        this.imageKey = imageKey;
         this.vida = vida || 10;
         this.setOrigin(1 / 2);
         this.setScale(1);
@@ -36,7 +36,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (!scene.anims.exists("izq")) {
             scene.anims.create({
                 key: 'izq',
-                frames: scene.anims.generateFrameNumbers(this.texture, { start: 0, end: 3 }),
+                frames: scene.anims.generateFrameNumbers(this.imageKey, { start: 0, end: 3 }),
                 frameRate: 12,
                 repeat: -1
             })
@@ -54,7 +54,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (!scene.anims.exists("der")) {
             scene.anims.create({
                 key: 'der',
-                frames: scene.anims.generateFrameNumbers(this.texture, { start: 5, end: 8 }),
+                frames: scene.anims.generateFrameNumbers(this.imageKey, { start: 5, end: 8 }),
                 frameRate: 12,
                 repeat: -1
             })

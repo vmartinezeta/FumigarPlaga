@@ -20,7 +20,6 @@ export class MainMenu extends Scene {
         }
     }
 
-
     createConfetti() {
         // Crear emitter con tiempo de vida automático
         this.confetti = this.add.particles(this.game.config.width/2, 300, 'confetti', {

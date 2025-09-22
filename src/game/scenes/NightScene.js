@@ -1,6 +1,5 @@
-import Phaser from "phaser";
 import { BaseGameScene } from "./BaseGameScene";
-import Player from "../sprites/Player";
+import NightPlayer from "../sprites/NightPlayer";
 
 export class NightScene extends BaseGameScene {
     constructor() {
@@ -12,7 +11,8 @@ export class NightScene extends BaseGameScene {
         super.create();
         this.createNightEnvironment();
         // Player nocturno (con linterna)
-        this.createNightPlayer();
+        this.player = new NightPlayer(this, 100, 560, "player");
+
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
         // Sistema de iluminación
         // this.setupLightingSystem();
@@ -23,7 +23,7 @@ export class NightScene extends BaseGameScene {
 
     createNightEnvironment() {
         // Fondo nocturno
-        this.add.rectangle(400, 300, 800, 600, 0x0A0A2A);
+        // this.add.rectangle(400, 300, 800, 600, 0x0A0A2A);
         
         // Estrellas
         this.createStars();
@@ -34,15 +34,6 @@ export class NightScene extends BaseGameScene {
 
     createStars() {}
 
-    createNightPlayer() {
-        // Player con linterna integrada
-        this.player = new Player(this, 100, 560, "player");
-        
-        // Linterna (luz direccional)
-        this.flashlight = this.add.circle(this.player.x, this.player.y, 100, 0xFFDD99)
-            .setAlpha(0.3)
-            .setBlendMode(Phaser.BlendModes.ADD);
-    }
 
     setupLightingSystem() {
         // Sistema de visibilidad limitada
@@ -68,6 +59,7 @@ export class NightScene extends BaseGameScene {
     }
 
     update() {
+        super.update();
         if (this.keyboard.up.isDown) {
             this.player.top();
         } else if (this.keyboard.right.isDown) {
@@ -77,9 +69,6 @@ export class NightScene extends BaseGameScene {
         } else if (this.keyboard.left.isDown) {
             this.player.left();
         }
-
-        this.flashlight.x = this.player.x;
-        this.flashlight.y = this.player.y;
     }
 
 }
