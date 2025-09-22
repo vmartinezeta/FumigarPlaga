@@ -9,6 +9,7 @@ import TanqueConAgua from "../sprites/TanqueConAgua";
 import { BujillaLinear } from "../classes/BujillaLinear";
 import { BujillaRadial } from "../classes/BujillaRadial";
 import { BujillaAvanico } from "../classes/BujillaAvanico";
+import Rana from "../sprites/Rana";
 
 export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
@@ -124,6 +125,8 @@ export class BaseGameScene extends Phaser.Scene {
             bounceX: 0.3,
             bounceY: 0.3
         });
+
+
     }
 
     changeScene() {
@@ -136,11 +139,14 @@ export class BaseGameScene extends Phaser.Scene {
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
+        this.physics.add.collider(this.fluidParticles, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this);
         this.physics.add.collider(this.player, this.borders);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
     }
+
+    
 
     rotar(sprite) {
         sprite.rotar();
@@ -241,7 +247,7 @@ export class BaseGameScene extends Phaser.Scene {
 
         // Velocidad inicial
         const speed = 300;
-        const angle = this.player.flipX ? 160 : 20; // Dirección según player
+        const angle = this.player.control.right() ? 20:160; // Dirección según player
 
         particle.setVelocity(
             Math.cos(Phaser.Math.DegToRad(angle)) * speed,
@@ -258,17 +264,28 @@ export class BaseGameScene extends Phaser.Scene {
 
 
     startLiquido() {
-        for(let i =0; i<10; i++) {
+        for(let i =0; i<100; i++) {
             this.createParticle(this.player.x, this.player.y);
         }
     }
 
+    fijarObjetivo(izq, der) {
+        let rana = izq
+        let particula = der;
+        if (der instanceof Rana) {
+            rana = der;
+            particula = izq;
+        }
+        return [particula, rana];
+    }
+
     handleParticleCollision(particle, frog) {
-        particle.destroy();
-        frog.takeDamage(10);
+        const [particula, rana] = this.fijarObjetivo(particle, frog);
+        particula.destroy();
+        rana.takeDamage(this.player.boquilla.damage);
 
         // Efecto de salpicadura
-        this.createSplashEffect(particle.x, particle.y);
+        // this.createSplashEffect(particle.x, particle.y);
     }
 
     getAngle(ejeRef, angulo) {
