@@ -114,11 +114,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     takeDamage(damage) {
         this.vida -= damage;
         this.updateHealthBar();
-
-        // Efecto visual de daño
-        // this.setTint(0xff0000);
-        // this.scene.time.delayedCall(100, () => { this.clearTint(); });
-
+    
         if (this.vida <= 0) {
             this.morir();
         }

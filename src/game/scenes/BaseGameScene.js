@@ -22,6 +22,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.keyboard = null;
         this.keys = null;
         this.gameOver = false;
+        this.isSpraying = false;
     }
 
     init() {
@@ -146,7 +147,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
     }
 
-    
+
 
     rotar(sprite) {
         sprite.rotar();
@@ -247,7 +248,7 @@ export class BaseGameScene extends Phaser.Scene {
 
         // Velocidad inicial
         const speed = 300;
-        const angle = this.player.control.right() ? 20:160; // Dirección según player
+        const angle = this.player.control.right() ? 20 : 160; // Dirección según player
 
         particle.setVelocity(
             Math.cos(Phaser.Math.DegToRad(angle)) * speed,
@@ -262,11 +263,14 @@ export class BaseGameScene extends Phaser.Scene {
         return particle;
     }
 
+    startWaterSpray() {
+        this.isSpraying = true;
+        this.sprayRate = 50; // ms entre partículas
+        this.lastSprayTime = 0;
+    }
 
-    startLiquido() {
-        for(let i =0; i<100; i++) {
-            this.createParticle(this.player.x, this.player.y);
-        }
+    stopWaterSpray() {
+        this.isSpraying = false;
     }
 
     fijarObjetivo(izq, der) {
@@ -284,8 +288,24 @@ export class BaseGameScene extends Phaser.Scene {
         particula.destroy();
         rana.takeDamage(this.player.boquilla.damage);
 
-        // Efecto de salpicadura
-        // this.createSplashEffect(particle.x, particle.y);
+        rana.setTint(0xff0000);
+        this.time.delayedCall(100, () => rana.clearTint());
+        this.createSplashEffect(rana.x, rana.y);
+    }
+
+    createSplashEffect(x, y) {
+        // Partículas de salpicadura
+        const splash = this.add.particles(x, y, 'particle', {
+            speed: { min: 50, max: 150 },
+            scale: { start: 0.4, end: 0 },
+            alpha: { start: 0.8, end: 0 },
+            lifespan: 600,
+            quantity: 3,
+            emitting: false
+        });
+
+        splash.explode(3);
+        this.time.delayedCall(700, () => splash.destroy());
     }
 
     getAngle(ejeRef, angulo) {
@@ -332,7 +352,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.potenciadorGroup.addPotenciador(potenciador)
     }
 
-    update() {
+    update(time, delta) {
         this.player.update();
         this.player.permanecerAbajo(this.frontera);
         this.plagaGroup.update();
@@ -365,26 +385,26 @@ export class BaseGameScene extends Phaser.Scene {
             this.dock.updateDock(3);
         }
 
-        if (!this.tanque.estaVacio() && this.keys.S.isDown) {
-            // this.fumigar();
-            this.startLiquido();
+        if (!this.isSpraying && this.keys.S.isDown) {
+            this.startWaterSpray();
+        } else if (this.isSpraying &&this.keys.S.isUp) {
+            this.isSpraying = false;
         }
 
-        // if (this.emitter) {
+        // Emitir partículas continuamente mientras se pulsa
+        if (this.isSpraying) {
+            this.createParticle(this.player.x, this.player.y);
+            this.lastSprayTime = time;
+        }
 
-        //     this.plagaGroup.getChildren().forEach(plaga => {
-        //         const particulas = this.emitter.overlap(plaga.body);
-
-        //         const damage = this.player.boquilla.damage * particulas.length;
-        //         for (const p of particulas) p.kill();
-        //         plaga.takeDamage(damage);
-
-        //         if (plaga.vida <= 0) {
-        //             this.barraEstado.setPuntuacion(plaga.vidaMax);
-        //         }
-        //     });
-        //     this.emitter = null;
-        // }
+        // Actualizar partículas existentes
+        this.fluidParticles.getChildren().forEach(particle => {
+            // Efecto de desvanecimiento
+            if (particle.lifespan) {
+                const remainingLife = particle.lifespan - (time - particle.spawnTime);
+                particle.setAlpha(remainingLife / particle.lifespan);
+            }
+        });
 
         if (this.plagaGroup.estaVacio()) {
             this.gameOver = true;
