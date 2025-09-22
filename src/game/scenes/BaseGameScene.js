@@ -120,14 +120,13 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.dock = new DockCentro(this);
 
-        this.fluidParticles = this.physics.add.group({
-            defaultKey: 'particle',
-            collideWorldBounds: true,
-            bounceX: 0.3,
-            bounceY: 0.3
-        });
-
-
+        // this.fluidParticles = this.physics.add.group({
+        //     defaultKey: 'particle',
+        //     collideWorldBounds: true,
+        //     bounceX: 0.3,
+        //     bounceY: 0.3
+        // });
+        this.fluidParticles = this.physics.add.group();
     }
 
     changeScene() {
@@ -263,6 +262,29 @@ export class BaseGameScene extends Phaser.Scene {
         return particle;
     }
 
+    startSpray() {
+
+        const angle = this.getAngle(this.player.control.direccional.angulo, this.player.boquilla.angle);
+        
+        this.fluidEmitter = this.add.particles(this.player.x, this.player.y, 'particle', {
+            speed: { min: 100, max: 200 },
+            angle,
+            scale: { start: 0.3, end: 0 },
+            alpha: { start: 1, end: 0 },
+            lifespan: 1500,
+            quantity: 10,
+            duration:500,
+            blendMode: 'ADD'
+        });
+
+        this.fluidEmitter.on('particleemit', (particle) => {
+            const physicsBody = this.physics.add.existing(particle);
+            // physicsBody.setVelocity(particle.velocityX, particle.velocityY);
+            // physicsBody.setBounce(0.2, 0.2);
+            this.fluidParticles.add(particle);
+        });        
+    }
+
     startWaterSpray() {
         this.isSpraying = true;
         this.sprayRate = 50; // ms entre partículas
@@ -386,25 +408,26 @@ export class BaseGameScene extends Phaser.Scene {
         }
 
         if (!this.isSpraying && this.keys.S.isDown) {
-            this.startWaterSpray();
-        } else if (this.isSpraying &&this.keys.S.isUp) {
-            this.isSpraying = false;
+            this.startSpray();
         }
+        // } else if (this.isSpraying && this.keys.S.isUp) {
+        //     this.isSpraying = false;
+        // }
 
         // Emitir partículas continuamente mientras se pulsa
-        if (this.isSpraying) {
-            this.createParticle(this.player.x, this.player.y);
-            this.lastSprayTime = time;
-        }
+        // if (this.isSpraying) {
+        //     this.createParticle(this.player.x, this.player.y);
+        //     this.lastSprayTime = time;
+        // }
 
         // Actualizar partículas existentes
-        this.fluidParticles.getChildren().forEach(particle => {
-            // Efecto de desvanecimiento
-            if (particle.lifespan) {
-                const remainingLife = particle.lifespan - (time - particle.spawnTime);
-                particle.setAlpha(remainingLife / particle.lifespan);
-            }
-        });
+        // this.fluidParticles.getChildren().forEach(particle => {
+        //     // Efecto de desvanecimiento
+        //     if (particle.lifespan) {
+        //         const remainingLife = particle.lifespan - (time - particle.spawnTime);
+        //         particle.setAlpha(remainingLife / particle.lifespan);
+        //     }
+        // });
 
         if (this.plagaGroup.estaVacio()) {
             this.gameOver = true;
