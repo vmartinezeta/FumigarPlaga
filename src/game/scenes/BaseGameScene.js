@@ -23,6 +23,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.keys = null;
         this.gameOver = false;
         this.isSpraying = false;
+        this.fluidEmitter = null;
     }
 
     init() {
@@ -120,13 +121,13 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.dock = new DockCentro(this);
 
-        // this.fluidParticles = this.physics.add.group({
-        //     defaultKey: 'particle',
-        //     collideWorldBounds: true,
-        //     bounceX: 0.3,
-        //     bounceY: 0.3
-        // });
-        this.fluidParticles = this.physics.add.group();
+        this.fluidParticles = this.physics.add.group({
+            defaultKey: 'water-drop',
+            collideWorldBounds: true,
+            bounceX: 0.3,
+            bounceY: 0.3
+        });
+
     }
 
     changeScene() {
@@ -145,8 +146,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
     }
-
-
 
     rotar(sprite) {
         sprite.rotar();
@@ -263,36 +262,12 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     startSpray() {
-
-        const angle = this.getAngle(this.player.control.direccional.angulo, this.player.boquilla.angle);
-        
-        this.fluidEmitter = this.add.particles(this.player.x, this.player.y, 'particle', {
-            speed: { min: 100, max: 200 },
-            angle,
-            scale: { start: 0.3, end: 0 },
-            alpha: { start: 1, end: 0 },
-            lifespan: 1500,
-            quantity: 10,
-            duration:500,
-            blendMode: 'ADD'
-        });
-
-        this.fluidEmitter.on('particleemit', (particle) => {
-            const physicsBody = this.physics.add.existing(particle);
-            // physicsBody.setVelocity(particle.velocityX, particle.velocityY);
-            // physicsBody.setBounce(0.2, 0.2);
-            this.fluidParticles.add(particle);
-        });        
-    }
-
-    startWaterSpray() {
-        this.isSpraying = true;
-        this.sprayRate = 50; // ms entre partículas
-        this.lastSprayTime = 0;
-    }
-
-    stopWaterSpray() {
-        this.isSpraying = false;
+        // if (this.tanque.estaVacio()) return;
+        // this.tanque.vaciar();
+        // const factor = this.tanque.capacidad / this.tanque.capacidadMax;
+        // const frequency = this.player.boquilla.range * (1 - factor);
+        // const angle = this.getAngle(this.player.control.direccional.angulo, this.player.boquilla.angle);
+        this.createParticle(this.player.x, this.player.y);
     }
 
     fijarObjetivo(izq, der) {
@@ -374,7 +349,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.potenciadorGroup.addPotenciador(potenciador)
     }
 
-    update(time, delta) {
+    update() {
         this.player.update();
         this.player.permanecerAbajo(this.frontera);
         this.plagaGroup.update();
@@ -407,9 +382,11 @@ export class BaseGameScene extends Phaser.Scene {
             this.dock.updateDock(3);
         }
 
-        if (!this.isSpraying && this.keys.S.isDown) {
-            this.startSpray();
+        if (!this.tanque.estaVacio() && this.keys.S.isDown) {
+            this.startSpray()
         }
+
+
         // } else if (this.isSpraying && this.keys.S.isUp) {
         //     this.isSpraying = false;
         // }
