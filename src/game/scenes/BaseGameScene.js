@@ -6,12 +6,10 @@ import BorderSolido from "../sprites/BorderSolido";
 import { Tanque } from "../classes/Tanque";
 import Vida from "../sprites/Vida";
 import TanqueConAgua from "../sprites/TanqueConAgua";
-import { BujillaLinear } from "../classes/BujillaLinear";
-import { BujillaRadial } from "../classes/BujillaRadial";
-import { BujillaAvanico } from "../classes/BujillaAvanico";
 import Rana from "../sprites/Rana";
 import Roca from "../sprites/Roca";
 import BujillaChorrito from "../sprites/BujillaChorrito";
+import BujillaAvanico from "../sprites/BujillaAvanico";
 
 export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
@@ -26,6 +24,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.gameOver = false;
         this.isSpraying = false;
         this.fluidEmitter = null;
+        this.spray = null;
     }
 
     init() {
@@ -136,7 +135,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
-        this.physics.add.collider(this.spray, this.plagaGroup, this.handleParticleCollision, null, this);
+        this.physics.add.overlap(this.spray, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this);
         this.physics.add.collider(this.player, this.borders);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
@@ -451,7 +450,7 @@ export class BaseGameScene extends Phaser.Scene {
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
         } else if (this.keys.TRES.isDown) {
-            this.player.setBoquilla(new BujillaAvanico());
+            this.spray = new BujillaAvanico(this);
             this.barraEstado.setBoquilla(3);
             this.dock.updateDock(3);
         }
@@ -460,7 +459,7 @@ export class BaseGameScene extends Phaser.Scene {
             this.spray.lanzar();
         } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keys.S.isUp){
             this.spray.soltar();
-        } else if (this.spray instanceof BujillaChorrito && this.keys.S.isDown) {
+        } else if ([BujillaChorrito, BujillaAvanico].some(base => this.spray instanceof base) && this.keys.S.isDown) {
             this.spray.abrir();
         }
         

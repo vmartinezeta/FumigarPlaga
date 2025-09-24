@@ -8,6 +8,6 @@ export default class BujillaChorrito extends BaseEmitter {
     }
 
     abrir() {
-        this.emitParticles(Math.PI/6, 200);
+        this.emitParticles(Math.PI/4, 200);
     }
 }
