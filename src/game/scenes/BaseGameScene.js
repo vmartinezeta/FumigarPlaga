@@ -11,6 +11,7 @@ import { BujillaRadial } from "../classes/BujillaRadial";
 import { BujillaAvanico } from "../classes/BujillaAvanico";
 import Rana from "../sprites/Rana";
 import Roca from "../sprites/Roca";
+import BujillaChorrito from "../sprites/BujillaChorrito";
 
 export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
@@ -441,12 +442,12 @@ export class BaseGameScene extends Phaser.Scene {
             this.player.left();
         }
 
-        if (this.keys.UNO.isDown) {
-            this.player.setBoquilla(new BujillaLinear());
+        if (this.keys.UNO.isDown) {            
+            this.spray = new Roca(this);
             this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
         } else if (this.keys.DOS.isDown) {
-            this.player.setBoquilla(new BujillaRadial());
+            this.spray = new BujillaChorrito(this);
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
         } else if (this.keys.TRES.isDown) {
@@ -459,6 +460,8 @@ export class BaseGameScene extends Phaser.Scene {
             this.spray.lanzar();
         } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keys.S.isUp){
             this.spray.soltar();
+        } else if (this.spray instanceof BujillaChorrito && this.keys.S.isDown) {
+            this.spray.abrir();
         }
         
         // this.spray.update()

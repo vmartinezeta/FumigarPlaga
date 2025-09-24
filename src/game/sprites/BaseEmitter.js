@@ -16,15 +16,7 @@ export default class BaseEmitter extends Phaser.GameObjects.Group {
         scene.physics.add.existing(this);
     }
 
-    chorrito() {}
-
-    flujoFuerte() {}
-
-    avanico() {}
-
-    radial() {}
-
-    emitParticles() {
+    emitParticles(spread, gravity) {
         const particle = this.get();        
         if (!particle) return;
 
@@ -44,7 +36,7 @@ export default class BaseEmitter extends Phaser.GameObjects.Group {
 
         // Velocidad basada en dirección del player
         const baseAngle = this.scene.player.control.right() ? 0: Math.PI; // 180° o 0°
-        const spread = Math.PI / 6; // 30° de dispersión
+        // const spread = Math.PI / 6; // 30° de dispersión
         const angle = baseAngle + Phaser.Math.FloatBetween(-spread, spread);
         const speed = Phaser.Math.Between(300, 400);
 
@@ -56,7 +48,7 @@ export default class BaseEmitter extends Phaser.GameObjects.Group {
         );
 
         // Gravedad para efecto de arco
-        physicsBody.body.setGravityY(200);
+        physicsBody.body.setGravityY(gravity);
         physicsBody.body.setBounce(0.2, 0.2);
 
         // Tiempo de vida
