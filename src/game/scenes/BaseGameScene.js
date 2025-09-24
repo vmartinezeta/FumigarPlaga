@@ -10,6 +10,7 @@ import { BujillaLinear } from "../classes/BujillaLinear";
 import { BujillaRadial } from "../classes/BujillaRadial";
 import { BujillaAvanico } from "../classes/BujillaAvanico";
 import Rana from "../sprites/Rana";
+import SuperSpray from "../sprites/SuperSpray";
 
 export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
@@ -121,20 +122,14 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.dock = new DockCentro(this);
 
-        this.fluidParticles = this.physics.add.group({
-            defaultKey: 'water-drop',
+        this.spray = new SuperSpray(this, {
+            key: 'particle',
+            repeat: 50,
+            setXY: { x: 0, y: 100, stepX: 0 },
             collideWorldBounds: true,
             bounceX: 0.3,
             bounceY: 0.3
-        });
-
-        this.sprayConfig = {
-            isSpraying: false,
-            lastEmitTime: 0,
-            emitRate: 60, // ms entre partículas
-            particleLifespan: 1500
-        };
-
+        })
     }
 
     changeScene() {
@@ -147,7 +142,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
-        this.physics.add.collider(this.fluidParticles, this.plagaGroup, this.handleParticleCollision, null, this);
+        this.physics.add.collider(this.spray, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this);
         this.physics.add.collider(this.player, this.borders);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
@@ -249,7 +244,7 @@ export class BaseGameScene extends Phaser.Scene {
             .setScale(0.3)
             .setAlpha(1)
             .setBounce(0.2, 0.2)
-            .setDrag(10, 10);
+            .setDrag(10, 10).setTint(0x000000);
 
         // Velocidad inicial
         const speed = 300;
@@ -268,13 +263,13 @@ export class BaseGameScene extends Phaser.Scene {
         return particle;
     }
 
-    startSpraying() {
-        const {x, y} = this.getSprayVelocity();
-        const x0 = this.player.control.right? this.player.x-x:this.player.x+x;
-        for (let i =0; i<200; i++) {
-            this.createParticle(x0+x, this.player.y + y);
-        }
-    }
+    // startSpraying() {
+    //     const { x, y } = this.getSprayVelocity();
+    //     const x0 = this.player.control.right ? this.player.x - x : this.player.x + x;
+    //     for (let i = 0; i < 200; i++) {
+    //         this.createParticle(x0 + x, this.player.y + y);
+    //     }
+    // }
 
     fijarObjetivo(izq, der) {
         let rana = izq
@@ -369,7 +364,72 @@ export class BaseGameScene extends Phaser.Scene {
         };
     }
 
-    update() {
+    // Función para emitir partículas
+    emitWaterParticle() {
+        const particle = this.fluidParticles.get();
+        if (!particle) return;
+
+        // Posición de emisión (ajusta según tu sprite de player)
+        const offsetX = this.player.control.right() ? -30 : 30;
+        const emitX = this.player.x + offsetX;
+        const emitY = this.player.y - 15;
+
+        // Reactivar partícula
+        particle.setActive(true)
+            .setVisible(true)
+            .setPosition(emitX, emitY)
+            .setAlpha(1)
+            .setScale(0.4)
+            .setDepth(10);
+
+        // Velocidad basada en dirección del player
+        const baseAngle = this.player.control.right() ? Math.PI : 0; // 180° o 0°
+        const spread = Math.PI / 6; // 30° de dispersión
+        const angle = baseAngle + Phaser.Math.FloatBetween(-spread, spread);
+        const speed = Phaser.Math.Between(300, 400);
+
+        particle.setVelocity(
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed
+        );
+
+        // Gravedad para efecto de arco
+        particle.setGravityY(200);
+        particle.setBounce(0.2, 0.2);
+
+        // Tiempo de vida
+        particle.spawnTime = this.time.now;
+    }
+
+    startSpraying() {
+        this.sprayConfig.isSpraying = true;
+        console.log('💦 SPRAY ACTIVADO');
+    }
+
+    stopSpraying() {
+        this.sprayConfig.isSpraying = false;
+        console.log('💦 SPRAY DESACTIVADO');
+    }
+    // Gestionar partículas existentes
+    updateParticlesLifecycle(currentTime) {
+        this.fluidParticles.getChildren().forEach(particle => {
+            if (!particle.active) return;
+
+            const aliveTime = currentTime - particle.spawnTime;
+            const lifeProgress = aliveTime / this.sprayConfig.particleLifespan;
+
+            // Desvanecimiento gradual
+            particle.setAlpha(1 - (lifeProgress * 0.8));
+            particle.setScale(0.4 * (1 - (lifeProgress * 0.5)));
+
+            // Destruir cuando expire el tiempo
+            if (aliveTime > this.sprayConfig.particleLifespan) {
+                particle.destroy();
+            }
+        });
+    }
+
+    update(time, delta) {
         this.player.update();
         this.player.permanecerAbajo(this.frontera);
         this.plagaGroup.update();
@@ -403,9 +463,10 @@ export class BaseGameScene extends Phaser.Scene {
         }
 
         if (this.keys.S.isDown) {
-            this.startSpraying();
+            this.spray.emitWaterParticle();
         }
-
+        
+        // this.spray.update()
 
         if (this.plagaGroup.estaVacio()) {
             this.gameOver = true;
