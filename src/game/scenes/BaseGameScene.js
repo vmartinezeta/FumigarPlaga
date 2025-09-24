@@ -277,7 +277,7 @@ export class BaseGameScene extends Phaser.Scene {
     handleParticleCollision(particle, frog) {
         const [particula, rana] = this.fijarObjetivo(particle, frog);
         particula.destroy();
-        rana.takeDamage(this.player.boquilla.damage);
+        rana.takeDamage(this.spray.damage);
 
         rana.setTint(0xff0000);
         this.time.delayedCall(100, () => rana.clearTint());
@@ -422,7 +422,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
     }
 
-    update(time, delta) {
+    update() {
         this.player.update();
         this.player.permanecerAbajo(this.frontera);
         this.plagaGroup.update();
@@ -455,10 +455,10 @@ export class BaseGameScene extends Phaser.Scene {
             this.dock.updateDock(3);
         }
 
-        if (!this.spray.isSpraying && this.keys.S.isDown) {
+        if (this.spray instanceof Roca && !this.spray.estaFuera && this.keys.S.isDown) {
             this.spray.lanzar();
-        } else if (this.spray.isSpraying && this.keys.S.isUp){
-            this.spray.reset();
+        } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keys.S.isUp){
+            this.spray.soltar();
         }
         
         // this.spray.update()

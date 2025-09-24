@@ -7,10 +7,10 @@ export default class Roca extends BaseEmitter {
 
     lanzar() {
         this.emitParticles();
-        this.isSpraying = true;
+        this.estaFuera = true;
     }
 
-    reset() {
-        this.isSpraying = false;
+    soltar() {
+        this.estaFuera = false;
     }
 }

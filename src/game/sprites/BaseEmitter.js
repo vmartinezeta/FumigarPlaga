@@ -5,8 +5,8 @@ export default class BaseEmitter extends Phaser.GameObjects.Group {
         super(scene);
         this.scene = scene;
         this.imageKey = imageKey;
-        this.isSpraying = false;
-
+        this.estaFuera = false;
+        this.damage = 10;
         this.lastEmitTime = 0;
 
         this.emitRate = 60; // ms entre partículas
