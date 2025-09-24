@@ -1,21 +1,31 @@
 import Phaser from "phaser";
 
-export default class SuperSpray extends Phaser.GameObjects.Group {
-    constructor(scene, config) {
-        super(scene, {...config, visible:false});
+export default class BaseEmitter extends Phaser.GameObjects.Group {
+    constructor(scene, imageKey) {
+        super(scene);
         this.scene = scene;
+        this.imageKey = imageKey;
+        this.isSpraying = false;
 
-        this.sprayConfig = {
-            isSpraying: false,
-            lastEmitTime: 0,
-            emitRate: 60, // ms entre partículas
-            particleLifespan: 1500
-        };
+        this.lastEmitTime = 0;
+
+        this.emitRate = 60; // ms entre partículas
+
+        this.particleLifespan = 1500;
+
         scene.physics.add.existing(this);
     }
 
-    emitWaterParticle() {
-        const particle = this.get();
+    chorrito() {}
+
+    flujoFuerte() {}
+
+    avanico() {}
+
+    radial() {}
+
+    emitParticles() {
+        const particle = this.get();        
         if (!particle) return;
 
         // Posición de emisión (ajusta según tu sprite de player)
@@ -29,7 +39,8 @@ export default class SuperSpray extends Phaser.GameObjects.Group {
             .setPosition(emitX, emitY)
             .setAlpha(1)
             .setScale(0.4)
-            .setDepth(10).setTexture("particle");
+            .setDepth(10)
+            .setTexture(this.imageKey);
 
         // Velocidad basada en dirección del player
         const baseAngle = this.scene.player.control.right() ? 0: Math.PI; // 180° o 0°
@@ -57,20 +68,20 @@ export default class SuperSpray extends Phaser.GameObjects.Group {
             if (!particle.active) return;
 
             const aliveTime = currentTime - particle.spawnTime;
-            const lifeProgress = aliveTime / this.sprayConfig.particleLifespan;
+            const lifeProgress = aliveTime / this.particleLifespan;
 
             // Desvanecimiento gradual
             particle.setAlpha(1 - (lifeProgress * 0.8));
             particle.setScale(0.4 * (1 - (lifeProgress * 0.5)));
 
             // Destruir cuando expire el tiempo
-            if (aliveTime > this.sprayConfig.particleLifespan) {
+            if (aliveTime > this.particleLifespan) {
                 particle.destroy();
             }
         });
     }
 
     update(time) { 
-        this.updateParticlesLifecycle(time)
+        this.updateParticlesLifecycle(time);
     }
 }

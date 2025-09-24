@@ -3,7 +3,6 @@ import Phaser from 'phaser';
 import Player from '../sprites/Player';
 import BarraEstado from '../sprites/BarraEstado';
 import { BaseGameScene } from './BaseGameScene';
-import SuperSpray from '../sprites/SuperSpray';
 
 
 export class DayScene extends BaseGameScene {

@@ -1,8 +1,6 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
-import SuperSpray from '../sprites/SuperSpray';
-import Player from '../sprites/Player';
 
 export class MainMenu extends Scene {
 

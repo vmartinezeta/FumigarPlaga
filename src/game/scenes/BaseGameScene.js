@@ -10,7 +10,7 @@ import { BujillaLinear } from "../classes/BujillaLinear";
 import { BujillaRadial } from "../classes/BujillaRadial";
 import { BujillaAvanico } from "../classes/BujillaAvanico";
 import Rana from "../sprites/Rana";
-import SuperSpray from "../sprites/SuperSpray";
+import Roca from "../sprites/Roca";
 
 export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
@@ -122,14 +122,7 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.dock = new DockCentro(this);
 
-        this.spray = new SuperSpray(this, {
-            key: 'particle',
-            repeat: 50,
-            setXY: { x: 0, y: 100, stepX: 0 },
-            collideWorldBounds: true,
-            bounceX: 0.3,
-            bounceY: 0.3
-        })
+        this.spray = new Roca(this);
     }
 
     changeScene() {
@@ -462,8 +455,10 @@ export class BaseGameScene extends Phaser.Scene {
             this.dock.updateDock(3);
         }
 
-        if (this.keys.S.isDown) {
-            this.spray.emitWaterParticle();
+        if (!this.spray.isSpraying && this.keys.S.isDown) {
+            this.spray.lanzar();
+        } else if (this.spray.isSpraying && this.keys.S.isUp){
+            this.spray.reset();
         }
         
         // this.spray.update()
