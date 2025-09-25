@@ -3,37 +3,30 @@ import Phaser from 'phaser';
 import Player from '../sprites/Player';
 import BarraEstado from '../sprites/BarraEstado';
 import { BaseGameScene } from './BaseGameScene';
+import Mosquito from '../sprites/Mosquito';
 
 
 export class DayScene extends BaseGameScene {
     constructor() {
         super('DayScene');
-        this.plagaGroup = null;
-        this.borders = null;
-        this.player = null;
-        this.emitter = null;       
-        this.tanque = null;
-        this.potenciadorGroup = null;
-        this.dock = null;
-        this.gameWidth = 4000;
-        this.gameHeight = 600;
+        this.reguladorWidth = 13/2;
     }
 
     create() {
         super.create();
-        this.bosque = this.add.tileSprite(0, 256, this.width, 200, "bosque");
+        this.bosque = this.add.tileSprite(0, 256, this.reguladorWidth*this.game.config.width, 200, "bosque");
         this.bosque.setOrigin(1 / 2);
         this.bosque.setScale(.6)
         this.bosque.setScrollFactor(0);
 
         this.cloudTextures = ["nube", "nube-2"];
 
-        this.clouds = this.add.tileSprite(0, 100, 6000, 200, this.cloudTextures[0]);
+        this.clouds = this.add.tileSprite(0, 100, this.reguladorWidth*this.game.config.width, 200, this.cloudTextures[0]);
         this.clouds.setScrollFactor(.5);
         this.clouds.setAlpha(.9);
         this.clouds.setScale(.8);
 
-        this.nextClouds = this.add.tileSprite(0, 100, 6000, 200, this.cloudTextures[1]);
+        this.nextClouds = this.add.tileSprite(0, 100, this.reguladorWidth*this.game.config.width, 200, this.cloudTextures[1]);
         this.nextClouds.setScrollFactor(.5);
         this.nextClouds.setAlpha(0);
         this.nextClouds.setScale(.8);
@@ -64,7 +57,11 @@ export class DayScene extends BaseGameScene {
         });
 
         this.player = new Player(this, 100, 560, "player");
+        this.player.setYmax(this.ymax);
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
+
+        this.mosquito = new Mosquito(this, 100,300, "mosquito");
+        
 
         this.detectarColision();
         
@@ -143,6 +140,7 @@ export class DayScene extends BaseGameScene {
     update() {
         if (this.gameOver) return;
         super.update();
+        this.mosquito.update();
         this.clouds.tilePositionX += .2;
     }
 }

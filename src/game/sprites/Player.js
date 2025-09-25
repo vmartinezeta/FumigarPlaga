@@ -9,21 +9,23 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.imageKey = imageKey;
         this.vida = vida || 10;
-        this.setOrigin(1 / 2);
-        this.setScale(1);
-        this.moverse = true;
+        this.ymax = 0;
         this.control = new ControlDireccional([
             new Direccional(1, 270, new Punto(0, -1)),
             new Direccional(2, 0, new Punto(1, 0)),
             new Direccional(3, 90, new Punto(0, 1)),
             new Direccional(4, 180, new Punto(-1, 0)),
         ], 1);
-        this.destino = null;
+        
+        this.setScale(1);
+        this.setOrigin(1 / 2);
         this.animate(scene);
         this.play('frontal');
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setCollideWorldBounds(true);
+        this.body.setAllowGravity(false);
+        this.body.setImmovable(true);
     }
 
     animate(scene) {
@@ -85,9 +87,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.mover(direccional.vector, 6);
     }
 
-    permanecerAbajo(y) {
-        if (this.y > y) return;
-        this.y = y;
+    setYmax(y) {
+        this.ymax = y;
+    }
+
+    update() {
+        if (this.y > this.ymax) return;
+        this.y = this.ymax;
         this.body.setVelocityY(0);
     }
 

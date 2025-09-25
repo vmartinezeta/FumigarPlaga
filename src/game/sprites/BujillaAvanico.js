@@ -1,4 +1,4 @@
-import SuperSpray from "./SuperSpray";
+import SuperSpray from "../sprites/SuperSpray";
 
 export default class BujillaAvanico extends SuperSpray {
     constructor(scene) {

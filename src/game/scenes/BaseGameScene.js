@@ -1,15 +1,16 @@
 import Phaser from "phaser";
+import { Tanque } from "../classes/Tanque";
 import PlagaGroup from "../sprites/PlagaGroup";
 import PotenciadorGroup from "../sprites/PotenciadorGroup";
 import DockCentro from "../sprites/DockCentro";
 import BorderSolido from "../sprites/BorderSolido";
-import { Tanque } from "../classes/Tanque";
 import Vida from "../sprites/Vida";
 import TanqueConAgua from "../sprites/TanqueConAgua";
 import Rana from "../sprites/Rana";
-import BujillaChorrito from "../classes/BujillaChorrito";
-import BujillaAvanico from "../classes/BujillaAvanico";
-import Roca from "../classes/Roca";
+import BujillaChorrito from "../sprites/BujillaChorrito";
+import BujillaAvanico from "../sprites/BujillaAvanico";
+import Roca from "../sprites/Roca";
+import Mosquitos from "../sprites/Mosquitos";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -20,12 +21,13 @@ export class BaseGameScene extends Phaser.Scene {
         this.potenciadorGroup = null;
         this.plagaGroup = null;
         this.barraEstado = null;
+        this.mosquitos = null;
         this.keyboard = null;
-        this.keys = null;
         this.gameOver = false;
-        this.isSpraying = false;
-        this.fluidEmitter = null;
         this.spray = null;
+        this.ymax = 300;
+        this.width = 0;
+        this.height = 0;
     }
 
     init() {
@@ -86,13 +88,13 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     create() {
-        this.width = 3584;
-        this.height = 600;
+        this.width = 4*this.game.config.width;
+        this.height = this.game.config.height;
         this.bg = this.add.tileSprite(0, 0, this.width, this.height, "bg");
         this.bg.setOrigin(0);
         this.bg.setScrollFactor(0);
-        this.frontera = 300;
-        this.suelo = this.add.tileSprite(0, this.frontera, this.width, this.frontera, "platform");
+        this.ymax = 300;
+        this.suelo = this.add.tileSprite(0, this.ymax, this.width, this.ymax, "platform");
         this.suelo.setOrigin(0);
         this.suelo.setScrollFactor(0);
 
@@ -102,17 +104,24 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.keyboard = this.input.keyboard.createCursorKeys();
 
-        this.keys = this.input.keyboard.addKeys({
+        this.keyboard = this.input.keyboard.addKeys({
             A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
             W: Phaser.Input.Keyboard.KeyCodes.W,
             S: Phaser.Input.Keyboard.KeyCodes.S, //fumigar
             D: Phaser.Input.Keyboard.KeyCodes.D,
+            UP: Phaser.Input.Keyboard.KeyCodes.UP,
+            RIGHT: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            DOWN: Phaser.Input.Keyboard.KeyCodes.DOWN,
+            LEFT: Phaser.Input.Keyboard.KeyCodes.LEFT,
             UNO: Phaser.Input.Keyboard.KeyCodes.ONE,
             DOS: Phaser.Input.Keyboard.KeyCodes.TWO,
             TRES: Phaser.Input.Keyboard.KeyCodes.THREE
         });
 
         this.plagaGroup = new PlagaGroup(this);
+
+        this.mosquitos = new Mosquitos(this);
+
         this.potenciadorGroup = new PotenciadorGroup(this);
 
         this.tanque = new Tanque();
@@ -124,7 +133,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.dock = new DockCentro(this);
 
         this.particles = this.physics.add.group();
-        this.spray = new Roca(this)
+        this.spray = new Roca(this);
     }
 
     changeScene() {
@@ -137,7 +146,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
-        this.physics.add.collider(this.particles, this.plagaGroup, this.handleParticleCollision, null, this);
+        this.physics.add.overlap(this.particles, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this);
         this.physics.add.collider(this.player, this.borders);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
@@ -184,7 +193,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     activarPotenciador() {
-        if (this.keys.A.isDown) {
+        if (this.keyboard.A.isDown) {
             return true;
         }
         return false;
@@ -258,14 +267,6 @@ export class BaseGameScene extends Phaser.Scene {
         return particle;
     }
 
-    // startSpraying() {
-    //     const { x, y } = this.getSprayVelocity();
-    //     const x0 = this.player.control.right ? this.player.x - x : this.player.x + x;
-    //     for (let i = 0; i < 200; i++) {
-    //         this.createParticle(x0 + x, this.player.y + y);
-    //     }
-    // }
-
     fijarObjetivo(izq, der) {
         let rana = izq
         let particula = der;
@@ -299,13 +300,6 @@ export class BaseGameScene extends Phaser.Scene {
 
         splash.explode(3);
         this.time.delayedCall(700, () => splash.destroy());
-    }
-
-    getAngle(ejeRef, angulo) {
-        return {
-            min: ejeRef - angulo,
-            max: ejeRef + angulo
-        }
     }
 
     morir(player, rana) {
@@ -345,123 +339,43 @@ export class BaseGameScene extends Phaser.Scene {
         this.potenciadorGroup.addPotenciador(potenciador)
     }
 
-    getSprayVelocity() {
-        // Velocidad basada en dirección del player
-        const baseAngle = this.player.control.right() ? Math.PI : 0; // 180° o 0°
-        const spread = Phaser.Math.DegToRad(25); // Dispersión
-
-        const angle = baseAngle + Phaser.Math.FloatBetween(-spread, spread);
-        const speed = Phaser.Math.Between(50, 100);
-
-        return {
-            x: Math.cos(angle) * speed,
-            y: Math.sin(angle) * speed
-        };
-    }
-
-    // Función para emitir partículas
-    emitWaterParticle() {
-        const particle = this.fluidParticles.get();
-        if (!particle) return;
-
-        // Posición de emisión (ajusta según tu sprite de player)
-        const offsetX = this.player.control.right() ? -30 : 30;
-        const emitX = this.player.x + offsetX;
-        const emitY = this.player.y - 15;
-
-        // Reactivar partícula
-        particle.setActive(true)
-            .setVisible(true)
-            .setPosition(emitX, emitY)
-            .setAlpha(1)
-            .setScale(0.4)
-            .setDepth(10);
-
-        // Velocidad basada en dirección del player
-        const baseAngle = this.player.control.right() ? Math.PI : 0; // 180° o 0°
-        const spread = Math.PI / 6; // 30° de dispersión
-        const angle = baseAngle + Phaser.Math.FloatBetween(-spread, spread);
-        const speed = Phaser.Math.Between(300, 400);
-
-        particle.setVelocity(
-            Math.cos(angle) * speed,
-            Math.sin(angle) * speed
-        );
-
-        // Gravedad para efecto de arco
-        particle.setGravityY(200);
-        particle.setBounce(0.2, 0.2);
-
-        // Tiempo de vida
-        particle.spawnTime = this.time.now;
-    }
-
-    startSpraying() {
-        this.sprayConfig.isSpraying = true;
-        console.log('💦 SPRAY ACTIVADO');
-    }
-
-    stopSpraying() {
-        this.sprayConfig.isSpraying = false;
-        console.log('💦 SPRAY DESACTIVADO');
-    }
-    // Gestionar partículas existentes
-    updateParticlesLifecycle(currentTime) {
-        this.fluidParticles.getChildren().forEach(particle => {
-            if (!particle.active) return;
-
-            const aliveTime = currentTime - particle.spawnTime;
-            const lifeProgress = aliveTime / this.sprayConfig.particleLifespan;
-
-            // Desvanecimiento gradual
-            particle.setAlpha(1 - (lifeProgress * 0.8));
-            particle.setScale(0.4 * (1 - (lifeProgress * 0.5)));
-
-            // Destruir cuando expire el tiempo
-            if (aliveTime > this.sprayConfig.particleLifespan) {
-                particle.destroy();
-            }
-        });
-    }
-
     update() {
         this.player.update();
-        this.player.permanecerAbajo(this.frontera);
         this.plagaGroup.update();
 
         if (this.plagaGroup.total > 5) {
             this.createTanque();
         }
 
-        if (this.keyboard.up.isDown) {
+        if (this.keyboard.UP.isDown) {
             this.player.top();
-        } else if (this.keyboard.right.isDown) {
+        } else if (this.keyboard.RIGHT.isDown) {
             this.player.right();
-        } else if (this.keyboard.down.isDown) {
+        } else if (this.keyboard.DOWN.isDown) {
             this.player.bottom();
-        } else if (this.keyboard.left.isDown) {
+        } else if (this.keyboard.LEFT.isDown) {
             this.player.left();
         }
 
-        if (this.keys.UNO.isDown) {
+        if (this.keyboard.UNO.isDown) {
             this.spray = new Roca(this, this.player);
             this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
-        } else if (this.keys.DOS.isDown) {
+        } else if (this.keyboard.DOS.isDown) {
             this.spray = new BujillaChorrito(this, this.player);
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
-        } else if (this.keys.TRES.isDown) {
+        } else if (this.keyboard.TRES.isDown) {
             this.spray = new BujillaAvanico(this, this.player);
             this.barraEstado.setBoquilla(3);
             this.dock.updateDock(3);
         }
 
-        if (this.spray instanceof Roca  && !this.spray.estaFuera && this.keys.S.isDown) {
+        if (this.spray instanceof Roca  && !this.spray.estaFuera && this.keyboard.S.isDown) {
             this.spray.lanzar();
-        } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keys.S.isUp){
+        } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keyboard.S.isUp){
             this.spray.soltar();
-        } else if ([BujillaChorrito, BujillaAvanico].some(base=> this.spray instanceof base) && this.keys.S.isDown) {
+        } else if ([BujillaChorrito, BujillaAvanico].some(base=> this.spray instanceof base) && this.keyboard.S.isDown) {
             this.spray.abrir();
         }
 

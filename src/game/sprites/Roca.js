@@ -1,4 +1,4 @@
-import SuperSpray from "./SuperSpray";
+import SuperSpray from "../sprites/SuperSpray";
 
 export default class Roca extends SuperSpray{
     constructor(scene){

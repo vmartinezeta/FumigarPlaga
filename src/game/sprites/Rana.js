@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import { Punto } from "../classes/Punto";
+import { ControlDireccional } from "../classes/ControlDireccional";
+import { Direccional } from "../classes/Direccional";
 
 export default class Rana extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey, hembra, puedeCoger) {
@@ -9,22 +11,29 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.hembra = hembra;
         this.vida = hembra ? 30 : 50;
         this.vidaMax = hembra ? 30 : 50;
-        this.setTint(hembra ? 0xff88ff : 0x8888ff);
-        this.setOrigin(1 / 2);
-        this.setScale(1);
         this.inicio = false;
         this.puedeCoger = puedeCoger;
         this.finalizo = false;
         this.onComplete = null;
         this.furia = false;
+        this.control = new ControlDireccional([
+            new Direccional(1, 270, new Punto(0, -1)),
+            new Direccional(2, 0, new Punto(1, 0)),
+            new Direccional(3, 90, new Punto(0, 1)),
+            new Direccional(4, 180, new Punto(-1, 0)),
+        ], 3);
+        this.setTint(hembra ? 0xff88ff : 0x8888ff);
+        this.setOrigin(1 / 2);
+        this.setScale(1);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.velocidad = new Punto(-1 * Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));
-        this.body.setVelocity(this.velocidad.x, this.velocidad.y);
+
+        this.body.setVelocity(this.velocidad.x,0);
         this.body.setBounce(1);
         this.body.setCollideWorldBounds(true);
         this.body.setAllowGravity(false);
-        this.body.setSize(40, 40);
+        this.body.setSize(50, 50);
         if (!this.existe("run")) {
             this.animate({
                 key: 'run',
@@ -114,7 +123,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     takeDamage(damage) {
         this.vida -= damage;
         this.updateHealthBar();
-    
+
         if (this.vida <= 0) {
             this.morir();
         }

@@ -7,8 +7,6 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
         super(scene);
         this.scene = scene;
         this.total = 0;
-        this.gameWidth = 4000;
-        this.gameHeight = 600;
         this.agregar(scene, 20);
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -16,8 +14,8 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
 
     agregar(scene, cantidad) {
         for (let i = 1; i <= cantidad; i++) {
-            const x = Phaser.Math.Between(100, this.gameWidth - 100);
-            const y = this.gameHeight - 200;
+            const x = Phaser.Math.Between(100, this.scene.width - 100);
+            const y = this.scene.height - 200;
             const hembra = Math.floor(Math.random() * 2);
             const type = Math.floor(Math.random() * 3);
             if (type === 0) {
