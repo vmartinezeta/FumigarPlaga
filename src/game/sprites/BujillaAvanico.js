@@ -1,9 +1,13 @@
-import BaseEmitter from "./BaseEmitter";
+import Recipiente from "./SuperSpray";
 
-export default class BujillaAvanico extends BaseEmitter {
+export default class BujillaAvanico extends Recipiente {
     constructor(scene) {
-        super(scene, "particle");
+        super(scene,3, "particle");
         this.damage = 2;
+    }
+
+    isAvanico() {
+        return this.id === 3;
     }
 
     abrir() {

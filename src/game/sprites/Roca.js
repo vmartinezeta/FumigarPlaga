@@ -1,8 +1,9 @@
-import BaseEmitter from "./BaseEmitter";
+import Recipiente from "./SuperSpray";
 
-export default class Roca extends BaseEmitter {
+
+export default class Roca extends Recipiente {
     constructor(scene) {
-        super(scene, "particle");
+        super(scene, 1, "particle");
         this.damage = 20;
     }
 
@@ -13,5 +14,9 @@ export default class Roca extends BaseEmitter {
 
     soltar() {
         this.estaFuera = false;
+    }
+
+    isRoca() {
+        return this.id === 1;
     }
 }

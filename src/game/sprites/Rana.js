@@ -24,7 +24,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.body.setBounce(1);
         this.body.setCollideWorldBounds(true);
         this.body.setAllowGravity(false);
-        this.body.setSize(30, 30);
+        this.body.setSize(40, 40);
         if (!this.existe("run")) {
             this.animate({
                 key: 'run',

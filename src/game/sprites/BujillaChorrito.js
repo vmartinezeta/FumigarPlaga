@@ -1,10 +1,14 @@
-import BaseEmitter from "./BaseEmitter";
+import Recipiente from "./SuperSpray";
 
-export default class BujillaChorrito extends BaseEmitter {
+export default class BujillaChorrito extends Recipiente {
 
     constructor(scene) {
-        super(scene, "particle");
+        super(scene,2, "particle");
         this.damage = 10;
+    }
+
+    isChorrito() {
+        return this.id === 2;
     }
 
     abrir() {

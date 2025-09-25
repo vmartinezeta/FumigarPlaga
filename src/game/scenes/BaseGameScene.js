@@ -7,9 +7,7 @@ import { Tanque } from "../classes/Tanque";
 import Vida from "../sprites/Vida";
 import TanqueConAgua from "../sprites/TanqueConAgua";
 import Rana from "../sprites/Rana";
-import Roca from "../sprites/Roca";
-import BujillaChorrito from "../sprites/BujillaChorrito";
-import BujillaAvanico from "../sprites/BujillaAvanico";
+import SuperSpray from "../sprites/SuperSpray";
 
 export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
@@ -122,7 +120,7 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.dock = new DockCentro(this);
 
-        this.spray = new Roca(this);
+        this.spray = new SuperSpray(this, "particle");
     }
 
     changeScene() {
@@ -135,7 +133,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
-        this.physics.add.overlap(this.spray, this.plagaGroup, this.handleParticleCollision, null, this);
+        this.physics.add.collider(this.spray, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this);
         this.physics.add.collider(this.player, this.borders);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
@@ -441,29 +439,30 @@ export class BaseGameScene extends Phaser.Scene {
             this.player.left();
         }
 
-        if (this.keys.UNO.isDown) {            
-            this.spray = new Roca(this);
+        if (this.keys.UNO.isDown) {
+            this.spray.roca();
             this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
         } else if (this.keys.DOS.isDown) {
-            this.spray = new BujillaChorrito(this);
+            this.spray.chorrito();
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
         } else if (this.keys.TRES.isDown) {
-            this.spray = new BujillaAvanico(this);
+            this.spray.avanico();
             this.barraEstado.setBoquilla(3);
             this.dock.updateDock(3);
         }
 
-        if (this.spray instanceof Roca && !this.spray.estaFuera && this.keys.S.isDown) {
+        if (this.spray.isRoca()  && !this.spray.estaFuera && this.keys.S.isDown) {
             this.spray.lanzar();
-        } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keys.S.isUp){
+        } else if (this.spray.isRoca() && this.spray.estaFuera && this.keys.S.isUp){
             this.spray.soltar();
-        } else if ([BujillaChorrito, BujillaAvanico].some(base => this.spray instanceof base) && this.keys.S.isDown) {
-            this.spray.abrir();
+        } else if (this.spray.isChorrito() && this.keys.S.isDown) {
+            this.spray.chorrito();
+        } else if(this.spray.isAvanico()&& this.keys.S.isDown) {
+            this.spray.avanico();
         }
-        
-        // this.spray.update()
+
 
         if (this.plagaGroup.estaVacio()) {
             this.gameOver = true;
