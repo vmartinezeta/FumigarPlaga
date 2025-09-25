@@ -3,10 +3,6 @@ import { Punto } from "../classes/Punto";
 import { ControlDireccional } from "../classes/ControlDireccional";
 import { Direccional } from "../classes/Direccional";
 
-import { BujillaLinear } from "../classes/BujillaLinear";
-import { BujillaRadial } from "../classes/BujillaRadial";
-import { BujillaAvanico } from "../classes/BujillaAvanico";
-
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey, vida) {
         super(scene, x, y, imageKey);
@@ -23,10 +19,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
             new Direccional(4, 180, new Punto(-1, 0)),
         ], 1);
         this.destino = null;
-        this.boquilla = new BujillaLinear();
         this.animate(scene);
         this.play('frontal');
-        this.updateBoquilla();
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setCollideWorldBounds(true);
@@ -70,72 +64,25 @@ export default class Player extends Phaser.GameObjects.Sprite {
     top() {
         this.play("frontal");
         const direccional = this.control.fromInt(1);
-        if (this.moverse) {
-            this.mover(direccional.vector, 6);
-        }
-        if (this.boquilla instanceof BujillaLinear) {
-            this.destino = new Phaser.Geom.Line(this.x, this.y - 30, this.x, this.y - 200);
-        } else if (this.boquilla instanceof BujillaRadial || this.boquilla instanceof BujillaAvanico) {
-            this.destino = new Phaser.Geom.Rectangle(this.x, this.y - 120, 60, 20);
-        }
+        this.mover(direccional.vector, 6);
     }
 
     right() {
         this.play("der");
         const direccional = this.control.fromInt(2);
-        if (this.moverse) {
-            this.mover(direccional.vector, 6);
-        }
-        if (this.boquilla instanceof BujillaLinear) {
-            this.destino = new Phaser.Geom.Line(this.x + 30, this.y, this.x + 200, this.y);
-        } else if (this.boquilla  instanceof BujillaRadial|| this.boquilla instanceof BujillaAvanico) {
-            this.destino = new Phaser.Geom.Rectangle(this.x + 100, this.y, 60, 20);
-        }
+        this.mover(direccional.vector, 6);
     }
 
     bottom() {
         this.play("frontal");
         const direccional = this.control.fromInt(3);
-        if (this.moverse) {
-            this.mover(direccional.vector, 6);
-        }
-        if (this.boquilla instanceof BujillaLinear) {
-            this.destino = new Phaser.Geom.Line(this.x, this.y + 30, this.x, this.y + 200);
-        } else if (this.boquilla instanceof BujillaRadial|| this.boquilla instanceof BujillaAvanico) {
-            this.destino = new Phaser.Geom.Rectangle(this.x, this.y + 100, 60, 20);
-        }
+        this.mover(direccional.vector, 6);
     }
 
     left() {
         this.play("izq");
         const direccional = this.control.fromInt(4);
-        if (this.moverse) {
-            this.mover(direccional.vector, 6);
-        }
-        if (this.boquilla instanceof BujillaLinear) {
-            this.destino = new Phaser.Geom.Line(this.x - 30, this.y, this.x - 200, this.y);
-        } else if (this.boquilla instanceof BujillaRadial|| this.boquilla instanceof BujillaAvanico) {
-            this.destino = new Phaser.Geom.Rectangle(this.x - 160, this.y, 60, 20);
-        }
-    }
-
-    updateBoquilla() {
-        if (this.control.top()) {
-            this.top();
-        } else if (this.control.right()) {
-            this.right();
-        } else if (this.control.bottom()) {
-            this.bottom();
-        } else if (this.control.left()) {
-            this.left();
-        }
-    }
-
-    setBoquilla(boquilla) {
-        this.boquilla = boquilla;
-        this.moverse = false;
-        this.updateBoquilla();
-        this.moverse = true;
+        this.mover(direccional.vector, 6);
     }
 
     permanecerAbajo(y) {

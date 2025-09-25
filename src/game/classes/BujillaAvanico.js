@@ -1,7 +1,13 @@
-import { Bujilla } from "./Bujilla";
+import SuperSpray from "./SuperSpray";
 
-export class BujillaAvanico extends Bujilla{
-    constructor(){
-        super(2, 1, 200, 100, 90);
+export default class BujillaAvanico extends SuperSpray {
+    constructor(scene) {
+        super(scene,"particle", Math.PI / 4, 2);
     }
+
+    abrir() {
+        this.createConcentratedSpray();
+        this.estaFuera = true;
+    }
+
 }

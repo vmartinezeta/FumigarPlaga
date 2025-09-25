@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 
-
 export default class SuperSpray  extends Phaser.GameObjects.Group {
     constructor(scene, imageKey) {
         super(scene);
@@ -58,7 +57,7 @@ export default class SuperSpray  extends Phaser.GameObjects.Group {
         particle.destroy();
     }
 
-    lanzar() {
+    roca() {
         this.id = 1;
         this.damage = 20;
         this.emitParticles(Math.PI/6, 200);
