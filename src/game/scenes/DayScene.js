@@ -6,6 +6,7 @@ import { BaseGameScene } from './BaseGameScene';
 import Mosquito from '../sprites/Mosquito';
 import Rana from '../sprites/Rana';
 import Pinchos from '../sprites/Pinchos';
+import Roca from '../sprites/Roca';
 
 
 export class DayScene extends BaseGameScene {
@@ -60,6 +61,8 @@ export class DayScene extends BaseGameScene {
 
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
+        this.spray = new Roca(this, this.player, this.particles);
+
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
         this.mosquito = new Mosquito(this, 100,300, "mosquito");

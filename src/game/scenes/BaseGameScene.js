@@ -28,6 +28,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.ymax = 300;
         this.width = 0;
         this.height = 0;
+        this.particles = null;
     }
 
     init() {
@@ -133,7 +134,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.dock = new DockCentro(this);
 
         this.particles = this.physics.add.group();
-        this.spray = new Roca(this);
     }
 
     changeScene() {
@@ -358,15 +358,15 @@ export class BaseGameScene extends Phaser.Scene {
         }
 
         if (this.keyboard.UNO.isDown) {
-            this.spray = new Roca(this, this.player);
+            this.spray = new Roca(this, this.player, this.particles);
             this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
         } else if (this.keyboard.DOS.isDown) {
-            this.spray = new BujillaChorrito(this, this.player);
+            this.spray = new BujillaChorrito(this, this.player, this.particles);
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
         } else if (this.keyboard.TRES.isDown) {
-            this.spray = new BujillaAvanico(this, this.player);
+            this.spray = new BujillaAvanico(this, this.player, this.particles);
             this.barraEstado.setBoquilla(3);
             this.dock.updateDock(3);
         }

@@ -3,6 +3,7 @@ import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
 import Pinchos from '../sprites/Pinchos';
 import TanqueConAgua from '../sprites/TanqueConAgua';
+import SuperSpray from '../sprites/SuperSpray';
 
 export class MainMenu extends Scene {
 
@@ -12,6 +13,7 @@ export class MainMenu extends Scene {
         this.letra = null;
         this.reactCallback = null;
         this.record = 0;
+        this.superSpray = null;
     }
 
     init(data) {
@@ -36,36 +38,12 @@ export class MainMenu extends Scene {
         this.confetti.explode(2000); // Explota y se destruye después de 2 segundos
     }
 
-    emitterEterno() {
-        const xmedio = this.game.config.width/2 
-        this.chorro = this.add.particles(xmedio-70, 100, 'particle', {
-            speed: { min: 100, max: 200 },
-            angle: { min: 30, max: 90 },
-            scale: { start: 0.3, end: 0 },
-            alpha: { start: 1, end: 0 },
-            lifespan: 2000,
-            quantity: 10,
-            blendMode: 'ADD'
-        });
-
-        // Destello de luz
-        // this.flash = this.add.rectangle(width/2, 260, 420, 300, 0xffffff)
-        //     .setAlpha(0)
-        //     .setDepth(999);
-
-        // this.tweens.add({
-        //     targets: this.flash,
-        //     alpha: 0.3,
-        //     duration: 200,
-        //     yoyo: true,
-        //     onComplete: () => this.flash.destroy()
-        // });
-    }
-
+    
     create() {
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
-
-        this.emitterEterno();
+        this.chorro = this.add.group();
+        this.superSpray = new SuperSpray(this,this.chorro, "particle", Math.PI/6);
+        this.superSpray.setPosition(330,100);
 
         this.add.text(740, 100, 'Nuevo Record: '+this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
@@ -97,5 +75,9 @@ export class MainMenu extends Scene {
 
     reiniciar() {
         this.animacion.reiniciar(this.siguiente, this);
+    }
+
+    update() {
+        this.superSpray.createConcentratedSpray();
     }
 }
