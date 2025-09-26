@@ -3,24 +3,26 @@ import Phaser from "phaser"
 export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey);
-        this.imageKey = imageKey
+        this.imageKey = imageKey;
         this.setScale(1);
         this.setOrigin(1 / 2);
-        scene.time.delayedCall(6000, this.onEliminar, [], this);    
+        scene.time.delayedCall(6000, this.onEliminar, [], this);
 
-        this.createAnimations(scene)
-        this.play("fluir")
+        this.createAnimations(scene);
+        this.play("fluir");
 
         this.scene.add.existing(this);
-        this.scene.physics.world.enable(this);
+        scene.physics.add.existing(this);
 
         scene.tweens.add({
             targets: this,
-            scaleX: { from: 1, to: 2 },
-            scaleY: { from: 1, to: 2 },
-            duration: 1000,
+            scaleX: { from: 0.5, to: 1.2 },
+            scaleY: { from: 0.5, to: 1.2 },
+            duration: 500,
+            repeat:-1,
+            yoyo:true,
             ease: 'Back.out'
-        })
+        });
 
     }
 
@@ -32,7 +34,7 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
         if (scene.anims.exists("fluir")) return
         scene.anims.create({
             key: 'fluir',
-            frames: scene.anims.generateFrameNumbers(this.imageKey, { start: 0, end: 4 }),
+            frames: scene.anims.generateFrameNumbers(this.imageKey, { start: 0, end: 2 }),
             frameRate: 12,
             repeat: -1
         });

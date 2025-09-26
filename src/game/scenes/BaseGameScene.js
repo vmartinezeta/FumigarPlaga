@@ -333,8 +333,8 @@ export class BaseGameScene extends Phaser.Scene {
     createTanque() {
         this.plagaGroup.total = 0
         if (this.potenciadorGroup.countActive() > 500) return
-        const x = Phaser.Math.Between(100, this.gameWidth - 100);
-        const y = Phaser.Math.Between(300, this.game.config.width);
+        const x = Phaser.Math.Between(100, this.width - 100);
+        const y = Phaser.Math.Between(300, this.height);
         const potenciador = new TanqueConAgua(this, x, y, "tanque")
         this.potenciadorGroup.addPotenciador(potenciador)
     }
