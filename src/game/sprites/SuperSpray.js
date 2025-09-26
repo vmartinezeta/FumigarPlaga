@@ -17,9 +17,10 @@ export default class SuperSpray {
             emitX,
             emitY,
             this.imageKey
-        ).setAlpha(1)
-        .setScale(0.4)
-        .setDepth(10);
+        )
+        particle.setAlpha(1);
+        particle.setScale(0.4);
+        particle.setDepth(5);
 
         const baseAngle = this.scene.player.control.right() ? 0 : Math.PI; // 180° o 0°
         // const spread = Math.PI / 6; // 30° de dispersión

@@ -4,6 +4,8 @@ import Player from '../sprites/Player';
 import BarraEstado from '../sprites/BarraEstado';
 import { BaseGameScene } from './BaseGameScene';
 import Mosquito from '../sprites/Mosquito';
+import Rana from '../sprites/Rana';
+import Pinchos from '../sprites/Pinchos';
 
 
 export class DayScene extends BaseGameScene {
@@ -64,9 +66,30 @@ export class DayScene extends BaseGameScene {
         
 
         this.detectarColision();
-        
+
+        new Pinchos(this);
+
         EventBus.emit('current-scene-ready', this);
     }
+
+    testBasicCollision() {
+    console.log('=== PRUEBA DE COLISIÓN BÁSICA ===');
+    
+    // Crear una partícula y rana en posiciones conocidas
+    const testParticle = this.particles.create(100, 300, 'particle');
+    const testFrog = new Rana(this,100, 300, 'rana'); // MISMA POSICIÓN
+    testFrog.setTint(0xff0000);
+    
+    if (testParticle && testFrog) {
+        this.physics.add.existing(testParticle);
+        this.physics.add.existing(testFrog);
+
+        // Verificar colisión inmediata
+        this.physics.world.collide(testParticle, testFrog, () => {
+            console.log('✅ COLISIÓN FUNCIONA!');
+        });
+    }
+}
 
     createCreepySounds() {
         // Viento aullante cada 20-30 segundos

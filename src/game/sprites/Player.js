@@ -10,15 +10,17 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.imageKey = imageKey;
         this.vida = vida || 10;
         this.ymax = 0;
+        this.rapidez = 40;
         this.control = new ControlDireccional([
             new Direccional(1, 270, new Punto(0, -1)),
             new Direccional(2, 0, new Punto(1, 0)),
             new Direccional(3, 90, new Punto(0, 1)),
             new Direccional(4, 180, new Punto(-1, 0)),
         ], 1);
-        
+
         this.setScale(1);
         this.setOrigin(1 / 2);
+        this.setDepth(10);
         this.animate(scene);
         this.play('frontal');
         scene.add.existing(this);
@@ -59,32 +61,31 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     mover(vector, modulo) {
-        this.x += modulo * vector.x
-        this.y += modulo * vector.y;
+        this.body.setVelocity(vector.x*modulo, vector.y*modulo);
     }
 
     top() {
         this.play("frontal");
-        const direccional = this.control.fromInt(1);
-        this.mover(direccional.vector, 6);
+        const {vector} = this.control.fromInt(1);
+        this.mover(vector, vector.y*this.body.velocity.y+this.rapidez);
     }
 
     right() {
         this.play("der");
-        const direccional = this.control.fromInt(2);
-        this.mover(direccional.vector, 6);
+        const {vector}= this.control.fromInt(2);
+        this.mover(vector, vector.x*this.body.velocity.x+this.rapidez);
     }
 
     bottom() {
         this.play("frontal");
-        const direccional = this.control.fromInt(3);
-        this.mover(direccional.vector, 6);
+        const {vector} = this.control.fromInt(3);
+        this.mover(vector, vector.y*this.body.velocity.y+this.rapidez);
     }
 
     left() {
         this.play("izq");
-        const direccional = this.control.fromInt(4);
-        this.mover(direccional.vector, 6);
+        const {vector} = this.control.fromInt(4);
+        this.mover(vector, vector.x*this.body.velocity.x+this.rapidez);
     }
 
     setYmax(y) {

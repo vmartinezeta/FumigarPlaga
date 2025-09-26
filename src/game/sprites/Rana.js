@@ -25,6 +25,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.setTint(hembra ? 0xff88ff : 0x8888ff);
         this.setOrigin(1 / 2);
         this.setScale(1);
+        this.setDepth(5);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.velocidad = new Punto(-1 * Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));

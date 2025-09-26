@@ -77,6 +77,7 @@ export class Preloader extends Scene {
         this.load.spritesheet('tanque', 'cisterna.png', { frameWidth: 17, frameHeight: 21 });
         this.load.spritesheet('vida', 'vida.png', { frameWidth: 32, frameHeight: 27 });
         this.load.spritesheet('mosquito', 'mosquito.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.image("pinchos", "pinchos.png");
         this.load.audio("bosque-tenebroso", "bosque-tenebroso.wav");
         this.load.audio("efecto-1", "efecto-1.wav");
         this.load.audio("efecto-2", "efecto-2.wav");
