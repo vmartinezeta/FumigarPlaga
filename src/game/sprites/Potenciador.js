@@ -3,8 +3,8 @@ import Phaser from "phaser";
 export default class Potenciador extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey);
+        console.log('Creando potenciador de tipo:', this.constructor.name)
         this.scene = scene;
-        this.imageKey = imageKey;
         this.setScale(1);
         this.setOrigin(1 / 2);
 
