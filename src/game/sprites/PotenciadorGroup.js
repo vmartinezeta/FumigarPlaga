@@ -4,11 +4,10 @@ import Vida from "./Vida"
 import NotificacionTextual from "./NotificacionTextual";
 
 export default class PotenciadorGroup extends Phaser.GameObjects.Group {
-    constructor(scene, config) {
+    constructor(scene) {
         super(scene);
         this.scene = scene;
-        this.config = config;
-        this.scene.physics.add.existing(this, true);
+        scene.physics.add.existing(this);
         this.alertas = [];
         this.primerasVecesAlerta = {
             tanque: 3,
@@ -29,9 +28,8 @@ export default class PotenciadorGroup extends Phaser.GameObjects.Group {
             this.primerasVecesAlerta.vida--;
         }
 
-        this.add(potenciador)
+        this.add(potenciador);
     }
-
 
     createAlerta(x, y, texto, width, height) {
         const encontrado = this.alertas.find(alerta => alerta.getTexto() === texto);

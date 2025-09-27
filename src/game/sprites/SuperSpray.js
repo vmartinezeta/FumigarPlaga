@@ -1,11 +1,9 @@
 export default class SuperSpray {
-    constructor(scene, particles, imageKey, spread, damage = 20) {
+    constructor(scene, particles, spread, damage = 20) {
         this.scene = scene;
         this.particles = particles;
-        this.imageKey = imageKey;
         this.spread = spread;
         this.damage = damage;
-        this.estaFuera = false;
         this.baseAngle = 0;
         this.emitX = 0;
         this.emitY = 0;
@@ -16,15 +14,15 @@ export default class SuperSpray {
         this.emitY = y;
     }
 
-    createConcentratedSpray() {
+    createConcentratedSpray(imageKey, scale) {
         // Posición de emisión (ajusta según tu sprite de player)
         const particle = this.particles.create(
             this.emitX,
             this.emitY,
-            this.imageKey
-        )
+            imageKey
+        );
         particle.setAlpha(1);
-        particle.setScale(0.4);
+        particle.setScale(scale || 0.4);
         particle.setDepth(5);
 
         // const spread = Math.PI / 6; // 30° de dispersión

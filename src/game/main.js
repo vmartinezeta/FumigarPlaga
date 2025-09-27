@@ -6,6 +6,7 @@ import { Preloader } from './scenes/Preloader';
 import { HowTo } from './scenes/HowTo';
 import { NightScene } from './scenes/NightScene';
 import { DayScene } from './scenes/DayScene';
+import { LogroScene } from './scenes/LogroScene';
 
 // Find out more information about the Game Config at:
 // https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -29,7 +30,8 @@ const config = {
         DayScene,
         NightScene,
         GameOver,
-        HowTo
+        HowTo,
+        LogroScene
     ]
 }
 

@@ -3,33 +3,33 @@ import Phaser from 'phaser';
 import Player from '../sprites/Player';
 import BarraEstado from '../sprites/BarraEstado';
 import { BaseGameScene } from './BaseGameScene';
-import Mosquito from '../sprites/Mosquito';
 import Rana from '../sprites/Rana';
 import Pinchos from '../sprites/Pinchos';
 import Roca from '../sprites/Roca';
+import Mosquitos from '../sprites/Mosquitos';
 
 
 export class DayScene extends BaseGameScene {
     constructor() {
         super('DayScene');
-        this.reguladorWidth = 13/2;
+        this.reguladorWidth = 13 / 2;
     }
 
     create() {
         super.create();
-        this.bosque = this.add.tileSprite(0, 256, this.reguladorWidth*this.game.config.width, 200, "bosque");
+        this.bosque = this.add.tileSprite(0, 256, this.reguladorWidth * this.game.config.width, 200, "bosque");
         this.bosque.setOrigin(1 / 2);
         this.bosque.setScale(.6)
         this.bosque.setScrollFactor(0);
 
         this.cloudTextures = ["nube", "nube-2"];
 
-        this.clouds = this.add.tileSprite(0, 100, this.reguladorWidth*this.game.config.width, 200, this.cloudTextures[0]);
+        this.clouds = this.add.tileSprite(0, 100, this.reguladorWidth * this.game.config.width, 200, this.cloudTextures[0]);
         this.clouds.setScrollFactor(.5);
         this.clouds.setAlpha(.9);
         this.clouds.setScale(.8);
 
-        this.nextClouds = this.add.tileSprite(0, 100, this.reguladorWidth*this.game.config.width, 200, this.cloudTextures[1]);
+        this.nextClouds = this.add.tileSprite(0, 100, this.reguladorWidth * this.game.config.width, 200, this.cloudTextures[1]);
         this.nextClouds.setScrollFactor(.5);
         this.nextClouds.setAlpha(0);
         this.nextClouds.setScale(.8);
@@ -65,34 +65,33 @@ export class DayScene extends BaseGameScene {
 
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
-        this.mosquito = new Mosquito(this, 100,300, "mosquito");
-        
+        this.mosquitos = new Mosquitos(this);
 
         this.detectarColision();
 
-        new Pinchos(this);
+        this.pinchos = new Pinchos(this);
 
         EventBus.emit('current-scene-ready', this);
     }
 
     testBasicCollision() {
-    console.log('=== PRUEBA DE COLISIÓN BÁSICA ===');
-    
-    // Crear una partícula y rana en posiciones conocidas
-    const testParticle = this.particles.create(100, 300, 'particle');
-    const testFrog = new Rana(this,100, 300, 'rana'); // MISMA POSICIÓN
-    testFrog.setTint(0xff0000);
-    
-    if (testParticle && testFrog) {
-        this.physics.add.existing(testParticle);
-        this.physics.add.existing(testFrog);
+        console.log('=== PRUEBA DE COLISIÓN BÁSICA ===');
 
-        // Verificar colisión inmediata
-        this.physics.world.collide(testParticle, testFrog, () => {
-            console.log('✅ COLISIÓN FUNCIONA!');
-        });
+        // Crear una partícula y rana en posiciones conocidas
+        const testParticle = this.particles.create(100, 300, 'particle');
+        const testFrog = new Rana(this, 100, 300, 'rana'); // MISMA POSICIÓN
+        testFrog.setTint(0xff0000);
+
+        if (testParticle && testFrog) {
+            this.physics.add.existing(testParticle);
+            this.physics.add.existing(testFrog);
+
+            // Verificar colisión inmediata
+            this.physics.world.collide(testParticle, testFrog, () => {
+                console.log('✅ COLISIÓN FUNCIONA!');
+            });
+        }
     }
-}
 
     createCreepySounds() {
         // Viento aullante cada 20-30 segundos
@@ -166,7 +165,7 @@ export class DayScene extends BaseGameScene {
     update() {
         if (this.gameOver) return;
         super.update();
-        this.mosquito.update();
+        this.mosquitos.update();
         this.clouds.tilePositionX += .2;
     }
 }

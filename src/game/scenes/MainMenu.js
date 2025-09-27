@@ -1,8 +1,6 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
-import Pinchos from '../sprites/Pinchos';
-import TanqueConAgua from '../sprites/TanqueConAgua';
 import SuperSpray from '../sprites/SuperSpray';
 
 export class MainMenu extends Scene {
@@ -26,7 +24,7 @@ export class MainMenu extends Scene {
 
     createConfetti() {
         // Crear emitter con tiempo de vida automático
-        this.confetti = this.add.particles(this.game.config.width/2, 300, 'confetti', {
+        this.confetti = this.add.particles(this.game.config.width / 2, 300, 'confetti', {
             speed: { min: 100, max: 200 },
             scale: { start: 0.5, end: 0 },
             lifespan: 2000, // 2 segundos de vida
@@ -38,14 +36,13 @@ export class MainMenu extends Scene {
         this.confetti.explode(2000); // Explota y se destruye después de 2 segundos
     }
 
-    
     create() {
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
         this.chorro = this.add.group();
-        this.superSpray = new SuperSpray(this,this.chorro, "particle", Math.PI/6);
-        this.superSpray.setPosition(330,100);
+        this.superSpray = new SuperSpray(this, this.chorro, Math.PI / 6);
+        this.superSpray.setPosition(330, 100);
 
-        this.add.text(740, 100, 'Nuevo Record: '+this.record, {
+        this.add.text(740, 100, 'Nuevo Record: ' + this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
@@ -78,6 +75,6 @@ export class MainMenu extends Scene {
     }
 
     update() {
-        this.superSpray.createConcentratedSpray();
+        this.superSpray.createConcentratedSpray("particle");
     }
 }

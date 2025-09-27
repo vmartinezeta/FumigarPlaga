@@ -15,7 +15,7 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
     agregar(scene, cantidad) {
         for (let i = 1; i <= cantidad; i++) {
             const x = Phaser.Math.Between(100, this.scene.width - 100);
-            const y = this.scene.height - 200;
+            const y = Phaser.Math.Between(scene.ymax + 20, this.scene.width - 20);
             const hembra = Math.floor(Math.random() * 2);
             const type = Math.floor(Math.random() * 3);
             if (type === 0) {

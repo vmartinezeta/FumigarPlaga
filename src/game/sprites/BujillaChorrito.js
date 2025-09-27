@@ -8,7 +8,6 @@ export default class BujillaChorrito extends PlayerAndSpray{
 
     abrir() {
         this.updateEmision();
-        this.createConcentratedSpray();
-        this.estaFuera = true;
+        this.createConcentratedSpray("particle");
     }    
 }

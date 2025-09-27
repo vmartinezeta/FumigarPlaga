@@ -6,6 +6,7 @@ export default class Segmento extends Phaser.GameObjects.Sprite{
         this.setOrigin(1/2);
         this.setScale(1);
         this.setVisible(false);
+        this.setDepth(5);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.allowGravity = false;

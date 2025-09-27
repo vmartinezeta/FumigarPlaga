@@ -10,7 +10,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.imageKey = imageKey;
         this.vida = vida || 10;
         this.ymax = 0;
-        this.rapidez = 40;
+        this.rapidez = 30;
         this.control = new ControlDireccional([
             new Direccional(1, 270, new Punto(0, -1)),
             new Direccional(2, 0, new Punto(1, 0)),

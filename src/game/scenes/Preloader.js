@@ -62,7 +62,8 @@ export class Preloader extends Scene {
         this.load.spritesheet("rana", "rana.png", { frameWidth: 60, frameHeight: 64 });
         this.load.spritesheet("rana2", "rana2.png", { frameWidth: 70, frameHeight: 64 });
         this.load.spritesheet("player", "dude.png", { frameWidth: 32, frameHeight: 48 });
-        this.load.image('tecla-1', 'tecla-1.png');
+        this.load.image('bomb', 'bomb.png');
+        this.load.image('tecla-1', 'tecla-1.png');        
         this.load.image('tecla-2', 'tecla-2.png');
         this.load.image('tecla-3', 'tecla-3.png');
         this.load.image('particle', 'particle.png');

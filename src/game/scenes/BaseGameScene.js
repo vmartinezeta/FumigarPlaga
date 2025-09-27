@@ -3,14 +3,15 @@ import { Tanque } from "../classes/Tanque";
 import PlagaGroup from "../sprites/PlagaGroup";
 import PotenciadorGroup from "../sprites/PotenciadorGroup";
 import DockCentro from "../sprites/DockCentro";
-import BorderSolido from "../sprites/BorderSolido";
 import Vida from "../sprites/Vida";
 import TanqueConAgua from "../sprites/TanqueConAgua";
 import Rana from "../sprites/Rana";
 import BujillaChorrito from "../sprites/BujillaChorrito";
 import BujillaAvanico from "../sprites/BujillaAvanico";
 import Roca from "../sprites/Roca";
-import Mosquitos from "../sprites/Mosquitos";
+import SueloFrontera from "../sprites/SueloFrontera";
+import BosqueFrontera from "../sprites/BosqueFrontera";
+import Player from "../sprites/Player";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -29,6 +30,9 @@ export class BaseGameScene extends Phaser.Scene {
         this.width = 0;
         this.height = 0;
         this.particles = null;
+        this.bosqueFrontera = null;
+        this.sueloFrontera = null;
+        this.pinchos = null;
     }
 
     init() {
@@ -89,7 +93,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     create() {
-        this.width = 4*this.game.config.width;
+        this.width = 4 * this.game.config.width;
         this.height = this.game.config.height;
         this.bg = this.add.tileSprite(0, 0, this.width, this.height, "bg");
         this.bg.setOrigin(0);
@@ -102,8 +106,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.width, this.height);
         this.physics.world.setBounds(0, 0, this.width, this.height);
         this.input.mouse.disableContextMenu();
-
-        this.keyboard = this.input.keyboard.createCursorKeys();
 
         this.keyboard = this.input.keyboard.addKeys({
             A: Phaser.Input.Keyboard.KeyCodes.A, //Coger el potenciador
@@ -121,15 +123,19 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.plagaGroup = new PlagaGroup(this);
 
-        this.mosquitos = new Mosquitos(this);
-
         this.potenciadorGroup = new PotenciadorGroup(this);
 
         this.tanque = new Tanque();
 
-        this.borders = new BorderSolido(this);
+        this.sueloFrontera = new SueloFrontera(this);
+        this.bosqueFrontera = new BosqueFrontera(this);
 
-        this.time.delayedCall(6000, this.suministrarVida, [], this);
+        this.time.addEvent({
+            delay: 6000,
+            callback: this.suministrarVida,
+            callbackScope: this,
+            loop: true
+        });
 
         this.dock = new DockCentro(this);
 
@@ -146,11 +152,13 @@ export class BaseGameScene extends Phaser.Scene {
 
     detectarColision() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
+        this.physics.add.overlap(this.player, this.pinchos, this.morirPlayer, null, this);
         this.physics.add.overlap(this.particles, this.plagaGroup, this.handleParticleCollision, null, this);
-        this.physics.add.collider(this.plagaGroup, this.borders, this.rotar, null, this);
-        this.physics.add.collider(this.player, this.borders);
+        this.physics.add.collider(this.plagaGroup, this.sueloFrontera, this.rotar, null, this);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
+        this.physics.add.collider(this.player, this.sueloFrontera);
+        this.physics.add.collider(this.mosquitos, this.bosqueFrontera);
     }
 
     rotar(sprite) {
@@ -217,32 +225,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.potenciadorGroup.remove(potenciador, true, true);
     }
 
-    fumigar() {
-        if (this.tanque.estaVacio()) return;
-        const zona = { type: 'edge', source: this.player.destino, quantity: 42 };
-        this.tanque.vaciar();
-        this.barraEstado?.actualizar(this.player.vida, this.tanque.capacidad);
-
-        const factor = this.tanque.capacidad / this.tanque.capacidadMax;
-        const frequency = this.player.boquilla.range * (1 - factor);
-
-        const angle = this.getAngle(this.player.control.direccional.angulo, this.player.boquilla.angle);
-
-        this.emitter = this.add.particles(0, 0, 'particle', {
-            lifespan: 800,
-            speed: this.player.boquilla.rate,
-            frequency,
-            quantity: 2,
-            angle,
-            scale: { start: 0.4, end: 0 },
-            emitZone: zona,
-            duration: 500,
-            emitting: false
-        });
-
-        this.emitter.start(2000);
-    }
-
     createParticle(x, y) {
         const particle = this.fluidParticles.create(x, y, 'particle')
             .setScale(0.3)
@@ -302,10 +284,30 @@ export class BaseGameScene extends Phaser.Scene {
         this.time.delayedCall(700, () => splash.destroy());
     }
 
-    morir(player, rana) {
-        this.barraEstado.setPuntuacion(rana.vidaMax);
-        rana.morir();
+    detectarObstaculo(izq, der) {
+        let player = izq;
+        let obstaculo = der;
+        if (der instanceof Player) {
+            der = player;
+            obstaculo = izq;
+        }
+        return [player, obstaculo];
+    }
+
+    morirPlayer(player) {
         player.vida--;
+        this.barraEstado.actualizar(player.vida, this.tanque.capacidad);
+        if (player.vida === 0) {
+            this.scene.start('GameOver');
+        }
+    }
+
+    morir(player, rana) {
+        player.vida--;
+        if (rana instanceof Rana) {
+            this.barraEstado.setPuntuacion(rana.vidaMax);
+            rana.morir();
+        }
 
         this.barraEstado.actualizar(player.vida, this.tanque.capacidad);
         if (player.vida === 0) {
@@ -317,17 +319,14 @@ export class BaseGameScene extends Phaser.Scene {
         this.gameOver = false;
         this.plagaGroup = null;
         this.player = null;
-        this.borders = null;
-        this.emitter = null;
-        this.zona = null;
+        this.sueloFrontera = null;
     }
 
     suministrarVida() {
-        const x = Math.random() * this.game.config.width;
-        const y = Math.random() * this.game.config.height;
+        const x = Phaser.Math.Between(100, this.width - 100);
+        const y = Phaser.Math.Between(100, this.ymax - 100);
         const potenciador = new Vida(this, x, y, "vida");
         this.potenciadorGroup.addPotenciador(potenciador);
-        this.time.delayedCall(6000, this.suministrarVida, [], this);
     }
 
     createTanque() {
@@ -335,8 +334,8 @@ export class BaseGameScene extends Phaser.Scene {
         if (this.potenciadorGroup.countActive() > 500) return
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(300, this.height);
-        const potenciador = new TanqueConAgua(this, x, y, "tanque")
-        this.potenciadorGroup.addPotenciador(potenciador)
+        const potenciador = new TanqueConAgua(this, x, y, "tanque");
+        this.potenciadorGroup.addPotenciador(potenciador);
     }
 
     update() {
@@ -371,11 +370,11 @@ export class BaseGameScene extends Phaser.Scene {
             this.dock.updateDock(3);
         }
 
-        if (this.spray instanceof Roca  && !this.spray.estaFuera && this.keyboard.S.isDown) {
+        if (this.spray instanceof Roca && !this.spray.estaFuera && this.keyboard.S.isDown) {
             this.spray.lanzar();
-        } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keyboard.S.isUp){
+        } else if (this.spray instanceof Roca && this.spray.estaFuera && this.keyboard.S.isUp) {
             this.spray.soltar();
-        } else if ([BujillaChorrito, BujillaAvanico].some(base=> this.spray instanceof base) && this.keyboard.S.isDown) {
+        } else if ([BujillaChorrito, BujillaAvanico].some(base => this.spray instanceof base) && this.keyboard.S.isDown) {
             this.spray.abrir();
         }
 

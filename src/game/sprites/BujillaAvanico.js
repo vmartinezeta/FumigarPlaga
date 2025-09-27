@@ -7,8 +7,7 @@ export default class BujillaAvanico extends PlayerAndSpray {
 
     abrir() {
         this.updateEmision();
-        this.createConcentratedSpray();
-        this.estaFuera = true;
+        this.createConcentratedSpray("particle");
     }
 
 }

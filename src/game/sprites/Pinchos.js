@@ -1,27 +1,24 @@
 import Phaser from "phaser";
+import Pincho from "./Pincho";
 
 export default class Pinchos extends Phaser.GameObjects.Group {
     constructor(scene) {
         super(scene);
         scene.physics.add.existing(this);
-        for (let i = 0; i<5; i++) {
-            const x = Math.random()*scene.width;
-            const y = scene.height - Math.random()*scene.height/2;
-            this.createPincho(x, y);
+        for (let i = 0; i < 5; i++) {
+            const x = Phaser.Math.Between(100, scene.width-100);
+            const y = Phaser.Math.Between(320, scene.height-20);
+            this.createPincho(scene, x, y);
         }
     }
 
 
-    createPincho(x, y) {
-        this.createSprite(x, y, "pinchos");
-        this.createSprite(x+10, y, "pinchos");
-        this.createSprite(x-20, y, "pinchos");
-        this.createSprite(x-10, y, "pinchos");
-        this.createSprite(x-30, y, "pinchos");
-    }
-
-    createSprite(x, y, imageKey) {
-        return this.create(x, y, imageKey).setScale(1/3);
+    createPincho(scene, x, y) {
+        this.add(new Pincho(scene, x, y, "pinchos"));
+        this.add(new Pincho(scene, x + 10, y, "pinchos"));
+        this.add(new Pincho(scene, x - 20, y, "pinchos"));
+        this.add(new Pincho(scene, x - 10, y, "pinchos"));
+        this.add(new Pincho(scene, x - 30, y, "pinchos"));
     }
 
 }

@@ -2,7 +2,7 @@ import SuperSpray from "./SuperSpray";
 
 export default class PlayerAndSpray extends SuperSpray{
     constructor(scene, player, particles, spread, damage) {
-        super(scene, particles, "particle", spread, damage);
+        super(scene, particles, spread, damage);
         this.player = player;
     }
 
@@ -12,4 +12,5 @@ export default class PlayerAndSpray extends SuperSpray{
         this.emitY = this.player.y - 15;
         this.baseAngle = this.player.control.right() ? 0 : Math.PI; // 180° o 0°
     }
+
 }
