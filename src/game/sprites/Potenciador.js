@@ -1,4 +1,4 @@
-import Phaser from "phaser"
+import Phaser from "phaser";
 
 export default class Potenciador extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey) {
@@ -8,15 +8,14 @@ export default class Potenciador extends Phaser.GameObjects.Sprite {
         this.setScale(1);
         this.setOrigin(1 / 2);
 
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
-
         this.animate(scene);
         scene.time.delayedCall(6000, this.onEliminar, [], this);
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
     }
 
     onEliminar() {
-        this.destroy()
+        this.destroy();
     }
 
     existe(key) {
