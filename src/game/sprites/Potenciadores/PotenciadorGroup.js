@@ -1,7 +1,7 @@
 import Phaser from "phaser"
 import TanqueConAgua from "./TanqueConAgua"
 import Vida from "./Vida"
-import NotificacionTextual from "./NotificacionTextual";
+import NotificacionTextual from "../NotificacionTextual";
 
 export default class PotenciadorGroup extends Phaser.GameObjects.Group {
     constructor(scene) {

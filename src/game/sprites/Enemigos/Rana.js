@@ -1,7 +1,7 @@
 import Phaser from "phaser";
-import { Punto } from "../classes/Punto";
-import { ControlDireccional } from "../classes/ControlDireccional";
-import { Direccional } from "../classes/Direccional";
+import { Punto } from "../../classes/Punto";
+import { ControlDireccional } from "../../classes/ControlDireccional";
+import { Direccional } from "../../classes/Direccional";
 
 export default class Rana extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey, hembra, puedeCoger) {

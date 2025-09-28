@@ -1,5 +1,6 @@
+import Phaser from "phaser";
 
-export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
+export default class FuriaDude extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey);
         this.scene = scene;
@@ -14,6 +15,9 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
         this.animate(scene);
         scene.time.delayedCall(6000, this.onEliminar, [], this);
 
+        this.body.setVelocity(Phaser.Math.Between(30, 40), Phaser.Math.Between(30, 40));
+        this.body.setCollideWorldBounds(true);
+        this.body.setBounce(1);
         scene.tweens.add({
             targets: this,
             scaleX: { from: 0.5, to: 1.2 },
@@ -23,7 +27,18 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
             yoyo: true,
             ease: 'Back.out'
         });
-        this.play("fluir");
+        this.play("furia");
+    }
+
+    applyEffect(player) {
+        player.rapidez = 50;
+        player.setTint(0xff0000);
+        this.scene.time.delayedCall(10000, this.reset, [player], this);
+    }
+
+    reset(player){
+        player.clearTint();
+        player.rapidez = 30;
     }
 
     onEliminar() {
@@ -35,9 +50,9 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
     }
 
     animate(scene) {
-        if (!this.existe("fluir")) {
+        if (!this.existe("furia")) {
             scene.anims.create({
-                key: 'fluir',
+                key: 'furia',
                 frames: scene.anims.generateFrameNumbers(this.imageKey, { start: 0, end: 2 }),
                 frameRate: 12,
                 repeat: -1

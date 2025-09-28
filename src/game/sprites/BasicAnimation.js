@@ -1,7 +1,8 @@
 import Phaser from "phaser";
 import { Punto } from "../classes/Punto";
 import { Letra } from "../classes/Letra";
-import Rana from "./Rana";
+import Rana from "./Enemigos/Rana";
+
 
 export default class BasicAnimation extends Phaser.GameObjects.Group {
     constructor(scene, x, y, texto, deltaX) {

@@ -1,7 +1,7 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
-import SuperSpray from '../sprites/SuperSpray';
+import SuperSpray from '../sprites/KitFierro/SuperSpray';
 
 export class MainMenu extends Scene {
 
@@ -11,7 +11,7 @@ export class MainMenu extends Scene {
         this.letra = null;
         this.reactCallback = null;
         this.record = 0;
-        this.superSpray = null;
+        this.spray = null;
     }
 
     init(data) {
@@ -38,9 +38,8 @@ export class MainMenu extends Scene {
 
     create() {
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
-        this.chorro = this.add.group();
-        this.superSpray = new SuperSpray(this, this.chorro, Math.PI / 6);
-        this.superSpray.setPosition(330, 100);
+        this.spray = new SuperSpray(this, Math.PI / 6);
+        this.spray.setOrigen(330, 100);
 
         this.add.text(740, 100, 'Nuevo Record: ' + this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
@@ -75,6 +74,6 @@ export class MainMenu extends Scene {
     }
 
     update() {
-        this.superSpray.createConcentratedSpray("particle");
+        this.spray.createParticle("particle");
     }
 }

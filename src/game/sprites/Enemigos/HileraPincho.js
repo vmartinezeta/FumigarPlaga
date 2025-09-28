@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import Pincho from "./Pincho";
 
-export default class Pinchos extends Phaser.GameObjects.Group {
+export default class HileraPincho extends Phaser.GameObjects.Group {
     constructor(scene) {
         super(scene);
         scene.physics.add.existing(this);
@@ -11,7 +11,6 @@ export default class Pinchos extends Phaser.GameObjects.Group {
             this.createPincho(scene, x, y);
         }
     }
-
 
     createPincho(scene, x, y) {
         this.add(new Pincho(scene, x, y, "pinchos"));

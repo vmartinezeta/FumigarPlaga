@@ -1,4 +1,4 @@
-import Rana from "./Rana";
+import Rana from "../Rana";
 
 // Rana camuflada (solo visible cuando se mueve)
 export default class RanaCamuflada extends Rana {

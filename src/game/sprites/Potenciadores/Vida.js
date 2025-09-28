@@ -30,7 +30,11 @@ export default class Vida extends Phaser.GameObjects.Sprite {
         this.play("vida");
     }
 
-        onEliminar() {
+    applyEffect(player) {
+        player.vida += 2;
+    }
+
+    onEliminar() {
         this.destroy()
     }
 

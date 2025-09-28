@@ -14,6 +14,10 @@ export default class Potenciador extends Phaser.GameObjects.Sprite {
         scene.physics.add.existing(this);
     }
 
+    applyEffect(objetivo) {
+        
+    }
+
     onEliminar() {
         this.destroy();
     }

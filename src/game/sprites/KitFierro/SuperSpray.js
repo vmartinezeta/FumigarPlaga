@@ -1,22 +1,39 @@
-export default class SuperSpray {
-    constructor(scene, particles, spread, damage = 20) {
-        this.scene = scene;
-        this.particles = particles;
+import Phaser from "phaser";
+
+export default class SuperSpray extends Phaser.GameObjects.Group {
+    constructor(scene, spread, damage, iterationCount) {
+        super(scene);
         this.spread = spread;
         this.damage = damage;
         this.baseAngle = 0;
         this.emitX = 0;
         this.emitY = 0;
+        this.iterationCount = iterationCount;
+        this.oldIterationCount = iterationCount;
     }
 
-    setPosition(x, y) {
+    reset() {
+        this.iterationCount = this.oldIterationCount;
+    }
+
+    vacio() {
+        return this.iterationCount === 0;
+    }
+
+    setOrigen(x, y) {
         this.emitX = x;
         this.emitY = y;
+        return this;
     }
 
-    createConcentratedSpray(imageKey, scale) {
-        // Posición de emisión (ajusta según tu sprite de player)
-        const particle = this.particles.create(
+    setAngle(angle) {
+        this.baseAngle = angle;
+        return this;
+    }
+
+    createParticle(imageKey, scale) {
+        this.iterationCount--;
+        const particle = this.create(
             this.emitX,
             this.emitY,
             imageKey

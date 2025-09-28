@@ -3,10 +3,9 @@ import Phaser from 'phaser';
 import Player from '../sprites/Player';
 import BarraEstado from '../sprites/BarraEstado';
 import { BaseGameScene } from './BaseGameScene';
-import Rana from '../sprites/Rana';
-import Pinchos from '../sprites/Pinchos';
-import Roca from '../sprites/Roca';
-import Mosquitos from '../sprites/Mosquitos';
+import HileraPincho from '../sprites/Enemigos/HileraPincho';
+import Mosquitos from '../sprites/Enemigos/Mosquitos';
+import Honda from '../sprites/KitFierro/Honda';
 
 
 export class DayScene extends BaseGameScene {
@@ -61,7 +60,7 @@ export class DayScene extends BaseGameScene {
 
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
-        this.spray = new Roca(this, this.player, this.particles);
+        this.spray = new Honda(this, this.player);
 
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
@@ -69,7 +68,7 @@ export class DayScene extends BaseGameScene {
 
         this.detectarColision();
 
-        this.pinchos = new Pinchos(this);
+        this.pinchos = new HileraPincho(this);
 
         EventBus.emit('current-scene-ready', this);
     }

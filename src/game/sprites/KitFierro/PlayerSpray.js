@@ -1,8 +1,8 @@
 import SuperSpray from "./SuperSpray";
 
-export default class PlayerAndSpray extends SuperSpray{
-    constructor(scene, player, particles, spread, damage) {
-        super(scene, particles, spread, damage);
+export default class PlayerSpray extends SuperSpray{
+    constructor(scene, player, spread, damage, iterationCount=5) {
+        super(scene, spread, damage, iterationCount);
         this.player = player;
     }
 
