@@ -61,31 +61,31 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     mover(vector, modulo) {
-        this.body.setVelocity(vector.x*modulo, vector.y*modulo);
+        this.body.setVelocity(vector.x * modulo, vector.y * modulo);
     }
 
     top() {
         this.play("frontal");
-        const {vector} = this.control.fromInt(1);
-        this.mover(vector, vector.y*this.body.velocity.y+this.rapidez);
+        const { vector } = this.control.fromInt(1);
+        this.mover(vector, vector.y * this.body.velocity.y + this.rapidez);
     }
 
     right() {
         this.play("der");
-        const {vector}= this.control.fromInt(2);
-        this.mover(vector, vector.x*this.body.velocity.x+this.rapidez);
+        const { vector } = this.control.fromInt(2);
+        this.mover(vector, vector.x * this.body.velocity.x + this.rapidez);
     }
 
     bottom() {
         this.play("frontal");
-        const {vector} = this.control.fromInt(3);
-        this.mover(vector, vector.y*this.body.velocity.y+this.rapidez);
+        const { vector } = this.control.fromInt(3);
+        this.mover(vector, vector.y * this.body.velocity.y + this.rapidez);
     }
 
     left() {
         this.play("izq");
-        const {vector} = this.control.fromInt(4);
-        this.mover(vector, vector.x*this.body.velocity.x+this.rapidez);
+        const { vector } = this.control.fromInt(4);
+        this.mover(vector, vector.x * this.body.velocity.x + this.rapidez);
     }
 
     setYmax(y) {
@@ -94,7 +94,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     saltar() {
         this.play("frontal");
-        const {vector} = this.control.fromInt(1);
+        const { vector } = this.control.fromInt(1);
         this.mover(vector, 330);
     }
 
@@ -103,5 +103,23 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.y = this.ymax;
         this.body.setVelocityY(0);
     }
+
+    createFuriaEffect() {
+        const particles = this.scene.add.particles(this.x, this.y, 'particle', {
+            speed: 100,
+            scale: { start: 0.3, end: 0 },
+            alpha: { start: 0.8, end: 0 },
+            lifespan: 1000,
+            quantity: 2,
+            emitting: true            
+        });
+
+        particles.startFollow(this);
+        this.scene.time.delayedCall(10000, () => {
+            particles.destroy();
+            this.rapidez = 30;
+        });
+    }
+
 
 }

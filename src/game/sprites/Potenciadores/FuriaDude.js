@@ -32,13 +32,7 @@ export default class FuriaDude extends Phaser.GameObjects.Sprite {
 
     applyEffect(player) {
         player.rapidez = 50;
-        player.setTint(0xff0000);
-        this.scene.time.delayedCall(10000, this.reset, [player], this);
-    }
-
-    reset(player){
-        player.clearTint();
-        player.rapidez = 30;
+        player.createFuriaEffect();
     }
 
     onEliminar() {
