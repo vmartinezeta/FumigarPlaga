@@ -222,7 +222,7 @@ export class BaseGameScene extends Phaser.Scene {
             this.emitter.startFollow(this.player);
             this.time.delayedCall(10000, () => {
                 this.emitter.destroy();
-                this.player.rapidez = 30;
+                this.player.reset();
             });
         }
 
@@ -302,22 +302,22 @@ export class BaseGameScene extends Phaser.Scene {
 
     morirPlayer(player, pincho) {
         pincho.destroy();
-        player.vida--;
+        player.takeDamage();
         this.barraEstado.actualizar(player.vida, this.spray.iterationCount);
-        if (player.vida === 0) {
+        if (player.debeMorir()) {
             this.scene.start('GameOver');
         }
     }
 
     morir(player, rana) {
-        player.vida--;
+        player.takeDamage();
         if (rana instanceof Rana) {
             this.barraEstado.setPuntuacion(rana.vidaMax);
             rana.morir();
         }
 
         this.barraEstado.actualizar(player.vida, this.spray.iterationCount);
-        if (player.vida === 0) {
+        if (player.debeMorir()) {
             this.scene.start('GameOver');
         }
     }

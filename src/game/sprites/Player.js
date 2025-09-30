@@ -11,6 +11,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.vida = vida || 10;
         this.ymax = 0;
         this.rapidez = 30;
+        this.tieneFuria = false;
         this.control = new ControlDireccional([
             new Direccional(1, 270, new Punto(0, -1)),
             new Direccional(2, 0, new Punto(1, 0)),
@@ -104,9 +105,22 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setVelocityY(0);
     }
 
-    activarFuria(){
+    activarFuria() {
+        this.tieneFuria = true;
         this.rapidez = 50;
     }
 
+    takeDamage() {
+        if (this.tieneFuria) return;
+        this.vida--;
+    }
 
+    reset() {
+        this.rapidez = 30;
+        this.tieneFuria = false;
+    }
+
+    debeMorir() {
+        return this.vida <= 0;
+    }
 }
