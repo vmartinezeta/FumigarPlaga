@@ -13,7 +13,7 @@ export default class HileraPincho extends Phaser.GameObjects.Group {
     }
 
     createPincho(scene, x, y) {
-        this.add(new Pincho(scene, x, y, "pinchos"));
+        this.add( new Pincho(scene, x, y, "pinchos"))
         this.add(new Pincho(scene, x + 10, y, "pinchos"));
         this.add(new Pincho(scene, x - 20, y, "pinchos"));
         this.add(new Pincho(scene, x - 10, y, "pinchos"));

@@ -17,12 +17,5 @@ export default class Mosquitos extends Phaser.GameObjects.Group {
         }
     }
 
-    update() {
-        for(const mosquito of this.getChildren()) {
-            if (mosquito.y < this.scene.ymax-100 ) {
-                mosquito.y = this.scene.ymax-100;
-                mosquito.body.velocity.y*=-1;
-            }
-        }
-    }
+    update() {}
 }

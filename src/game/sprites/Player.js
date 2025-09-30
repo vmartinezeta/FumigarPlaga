@@ -92,6 +92,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.ymax = y;
     }
 
+    saltar() {
+        this.play("frontal");
+        const {vector} = this.control.fromInt(1);
+        this.mover(vector, 330);
+    }
+
     update() {
         if (this.y > this.ymax) return;
         this.y = this.ymax;

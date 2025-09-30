@@ -7,9 +7,10 @@ export default class Pincho extends Phaser.GameObjects.Sprite {
         this.imageKey = imageKey;
         this.setScale(1/3);
         this.setOrigin(1 / 2);
-        this.setDepth(2);
+        this.setDepth(1);
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.body.setImmovable(true);
         this.body.setSize(60,60);
 
         scene.tweens.add({

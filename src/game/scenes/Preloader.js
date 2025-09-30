@@ -59,27 +59,28 @@ export class Preloader extends Scene {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
-        this.load.spritesheet("rana", "rana.png", { frameWidth: 60, frameHeight: 64 });
-        this.load.spritesheet("rana2", "rana2.png", { frameWidth: 70, frameHeight: 64 });
-        this.load.spritesheet("player", "dude.png", { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet("furia", "furia.png", { frameWidth: 40, frameHeight: 46 });
         this.load.image('bomb', 'bomb.png');
         this.load.image('tecla-1', 'tecla-1.png');        
         this.load.image('tecla-2', 'tecla-2.png');
         this.load.image('tecla-3', 'tecla-3.png');
         this.load.image('particle', 'particle.png');
-        this.load.image('sun-ray', 'sun-ray.png');
+        this.load.image('fuego', 'fuego.png');
+        this.load.image('humo', 'humo.png');
+        this.load.image('platform', 'platform.png');
         this.load.image('logo', 'logo.png');
         this.load.image('bg', 'bg2.png');
         this.load.image('nube', 'nube.png');
         this.load.image('nube-2', 'nube-2.png');
+        this.load.image("pinchos", "pinchos.png");
         this.load.image('bosque', 'bosque.png');
         this.load.image('star', 'star.png');
-        this.load.image('platform', 'platform.png');
+        this.load.spritesheet("rana", "rana.png", { frameWidth: 60, frameHeight: 64 });
+        this.load.spritesheet("rana2", "rana2.png", { frameWidth: 70, frameHeight: 64 });
+        this.load.spritesheet("player", "dude.png", { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet("furia", "furia.png", { frameWidth: 40, frameHeight: 46 });        
         this.load.spritesheet('tanque', 'cisterna.png', { frameWidth: 40, frameHeight: 51 });
         this.load.spritesheet('vida', 'vida.png', { frameWidth: 32, frameHeight: 27 });
         this.load.spritesheet('mosquito', 'mosquito.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.image("pinchos", "pinchos.png");
         this.load.audio("bosque-tenebroso", "bosque-tenebroso.wav");
         this.load.audio("efecto-1", "efecto-1.wav");
         this.load.audio("efecto-2", "efecto-2.wav");

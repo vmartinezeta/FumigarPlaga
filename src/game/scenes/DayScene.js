@@ -6,6 +6,8 @@ import { BaseGameScene } from './BaseGameScene';
 import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
 import Honda from '../sprites/KitFierro/Honda';
+import LanzaLlamas from '../sprites/KitFierro/LanzaLlamas';
+import LanzaHumo from '../sprites/KitFierro/LanzaHumo';
 
 
 export class DayScene extends BaseGameScene {
@@ -16,7 +18,7 @@ export class DayScene extends BaseGameScene {
 
     create() {
         super.create();
-        this.bosque = this.add.tileSprite(0, 256, this.reguladorWidth * this.game.config.width, 200, "bosque");
+        this.bosque = this.add.tileSprite(0, 280, this.reguladorWidth * this.game.config.width, 200, "bosque");
         this.bosque.setOrigin(1 / 2);
         this.bosque.setScale(.6)
         this.bosque.setScrollFactor(0);
@@ -60,15 +62,15 @@ export class DayScene extends BaseGameScene {
 
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
-        this.spray = new Honda(this, this.player);
+        this.spray = new LanzaLlamas(this, this.player);
 
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
         this.mosquitos = new Mosquitos(this);
-
-        this.detectarColision();
-
+    
         this.pinchos = new HileraPincho(this);
+
+        this.activarColisiones();
 
         EventBus.emit('current-scene-ready', this);
     }

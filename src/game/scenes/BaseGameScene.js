@@ -1,8 +1,6 @@
 import Phaser from "phaser";
 import DockCentro from "../sprites/DockCentro";
 import SueloFrontera from "../sprites/SueloFrontera";
-import BosqueFrontera from "../sprites/BosqueFrontera";
-import Player from "../sprites/Player";
 import PlagaGroup from "../sprites/Enemigos/PlagaGroup";
 import Rana from "../sprites/Enemigos/Rana";
 import Honda from "../sprites/KitFierro/Honda";
@@ -12,6 +10,8 @@ import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
 import Vida from "../sprites/Potenciadores/Vida";
 import TanqueConAgua from "../sprites/Potenciadores/TanqueConAgua";
 import FuriaDude from "../sprites/Potenciadores/FuriaDude";
+import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
+import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -28,7 +28,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.ymax = 300;
         this.width = 0;
         this.height = 0;
-        this.bosqueFrontera = null;
         this.sueloFrontera = null;
         this.pinchos = null;
     }
@@ -97,12 +96,13 @@ export class BaseGameScene extends Phaser.Scene {
         this.bg.setOrigin(0);
         this.bg.setScrollFactor(0);
         this.ymax = 300;
-        this.suelo = this.add.tileSprite(0, this.ymax, this.width, this.ymax, "platform");
-        this.suelo.setOrigin(0);
-        this.suelo.setScrollFactor(0);
+        this.add.tileSprite(0, this.ymax, this.width, this.ymax, "platform")
+            .setOrigin(0)
+            .setScrollFactor(0);
 
-        this.cameras.main.setBounds(0, 0, this.width, this.height);
-        this.physics.world.setBounds(0, 0, this.width, this.height);
+
+        this.cameras.main.setBounds(0, 0, this.width, this.ymax);
+        this.physics.world.setBounds(0, this.ymax, this.width, this.ymax);
         this.input.mouse.disableContextMenu();
 
         this.keyboard = this.input.keyboard.addKeys({
@@ -116,15 +116,15 @@ export class BaseGameScene extends Phaser.Scene {
             LEFT: Phaser.Input.Keyboard.KeyCodes.LEFT,
             UNO: Phaser.Input.Keyboard.KeyCodes.ONE,
             DOS: Phaser.Input.Keyboard.KeyCodes.TWO,
-            TRES: Phaser.Input.Keyboard.KeyCodes.THREE
+            TRES: Phaser.Input.Keyboard.KeyCodes.THREE,
+            _BARRA: Phaser.Input.Keyboard.KeyCodes.SPACE,
         });
 
         this.plagaGroup = new PlagaGroup(this);
 
         this.potenciadorGroup = new PotenciadorGroup(this);
 
-        this.sueloFrontera = new SueloFrontera(this);
-        this.bosqueFrontera = new BosqueFrontera(this);
+        this.sueloFrontera = new SueloFrontera(this, 0, this.ymax+40);
 
         this.time.addEvent({
             delay: 6000,
@@ -144,9 +144,9 @@ export class BaseGameScene extends Phaser.Scene {
         });
     }
 
-    detectarColision() {
+    activarColisiones() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
-        this.physics.add.overlap(this.player, this.pinchos, this.morirPlayer, null, this);
+        this.physics.add.collider(this.player, this.pinchos, this.morirPlayer, null, this);
         this.physics.add.overlap(this.spray, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.sueloFrontera, this.rotar, null, this);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
@@ -257,6 +257,10 @@ export class BaseGameScene extends Phaser.Scene {
         const [particula, rana] = this.fijarObjetivo(particle, frog);
         particula.destroy();
         rana.takeDamage(this.spray.damage);
+        if (rana.debeMorir()) {
+            this.barraEstado.setPuntuacion(rana.vidaMax);
+            rana.morir();
+        }
 
         rana.setTint(0xff0000);
         this.time.delayedCall(100, () => rana.clearTint());
@@ -278,19 +282,10 @@ export class BaseGameScene extends Phaser.Scene {
         this.time.delayedCall(700, () => splash.destroy());
     }
 
-    detectarObstaculo(izq, der) {
-        let player = izq;
-        let obstaculo = der;
-        if (der instanceof Player) {
-            der = player;
-            obstaculo = izq;
-        }
-        return [player, obstaculo];
-    }
-
-    morirPlayer(player) {
+    morirPlayer(player, pincho) {
+        pincho.destroy();
         player.vida--;
-        this.barraEstado.actualizar(player.vida, this.tanque.capacidad);
+        this.barraEstado.actualizar(player.vida, this.spray.iterationCount);
         if (player.vida === 0) {
             this.scene.start('GameOver');
         }
@@ -310,9 +305,18 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     reset() {
+        this.width = 0;
+        this.height = 0;
+        this.ymax = 300;
         this.gameOver = false;
-        this.plagaGroup = null;
         this.player = null;
+        this.keyboard = null;
+        this.barraEstado = null;
+        this.potenciadorGroup = null;
+        this.spray = null;
+        this.plagaGroup = null;
+        this.pinchos = null;
+        this.mosquitos = null;
         this.sueloFrontera = null;
     }
 
@@ -356,6 +360,11 @@ export class BaseGameScene extends Phaser.Scene {
             this.player.left();
         }
 
+        if (this.keyboard._BARRA.isDown) {
+            this.player.setTint(0xff0000)
+            this.player.saltar();
+        }
+
         if (this.keyboard.UNO.isDown) {
             this.spray = new Honda(this, this.player);
             this.barraEstado.setBoquilla(1);
@@ -368,14 +377,14 @@ export class BaseGameScene extends Phaser.Scene {
             this.spray = new BujillaAvanico(this, this.player);
             this.barraEstado.setBoquilla(3);
             this.dock.updateDock(3);
-        }
+        } 
 
         if (this.spray instanceof Honda && !this.spray.estaFuera && this.keyboard.S.isDown) {
             this.spray.lanzar();
             this.barraEstado.actualizar(this.player.vida, this.spray.iterationCount);
         } else if (this.spray instanceof Honda && this.spray.estaFuera && this.keyboard.S.isUp) {
             this.spray.soltar();
-        } else if ([BujillaChorrito, BujillaAvanico].some(base => this.spray instanceof base) && this.keyboard.S.isDown) {
+        } else if ([BujillaChorrito, BujillaAvanico, LanzaLlamas, LanzaHumo].some(base => this.spray instanceof base) && this.keyboard.S.isDown) {
             this.spray.abrir();
         }
 

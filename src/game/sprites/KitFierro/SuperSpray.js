@@ -41,10 +41,11 @@ export default class SuperSpray extends Phaser.GameObjects.Group {
         particle.setAlpha(1);
         particle.setScale(scale || 0.4);
         particle.setDepth(5);
+        
 
         // const spread = Math.PI / 6; // 30° de dispersión
         const angle = this.baseAngle + Phaser.Math.FloatBetween(-this.spread, this.spread);
-        const speed = Phaser.Math.Between(300, 400);
+        const speed = Phaser.Math.Between(400, 500);
 
         this.scene.physics.add.existing(particle);
         particle.body.setVelocity(
@@ -56,7 +57,7 @@ export default class SuperSpray extends Phaser.GameObjects.Group {
         particle.body.setGravityY(200);
         particle.body.setBounce(0.2, 0.2);
 
-        this.scene.time.delayedCall(1000, this.autoDestruccion, [particle], this);
+        this.scene.time.delayedCall(1200, this.autoDestruccion, [particle], this);
         return particle;
     }
 

@@ -22,7 +22,7 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
             align: 'center'
         }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
 
-        this.rotuloBoquilla = this.scene.add.text(x + 270, y, "Boquilla: " + this.boquilla, {
+        this.rotuloFierro = this.scene.add.text(x + 270, y, "Fierro: " + this.boquilla, {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
@@ -47,7 +47,7 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
     }
 
     setBoquilla(boquilla) {
-        this.rotuloBoquilla.setText("Boquilla: " + boquilla);
+        this.rotuloFierro.setText("Fierro: " + boquilla);
     }
 
     actualizar(vida, capacidad) {

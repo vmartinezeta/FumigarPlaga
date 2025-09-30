@@ -5,9 +5,9 @@ export default class Mosquito extends Phaser.GameObjects.Sprite {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;        
-        this.setScale(1/4);
+        this.setScale(1/6);
         this.setOrigin(1 / 2);
-        this.setDepth(5);
+        this.setDepth(10);
         this.animate(scene);
         this.play('volar');
         scene.add.existing(this);
@@ -17,6 +17,11 @@ export default class Mosquito extends Phaser.GameObjects.Sprite {
         this.body.setAllowGravity(false);
         this.body.setImmovable(true);
         this.body.setVelocity(40, 40);
+    }
+
+    bajar() {
+        const vy = this.body.velocity.y;
+        this.body.setVelocity(-1*vy);
     }
 
     animate(scene) {

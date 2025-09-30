@@ -38,7 +38,8 @@ export class MainMenu extends Scene {
 
     create() {
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
-        this.spray = new SuperSpray(this, Math.PI / 6);
+        this.spray = new SuperSpray(this, Math.PI / 10);
+        this.spray.setAngle(Math.PI/8);
         this.spray.setOrigen(330, 100);
 
         this.add.text(740, 100, 'Nuevo Record: ' + this.record, {
@@ -74,6 +75,6 @@ export class MainMenu extends Scene {
     }
 
     update() {
-        this.spray.createParticle("particle");
+        this.spray.createParticle("particle",.8);
     }
 }

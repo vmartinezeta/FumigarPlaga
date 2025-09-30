@@ -18,11 +18,11 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
             const y = Phaser.Math.Between(scene.ymax + 20, this.scene.width - 20);
             const hembra = Math.floor(Math.random() * 2);
             const type = Math.floor(Math.random() * 3);
-            if (type === 0) {
-                this.add(new Rana(scene, x, y, "rana", Boolean(hembra), true));
-            } else if (type === 1) {
-                this.add(new RanaSaltarina(scene, x, y, "rana", Boolean(hembra), true));
-            }
+            this.add(new Rana(scene, x, y, "rana", Boolean(hembra), true));
+            // if (type === 0) {
+            // } else if (type === 1) {
+                // this.add(new RanaSaltarina(scene, x, y, "rana", Boolean(hembra), true));
+            // }
         }
     }
 

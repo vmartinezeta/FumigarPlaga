@@ -30,11 +30,11 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         scene.physics.add.existing(this);
         this.velocidad = new Punto(-1 * Phaser.Math.Between(20, 35), Phaser.Math.Between(20, 35));
 
-        this.body.setVelocity(this.velocidad.x,0);
+        this.body.setVelocity(this.velocidad.x, this.velocidad.y);
         this.body.setBounce(1);
         this.body.setCollideWorldBounds(true);
         this.body.setAllowGravity(false);
-        this.body.setSize(50, 50);
+        this.body.setSize(40, 40);
         if (!this.existe("run")) {
             this.animate({
                 key: 'run',
@@ -109,6 +109,10 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.play("run");
     }
 
+    debeMorir() {
+        return this.vida <=0;
+    }
+    
     morir() {
         this.scene.time.removeEvent(this.onComplete);
 
@@ -122,12 +126,8 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     takeDamage(damage) {
-        this.vida -= damage;
+        this.vida -= damage;        
         this.updateHealthBar();
-
-        if (this.vida <= 0) {
-            this.morir();
-        }
     }
 
     updateHealthBar() {
