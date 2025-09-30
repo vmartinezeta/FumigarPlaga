@@ -30,6 +30,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.height = 0;
         this.sueloFrontera = null;
         this.pinchos = null;
+        this.emitter = null;
     }
 
     init() {
@@ -134,6 +135,15 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
         this.dock = new DockCentro(this);
+
+        this.emitter = this.add.particles(0,0, 'particle', {
+            speed: 100,
+            scale: { start: 0.3, end: 0 },
+            alpha: { start: 0.8, end: 0 },
+            lifespan: 1000,
+            quantity: 2,
+            emitting: false
+        });
     }
 
     changeScene() {
@@ -204,8 +214,16 @@ export class BaseGameScene extends Phaser.Scene {
     aplicarPotenciador(player, potenciador) {
         if (potenciador instanceof TanqueConAgua) {
             potenciador.applyEffect(this.spray);
-        } else if (potenciador instanceof Vida || potenciador instanceof FuriaDude) {
+        } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
+        } else if(potenciador instanceof FuriaDude) {
+            player.activarFuria();
+            this.emitter.start();
+            this.emitter.startFollow(this.player);
+            this.time.delayedCall(10000, () => {
+                this.emitter.destroy();
+                this.player.rapidez = 30;
+            });
         }
 
         this.tweens.add({

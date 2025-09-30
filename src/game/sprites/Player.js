@@ -104,21 +104,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setVelocityY(0);
     }
 
-    createFuriaEffect() {
-        const particles = this.scene.add.particles(this.x, this.y, 'particle', {
-            speed: 100,
-            scale: { start: 0.3, end: 0 },
-            alpha: { start: 0.8, end: 0 },
-            lifespan: 1000,
-            quantity: 2,
-            emitting: true            
-        });
-
-        particles.startFollow(this);
-        this.scene.time.delayedCall(10000, () => {
-            particles.destroy();
-            this.rapidez = 30;
-        });
+    activarFuria(){
+        this.rapidez = 50;
     }
 
 
