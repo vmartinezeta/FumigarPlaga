@@ -2,6 +2,7 @@ import Phaser from "phaser"
 import TanqueConAgua from "./TanqueConAgua"
 import Vida from "./Vida"
 import NotificacionTextual from "../NotificacionTextual";
+import FuriaDude from "./FuriaDude";
 
 export default class PotenciadorGroup extends Phaser.GameObjects.Group {
     constructor(scene) {
@@ -69,6 +70,18 @@ export default class PotenciadorGroup extends Phaser.GameObjects.Group {
             }
             anterior = actual;
         }
+    }
+
+    update() {
+        this.getChildren().forEach(potenciador => {
+            if (potenciador && potenciador.updateSize) {
+                if (potenciador instanceof TanqueConAgua) {
+                    potenciador.updateSize(300, 600);
+                } else {
+                    potenciador.updateSize(300, 600);
+                }
+            }
+        })
     }
 
 }

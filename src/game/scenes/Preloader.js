@@ -75,7 +75,7 @@ export class Preloader extends Scene {
         this.load.image('bosque', 'bosque.png');
         this.load.image('star', 'star.png');
         this.load.spritesheet("rana", "rana.png", { frameWidth: 60, frameHeight: 64 });
-        this.load.spritesheet("rana2", "rana2.png", { frameWidth: 70, frameHeight: 64 });
+        this.load.spritesheet("rana2", "rana2.png", { frameWidth: 69.3, frameHeight: 64 });
         this.load.spritesheet("player", "dude.png", { frameWidth: 32, frameHeight: 48 });
         this.load.spritesheet("furia", "furia.png", { frameWidth: 40, frameHeight: 46 });
         this.load.spritesheet('tanque', 'cisterna.png', { frameWidth: 40, frameHeight: 51 });

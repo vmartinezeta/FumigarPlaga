@@ -20,7 +20,8 @@ export class DayScene extends BaseGameScene {
         super.create();
         this.bosque = this.add.tileSprite(0, 280, this.reguladorWidth * this.game.config.width, 200, "bosque");
         this.bosque.setOrigin(1 / 2);
-        this.bosque.setScale(.6)
+        this.bosque.setScale(.6);
+        this.bosque.setDepth(0);
         this.bosque.setScrollFactor(0);
 
         this.cloudTextures = ["nube", "nube-2"];

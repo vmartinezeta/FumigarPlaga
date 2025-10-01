@@ -34,7 +34,6 @@ export class NightScene extends BaseGameScene {
 
     createStars() {}
 
-
     setupLightingSystem() {
         // Sistema de visibilidad limitada
         this.darknessOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000)
@@ -51,11 +50,11 @@ export class NightScene extends BaseGameScene {
         this.lanterns = this.physics.add.staticGroup();
         
         // Potenciador de visión temporal
-        this.nightVisionPowerup = this.physics.add.sprite(300, 300, 'night-vision')
-            .setInteractive()
-            .on('collected', () => {
-                this.activateNightVision();
-            });
+        // this.nightVisionPowerup = this.physics.add.sprite(300, 300, 'night-vision')
+        //     .setInteractive()
+        //     .on('collected', () => {
+        //         this.activateNightVision();
+        //     });
     }
 
     update() {

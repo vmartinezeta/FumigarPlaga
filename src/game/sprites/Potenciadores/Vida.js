@@ -18,15 +18,28 @@ export default class Vida extends Phaser.GameObjects.Sprite {
         this.body.setVelocity(Phaser.Math.Between(30, 40), Phaser.Math.Between(30, 40));
         this.body.setCollideWorldBounds(true);
         this.body.setBounce(1);
-        scene.tweens.add({
-            targets: this,
-            scaleX: { from: 0.5, to: 1.2 },
-            scaleY: { from: 0.5, to: 1.2 },
-            duration: 500,
-            repeat: -1,
-            yoyo: true,
-            ease: 'Back.out'
+        
+        this.timeline = scene.add.timeline();
+        this.timeline.add({
+            tween: {
+                targets: this,
+                scaleX: { from: 0.5, to: 1.2 },
+                scaleY: { from: 0.5, to: 1.2 },
+                duration: 500,
+                repeat: 2,
+                yoyo: true,
+                ease: 'Back.out'
+            }
         });
+
+        //     targets: this,
+        //     scaleX: { from: 0.5, to: 1.2 },
+        //     scaleY: { from: 0.5, to: 1.2 },
+        //     duration: 500,
+        //     repeat: -1,
+        //     yoyo: true,
+        //     ease: 'Back.out'
+        // });
         this.play("vida");
     }
 
@@ -51,5 +64,30 @@ export default class Vida extends Phaser.GameObjects.Sprite {
                 repeat: -1
             });
         }
+    }
+
+    updateSize(skyLevel, groundLevel) {
+        const relativeHeight = Phaser.Math.Clamp((this.y - skyLevel) / (groundLevel - skyLevel), 0, 1);
+        const minScale = 0.3;
+        const maxScale = 1;
+        const newScale = minScale + (maxScale - minScale) * relativeHeight;
+        this.setScale(newScale);
+
+        if (this.timeline.complete) {
+            this.timeline.clear();
+            this.timeline.add({
+                tween: {
+                    targets: this,
+                    scaleX: { from: minScale, to: newScale+0.2 },
+                    scaleY: { from: minScale, to: newScale+0.2 },
+                    duration: 500,
+                    repeat: 2,
+                    yoyo: true,
+                    ease: 'Back.out'
+                }
+            });
+
+        }
+
     }
 }

@@ -307,7 +307,9 @@ export class BaseGameScene extends Phaser.Scene {
     morirPlayer(player, pincho) {
         pincho.destroy();
         player.takeDamage();
-        this.scream.play();
+        if (!player.tieneFuria) {
+            this.scream.play();
+        }
         this.barraEstado.actualizar(player.vida, this.spray.iterationCount);
         if (player.debeMorir()) {
             this.scene.start('GameOver');
@@ -368,6 +370,7 @@ export class BaseGameScene extends Phaser.Scene {
     update() {
         this.player.update();
         this.plagaGroup.update();
+        this.potenciadorGroup.update();
 
         if (this.plagaGroup.total > 5) {
             this.createTanque();
