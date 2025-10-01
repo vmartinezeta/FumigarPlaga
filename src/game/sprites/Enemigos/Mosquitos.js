@@ -2,9 +2,11 @@ import Phaser from "phaser";
 import Mosquito from "./Mosquito";
 
 export default class Mosquitos extends Phaser.GameObjects.Group {
-    constructor(scene){
+    constructor(scene, x, y){
         super(scene);
         this.scene = scene;
+        this.x = x;
+        this.y = y;
         scene.physics.add.existing(this);
         this.agregar(scene, 20);
     }
@@ -17,5 +19,9 @@ export default class Mosquitos extends Phaser.GameObjects.Group {
         }
     }
 
-    update() {}
+    update() {
+        this.getChildren().forEach(mosquito =>{
+            mosquito.updateSize(this.y, this.scene.game.config.height);
+        });
+    }
 }

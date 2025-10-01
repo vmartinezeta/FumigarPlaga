@@ -85,6 +85,7 @@ export class Preloader extends Scene {
         this.load.audio("efecto-1", "efecto-1.wav");
         this.load.audio("efecto-2", "efecto-2.wav");
         this.load.audio("efecto-3", "efecto-3.wav");
+        this.load.audio("scream", "scream.mp3");
     }
 
     create() {

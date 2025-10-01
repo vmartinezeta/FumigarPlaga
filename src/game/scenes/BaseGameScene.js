@@ -121,7 +121,7 @@ export class BaseGameScene extends Phaser.Scene {
             _BARRA: Phaser.Input.Keyboard.KeyCodes.SPACE,
         });
 
-        this.plagaGroup = new PlagaGroup(this);
+        this.plagaGroup = new PlagaGroup(this, 0, this.ymax);
 
         this.potenciadorGroup = new PotenciadorGroup(this);
 
@@ -143,6 +143,10 @@ export class BaseGameScene extends Phaser.Scene {
             lifespan: 1000,
             quantity: 2,
             emitting: false
+        });
+
+        this.scream = this.sound.add('scream', {
+            volume: 0.4
         });
     }
 
@@ -303,6 +307,7 @@ export class BaseGameScene extends Phaser.Scene {
     morirPlayer(player, pincho) {
         pincho.destroy();
         player.takeDamage();
+        this.scream.play();
         this.barraEstado.actualizar(player.vida, this.spray.iterationCount);
         if (player.debeMorir()) {
             this.scene.start('GameOver');

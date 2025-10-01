@@ -110,9 +110,9 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     debeMorir() {
-        return this.vida <=0;
+        return this.vida <= 0;
     }
-    
+
     morir() {
         this.scene.time.removeEvent(this.onComplete);
 
@@ -126,16 +126,16 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     takeDamage(damage) {
-        this.vida -= damage;        
+        this.vida -= damage;
         this.updateHealthBar();
     }
 
-    updateHealthBar() {
+    updateHealthBar(x, y, width, height) {
         this.healthBar.clear();
         // Fondo barra roja
         this.healthBar.fillStyle(0xff0000, 0.5);
-        this.healthBar.fillRect(this.x - 20, this.y - 40, 40, 5);
-
+        this.healthBar.fillRect(this.x - x, this.y - y, width, height);
+        
         const factor = this.vida / this.vidaMax;
         if (!this.furia && factor < 0.5) {
             this.furia = true;
@@ -145,9 +145,10 @@ export default class Rana extends Phaser.GameObjects.Sprite {
             this.body.setVelocity(this.velocidad.x, this.velocidad.y);
         }
         // Salud actual verde
-        const healthWidth = factor * 40;
+        const healthWidth = factor * width;
         this.healthBar.fillStyle(0x00ff00, 0.8);
-        this.healthBar.fillRect(this.x - 20, this.y - 40, healthWidth, 5);
+        this.healthBar.fillRect(this.x - x, this.y - y, healthWidth, height);
+        this.healthBar.setDepth(5);
     }
 
     createImpactEffect(x, y) {
@@ -165,4 +166,12 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.time.delayedCall(100, () => frog.clearTint());
     }
 
+    updateSize(skyLevel, groundLevel) {
+        const relativeHeight = Phaser.Math.Clamp((this.y - skyLevel) / (groundLevel - skyLevel), 0, 1);
+        const minScale = 0.3;
+        const maxScale = 1;
+        const newScale = minScale + (maxScale - minScale) * relativeHeight;
+        this.setScale(newScale);
+        this.updateHealthBar(20*newScale, 40*newScale, 40*newScale, 5*newScale);
+    }
 }

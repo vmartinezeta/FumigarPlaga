@@ -5,7 +5,7 @@ export default class Mosquito extends Phaser.GameObjects.Sprite {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;        
-        this.setScale(1/6);
+        // this.setScale(1/6);
         this.setOrigin(1 / 2);
         this.setDepth(10);
         this.animate(scene);
@@ -35,4 +35,12 @@ export default class Mosquito extends Phaser.GameObjects.Sprite {
         }
     }
 
+
+   updateSize(skyLevel, groundLevel) {
+         const relativeHeight = Phaser.Math.Clamp((this.y - skyLevel) / (groundLevel - skyLevel), 0, 1);
+         const minScale = 0.1;
+         const maxScale = .25;
+         const newScale = minScale + (maxScale - minScale) * relativeHeight;
+         this.setScale(newScale);
+     }
 }

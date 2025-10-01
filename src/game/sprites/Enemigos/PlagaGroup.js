@@ -3,10 +3,12 @@ import Rana from "./Rana";
 import RanaSaltarina from "./RanaSaltarina";
 
 export default class PlagaGroup extends Phaser.GameObjects.Group {
-    constructor(scene) {
+    constructor(scene, x, y) {
         super(scene);
         this.scene = scene;
         this.total = 0;
+        this.x = x;
+        this.y = y;
         this.agregar(scene, 20);
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -37,7 +39,7 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
 
     update() {
         this.getChildren().forEach(rana => {
-            rana.updateHealthBar();
+            rana.updateSize(this.y, this.scene.game.config.height);
         });
     }
 

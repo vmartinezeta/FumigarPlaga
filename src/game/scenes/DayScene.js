@@ -66,7 +66,7 @@ export class DayScene extends BaseGameScene {
 
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
-        this.mosquitos = new Mosquitos(this);
+        this.mosquitos = new Mosquitos(this, 0, this.ymax);
     
         this.pinchos = new HileraPincho(this);
 
