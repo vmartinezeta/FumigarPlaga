@@ -68,7 +68,7 @@ export default class Vida extends Phaser.GameObjects.Sprite {
 
     updateSize(skyLevel, groundLevel) {
         const relativeHeight = Phaser.Math.Clamp((this.y - skyLevel) / (groundLevel - skyLevel), 0, 1);
-        const minScale = 0.3;
+        const minScale = 0.5;
         const maxScale = 1;
         const newScale = minScale + (maxScale - minScale) * relativeHeight;
         this.setScale(newScale);
