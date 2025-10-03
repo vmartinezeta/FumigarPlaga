@@ -1,11 +1,13 @@
 export default class Weapon extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, type) {
-        super(scene, x, y, texture);
+    constructor(scene, x, y, imageKey, type) {
+        super(scene, x, y, imageKey);
+        this.scene = scene;
+        this.imageKey = imageKey;
         this.type = type;
         this.fireRate = 500; // ms entre disparos
         this.damage = 10;
         this.collider = null;
-
+        this.setVisible(false);
         scene.add.existing(this);
         scene.physics.add.existing(this);
 

@@ -152,7 +152,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
 
-        this.currentWeapon = new LanzaLlamas(this, 100, 100);
+        this.currentWeapon = new LanzaLlamas(this,0,0);
     }
 
     changeScene() {
@@ -413,7 +413,7 @@ export class BaseGameScene extends Phaser.Scene {
         if (this.currentWeapon instanceof Honda && this.keyboard.S.isDown) {
             this.player.disparar();
             this.barraEstado.actualizar(this.player.vida, this.spray.iterationCount);
-        } else if (this.currentWeapon instanceof LanzaLlamas  && this.keyboard.S.isUp) {
+        } else if (this.currentWeapon instanceof LanzaLlamas  && this.keyboard.S.isDown) {
             this.player.disparar();
         }
 

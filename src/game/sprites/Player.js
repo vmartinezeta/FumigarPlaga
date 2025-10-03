@@ -102,9 +102,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        if (this.y > this.ymax) return;
+        if (this.y > this.ymax)return;
         this.y = this.ymax;
         this.body.setVelocityY(0);
+
     }
 
     activarFuria() {
@@ -129,7 +130,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     disparar() {
         if (!this.scene.currentWeapon) return;
-        // this.add.circle(100, 100, 100, 0xff0000)
         const weapon = this.scene.currentWeapon;
 
         switch (weapon.type) {
@@ -142,11 +142,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
                 break;
 
             case 'lanzallamas':
-                weapon.spray(this.direction, this.x, this.y);
+                weapon.spray(this.control.right()?"right":"left", this.x, this.y);
                 break;
 
             case 'lanzaHumo':
-                weapon.launchSmoke(this.x, this.y, this.direction);
+                weapon.launchSmoke(this.x, this.y, this.control.right()?"right":"left");
                 break;
         }
 
