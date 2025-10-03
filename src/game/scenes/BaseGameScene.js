@@ -10,9 +10,10 @@ import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
 import Vida from "../sprites/Potenciadores/Vida";
 import TanqueConAgua from "../sprites/Potenciadores/TanqueConAgua";
 import FuriaDude from "../sprites/Potenciadores/FuriaDude";
-import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
+// import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
 import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
 import Honda from "../sprites/Honda";
+import LanzaLlamas from "../sprites/LanzaLlamas";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -151,7 +152,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
 
-        this.currentWeapon = new Honda(this, 100, 100);
+        this.currentWeapon = new LanzaLlamas(this, 100, 100);
     }
 
     changeScene() {
@@ -412,10 +413,8 @@ export class BaseGameScene extends Phaser.Scene {
         if (this.currentWeapon instanceof Honda && this.keyboard.S.isDown) {
             this.player.disparar();
             this.barraEstado.actualizar(this.player.vida, this.spray.iterationCount);
-        } else if (this.spray instanceof Honda && this.spray.estaFuera && this.keyboard.S.isUp) {
-            this.spray.soltar();
-        } else if ([BujillaChorrito, BujillaAvanico, LanzaLlamas, LanzaHumo].some(base => this.spray instanceof base) && this.keyboard.S.isDown) {
-            this.spray.abrir();
+        } else if (this.currentWeapon instanceof LanzaLlamas  && this.keyboard.S.isUp) {
+            this.player.disparar();
         }
 
 
