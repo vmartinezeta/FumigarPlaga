@@ -3,7 +3,7 @@ import DockCentro from "../sprites/DockCentro";
 import SueloFrontera from "../sprites/SueloFrontera";
 import PlagaGroup from "../sprites/Enemigos/PlagaGroup";
 import Rana from "../sprites/Enemigos/Rana";
-import Honda from "../sprites/KitFierro/Honda";
+// import Honda from "../sprites/KitFierro/Honda";
 import BujillaChorrito from "../sprites/KitFierro/BujillaChorrito";
 import BujillaAvanico from "../sprites/KitFierro/BujillaAvanico";
 import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
@@ -12,6 +12,7 @@ import TanqueConAgua from "../sprites/Potenciadores/TanqueConAgua";
 import FuriaDude from "../sprites/Potenciadores/FuriaDude";
 import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
 import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
+import Honda from "../sprites/Honda";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -148,6 +149,9 @@ export class BaseGameScene extends Phaser.Scene {
         this.scream = this.sound.add('scream', {
             volume: 0.4
         });
+
+
+        this.currentWeapon = new Honda(this, 100, 100);
     }
 
     changeScene() {
@@ -362,7 +366,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.plagaGroup.total = 0
         if (this.potenciadorGroup.countActive() > 500) return
         const x = Phaser.Math.Between(100, this.width - 100);
-        const y = Phaser.Math.Between(300, this.height);
+        const y = Phaser.Math.Between(350, this.height-50);
         const potenciador = new TanqueConAgua(this, x, y, "tanque");
         this.potenciadorGroup.addPotenciador(potenciador);
     }
@@ -392,7 +396,7 @@ export class BaseGameScene extends Phaser.Scene {
         }
 
         if (this.keyboard.UNO.isDown) {
-            this.spray = new Honda(this, this.player);
+            // this.spray = new Honda(this, this.player);
             this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
         } else if (this.keyboard.DOS.isDown) {
@@ -405,8 +409,8 @@ export class BaseGameScene extends Phaser.Scene {
             this.dock.updateDock(3);
         } 
 
-        if (this.spray instanceof Honda && !this.spray.estaFuera && this.keyboard.S.isDown) {
-            this.spray.lanzar();
+        if (this.currentWeapon instanceof Honda && this.keyboard.S.isDown) {
+            this.player.disparar();
             this.barraEstado.actualizar(this.player.vida, this.spray.iterationCount);
         } else if (this.spray instanceof Honda && this.spray.estaFuera && this.keyboard.S.isUp) {
             this.spray.soltar();

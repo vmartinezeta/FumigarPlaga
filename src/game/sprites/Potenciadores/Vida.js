@@ -32,14 +32,6 @@ export default class Vida extends Phaser.GameObjects.Sprite {
             }
         });
 
-        //     targets: this,
-        //     scaleX: { from: 0.5, to: 1.2 },
-        //     scaleY: { from: 0.5, to: 1.2 },
-        //     duration: 500,
-        //     repeat: -1,
-        //     yoyo: true,
-        //     ease: 'Back.out'
-        // });
         this.play("vida");
     }
 

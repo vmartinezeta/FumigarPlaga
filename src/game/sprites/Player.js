@@ -19,6 +19,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
             new Direccional(4, 180, new Punto(-1, 0)),
         ], 1);
 
+        this.canShoot = false;
+
         this.setScale(1);
         this.setOrigin(1 / 2);
         this.setDepth(10);
@@ -122,5 +124,35 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     debeMorir() {
         return this.vida <= 0;
+    }
+
+
+    disparar() {
+        if (!this.scene.currentWeapon) return;
+        // this.add.circle(100, 100, 100, 0xff0000)
+        const weapon = this.scene.currentWeapon;
+
+        switch (weapon.type) {
+            case 'honda':
+                weapon.shoot(this.control.right()?"right":"left", this.x, this.y);
+                break;
+
+            case 'bomba':
+                weapon.throw(this.x, this.y, this.direction);
+                break;
+
+            case 'lanzallamas':
+                weapon.spray(this.direction, this.x, this.y);
+                break;
+
+            case 'lanzaHumo':
+                weapon.launchSmoke(this.x, this.y, this.direction);
+                break;
+        }
+
+        this.canShoot = false;
+        this.scene.time.delayedCall(weapon.fireRate, () => {
+            this.canShoot = true;
+        });
     }
 }

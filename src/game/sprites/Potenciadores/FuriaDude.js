@@ -65,6 +65,7 @@ export default class FuriaDude extends Phaser.GameObjects.Sprite {
         const newScale = minScale + (maxScale - minScale) * relativeHeight;
 
         this.setScale(newScale);
+        
 
         if (this.timeline.complete) {
             this.timeline.clear();

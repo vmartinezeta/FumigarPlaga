@@ -2,6 +2,9 @@ import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
 import SuperSpray from '../sprites/KitFierro/SuperSpray';
+import Honda from '../sprites/Honda';
+import Player from '../sprites/Player';
+
 
 export class MainMenu extends Scene {
 
@@ -47,7 +50,7 @@ export class MainMenu extends Scene {
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
-        this.add.graphics()
+            
 
         EventBus.emit('current-scene-ready', this);
     }
