@@ -16,6 +16,8 @@ export class DayScene extends BaseGameScene {
     create() {
         super.create();
 
+        
+
         this.add.tileSprite(0, 270, this.reguladorWidth * this.game.config.width, 200, "bosque")
             .setScale(.4)
             .setDepth(0)
@@ -68,6 +70,8 @@ export class DayScene extends BaseGameScene {
             capacidad: 10,
             boquilla: 1
         });
+
+        this.uiManager.setBarraEstado(this.barraEstado);
 
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);

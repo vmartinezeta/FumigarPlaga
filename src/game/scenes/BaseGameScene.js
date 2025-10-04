@@ -10,6 +10,7 @@ import FuriaDude from "../sprites/Potenciadores/FuriaDude";
 import Honda from "../sprites/KitFierro/Honda";
 import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
 import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
+import UIManager from "../sprites/UIManager";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -29,6 +30,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.sueloFrontera = null;
         this.pinchos = null;
         this.emitter = null;
+        this.eventBus = null;
     }
 
     init() {
@@ -134,19 +136,21 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.dock = new DockCentro(this);
 
-        this.emitter = this.add.particles(0,0, 'particle', {
-            speed: 100,
-            scale: { start: 0.3, end: 0 },
-            alpha: { start: 0.8, end: 0 },
-            lifespan: 1000,
-            quantity: 2,
-            emitting: false
-        });
 
         this.scream = this.sound.add('scream', {
             volume: 0.4
         });
 
+        //  this.emitter = this.add.particles(0, 0, 'particle', {
+        //     speed: 100,
+        //     scale: { start: 0.3, end: 0 },
+        //     alpha: { start: 0.8, end: 0 },
+        //     lifespan: 1000,
+        //     quantity: 2,
+        //     emitting: false
+        // });
+        this.eventBus = new Phaser.Events.EventEmitter();
+        this.uiManager = new UIManager(this, this.eventBus, this.potenciadorGroup);
 
         this.fierro = new LanzaLlamas(this);
     }
@@ -222,24 +226,8 @@ export class BaseGameScene extends Phaser.Scene {
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
         } else if(potenciador instanceof FuriaDude) {
-            player.activarFuria();
-            this.emitter.start();
-            this.emitter.startFollow(this.player);
-            this.time.delayedCall(10000, () => {
-                this.emitter.destroy();
-                this.player.reset();
-            });
+            this.eventBus.emit('furiaActivated', { player, potenciador });
         }
-
-        this.tweens.add({
-            targets: player,
-            scaleX: { from: .6, to: 1 },
-            scaleY: { from: .6, to: 1 },
-            duration: 1000,
-            ease: 'Back.out',
-        });
-        this.barraEstado.actualizar(this.player.vida, 0);
-        this.potenciadorGroup.remove(potenciador, true, true);
     }
 
     createParticle(x, y) {

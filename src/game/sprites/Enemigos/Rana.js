@@ -16,6 +16,9 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.finalizo = false;
         this.onComplete = null;
         this.furia = false;
+        this.canReceiveDamage = true;
+        this.damageCooldown = 200; // ms entre daños
+
         this.control = new ControlDireccional([
             new Direccional(1, 270, new Punto(0, -1)),
             new Direccional(2, 0, new Punto(1, 0)),
@@ -126,6 +129,14 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     takeDamage(damage) {
+        if (!this.canReceiveDamage) return;
+        
+        // Activar cooldown
+        this.canReceiveDamage = false;
+        this.scene.time.delayedCall(this.damageCooldown, () => {
+            this.canReceiveDamage = true;
+        });
+                
         this.vida = Math.max(0, this.vida - damage);
     }
 
