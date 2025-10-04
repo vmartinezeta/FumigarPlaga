@@ -1,13 +1,102 @@
-import PlayerSpray from "./PlayerSpray";
+import Fierro from "./Fierro";
+import Phaser from "phaser";
 
-export default class LanzaHumo extends PlayerSpray{
-    constructor(scene, player) {
-        super(scene, player, Math.PI/30, 1, 100);
+
+export default class LanzaHumo extends Fierro {
+    constructor(scene) {
+        super(scene, 0, 0, 'humo', 'lanzaHumo');
+        this.smokeCloud = null;
+        this.particles = null;
+        this.setVisible(false);
+        this.damage = 5;
     }
 
-    abrir() {
-        this.updateEmision();
-        const particle = this.createParticle("humo", .8);
-        particle.body.setAllowGravity(false);
+    launchSmoke(playerX, playerY, direction) {
+        // 1. Crear efecto visual de humo (partículas)
+        this.createSmokeParticles(playerX, playerY, direction);
+
+        // 2. Crear sprite invisible para la nube de humo (colisión)
+        this.createSmokeCloud(playerX, playerY, direction);
+    }
+
+    createSmokeParticles(x, y, direction) {
+        const offsetY = -10; // Ajusta este valor para que el fuego salga de la parte superior del jugador (como el hombro)
+        const offsetX = direction.right() ? 100 : -100; // Ajusta para que salga del frente del jugador
+
+        const emitX = x + offsetX;
+        const emitY = y + offsetY;
+        
+        this.particles = this.scene.add.particles(emitX, emitY, this.imageKey, {
+            speed: { min: 10, max: 30 },
+            scale: { start: 0.8, end: 0 },
+            lifespan: 2000,
+            quantity: 2,
+            frequency: 100, // Emitir 2 partículas cada 100ms
+            blendMode: 'SCREEN',
+            emitZone: { 
+                type: 'source', 
+                source: new Phaser.Geom.Circle(direction.right() ? emitX : emitX - 80, y, 10) 
+            }
+        });
+
+        // Expansión de la nube de partículas
+        this.scene.tweens.add({
+            targets: this.particles,
+            scaleX: 3,
+            scaleY: 3,
+            duration: 2000,
+            onComplete: () => {
+                this.particles.destroy();
+            }
+        });
+    }
+
+    createSmokeCloud(x, y, direction) {
+        const targetX = direction.right() ? x + 100 : x - 100;
+
+        // Sprite invisible para la nube de humo
+        this.smokeCloud = this.scene.physics.add.sprite(targetX, y, this.imageKey);
+        this.smokeCloud.setVisible(false);
+        this.smokeCloud.body.setImmovable(true);
+        this.smokeCloud.body.setAllowGravity(false);
+
+        // Ajustar el tamaño de la hitbox para que coincida con la nube visual
+        // Comienza pequeña y se expande
+        this.smokeCloud.body.setSize(40, 40);
+
+        // Expansión de la hitbox
+        this.scene.tweens.add({
+            targets: this.smokeCloud,
+            scaleX: 2.5,
+            scaleY: 2.5,
+            duration: 2000,
+            onUpdate: () => {
+                // Ajustar el tamaño del cuerpo de colisión durante la expansión
+                if (this.smokeCloud) {
+                    this.smokeCloud.body.setSize(40 * this.smokeCloud.scaleX, 40 * this.smokeCloud.scaleY);
+                }
+            },
+            onComplete: () => {
+                if (this.smokeCloud) {
+                    this.smokeCloud.destroy();
+                }
+                this.smokeCloud = null;
+            }
+        });
+
+        // Colisión con enemigos
+        this.scene.physics.add.overlap(this.smokeCloud, this.scene.plagaGroup, (_, rana) => {
+            // enemy.slowDown(0.5); // Reducir velocidad a la mitad
+            rana.takeDamage(this.damage);
+        });
+    }
+
+    cleanup() {
+        if (this.particles) {
+            this.particles.destroy();
+        }
+        if (this.smokeCloud) {
+            this.smokeCloud.destroy();
+        }
     }
 }

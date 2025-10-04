@@ -1,9 +1,6 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
-import SuperSpray from '../sprites/KitFierro/SuperSpray';
-import Honda from '../sprites/Honda';
-import Player from '../sprites/Player';
 
 
 export class MainMenu extends Scene {
@@ -41,9 +38,9 @@ export class MainMenu extends Scene {
 
     create() {
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
-        this.spray = new SuperSpray(this, Math.PI / 10);
-        this.spray.setAngle(Math.PI/8);
-        this.spray.setOrigen(330, 100);
+        // this.spray = new SuperSpray(this, Math.PI / 10);
+        // this.spray.setAngle(Math.PI/8);
+        // this.spray.setOrigen(330, 100);
 
         this.add.text(740, 100, 'Nuevo Record: ' + this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
@@ -79,6 +76,6 @@ export class MainMenu extends Scene {
     }
 
     update() {
-        this.spray.createParticle("particle",.8);
+        // this.spray.createParticle("particle",.8);
     }
 }

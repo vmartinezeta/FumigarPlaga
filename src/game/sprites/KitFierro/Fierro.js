@@ -1,5 +1,5 @@
-export default class Weapon extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, imageKey, type) {
+export default class Fierro extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, imageKey, type, capacidad) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
@@ -7,14 +7,23 @@ export default class Weapon extends Phaser.GameObjects.Sprite {
         this.fireRate = 500; // ms entre disparos
         this.damage = 10;
         this.collider = null;
-        this.setVisible(false);
+        this.capacidad = capacidad;
+        this.capacidadMax = capacidad;
         scene.add.existing(this);
         scene.physics.add.existing(this);
-
+        
         // Configurar hitbox según el tipo de arma
         this.setupHitbox();
     }
-    
+
+    vacio() {
+        return this.capacidad === 0;
+    }
+
+    reset() {
+        this.capacidad = this.capacidadMax;
+    }
+
     setupHitbox() {
         switch(this.type) {
             case 'honda':
@@ -36,7 +45,4 @@ export default class Weapon extends Phaser.GameObjects.Sprite {
         }
     }
     
-    // Métodos que deben implementar las subclases
-    // shoot(direction, x, y) {}
-    // update() {}
 }

@@ -1,19 +1,29 @@
-import PlayerSpray from "./PlayerSpray";
+import Fierro from "./Fierro";
 
-export default class Honda extends PlayerSpray {
-    constructor(scene, player) {
-        super(scene, player, Math.PI / 6, 20, 10);
-        this.estaFuera = false;
+export default class Honda extends Fierro {
+    constructor(scene) {
+        super(scene, 0, 0, 'bomb', 'honda', 8);
+        this.fireRate = 1500;
+        this.damage = 15;
     }
 
-    lanzar() {
-        if (this.vacio())return;
-        this.updateEmision();
-        this.createParticle("bomb", 1);
-        this.estaFuera = true;
-    }
+    shoot(direction, playerX, playerY) {
+        this.setPosition(playerX, playerY);
+        this.setActive(true);
+        this.setVisible(true);
+        this.body.setEnable(true);
 
-    soltar() {
-        this.estaFuera = false;
+        // Lógica de disparo específica de honda
+        const speed = 300;
+        this.body.setVelocity(
+            direction.right() ? speed : -speed,
+            0
+        );
+
+        // Auto-destrucción después de tiempo
+        this.scene.time.delayedCall(this.fireRate, () => {
+            this.setActive(false);
+            this.setVisible(false);
+        });
     }
 }

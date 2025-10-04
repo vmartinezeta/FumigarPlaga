@@ -5,9 +5,6 @@ import BarraEstado from '../sprites/BarraEstado';
 import { BaseGameScene } from './BaseGameScene';
 import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
-import Honda from '../sprites/KitFierro/Honda';
-import LanzaLlamas from '../sprites/KitFierro/LanzaLlamas';
-import LanzaHumo from '../sprites/KitFierro/LanzaHumo';
 
 
 export class DayScene extends BaseGameScene {
@@ -19,21 +16,21 @@ export class DayScene extends BaseGameScene {
     create() {
         super.create();
 
-        this.bosque = this.add.tileSprite(0, 270, this.reguladorWidth * this.game.config.width, 200, "bosque");
-        this.bosque.setScale(.4);
-        this.bosque.setDepth(0);
-        this.bosque.setScrollFactor(0);
+        this.add.tileSprite(0, 270, this.reguladorWidth * this.game.config.width, 200, "bosque")
+            .setScale(.4)
+            .setDepth(0)
+            .setScrollFactor(0);
 
-        this.bosque2 = this.add.tileSprite(10, 275, this.reguladorWidth * this.game.config.width, 200, "bosque");
-        this.bosque2.setScale(.5);
-        this.bosque2.setDepth(0);
-        this.bosque2.setScrollFactor(0);
+        this.add.tileSprite(10, 275, this.reguladorWidth * this.game.config.width, 200, "bosque")
+        .setScale(.5)
+        .setDepth(0)
+        .setScrollFactor(0);
 
-        this.bosque3 = this.add.tileSprite(0, 280, this.reguladorWidth * this.game.config.width, 200, "bosque");
-        this.bosque3.setOrigin(1 / 2);
-        this.bosque3.setScale(.6);
-        this.bosque3.setDepth(0);
-        this.bosque3.setScrollFactor(0);
+        this.add.tileSprite(0, 280, this.reguladorWidth * this.game.config.width, 200, "bosque")
+        .setOrigin(1 / 2)
+        .setScale(.6)
+        .setDepth(0)
+        .setScrollFactor(0);
 
         this.cloudTextures = ["nube", "nube-2"];
 
@@ -74,12 +71,11 @@ export class DayScene extends BaseGameScene {
 
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
-        this.spray = new LanzaLlamas(this, this.player);
 
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
         this.mosquitos = new Mosquitos(this, 0, this.ymax);
-    
+
         this.pinchos = new HileraPincho(this);
 
         this.activarColisiones();

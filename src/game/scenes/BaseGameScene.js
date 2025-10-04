@@ -3,17 +3,13 @@ import DockCentro from "../sprites/DockCentro";
 import SueloFrontera from "../sprites/SueloFrontera";
 import PlagaGroup from "../sprites/Enemigos/PlagaGroup";
 import Rana from "../sprites/Enemigos/Rana";
-// import Honda from "../sprites/KitFierro/Honda";
-import BujillaChorrito from "../sprites/KitFierro/BujillaChorrito";
-import BujillaAvanico from "../sprites/KitFierro/BujillaAvanico";
 import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
 import Vida from "../sprites/Potenciadores/Vida";
 import TanqueConAgua from "../sprites/Potenciadores/TanqueConAgua";
 import FuriaDude from "../sprites/Potenciadores/FuriaDude";
-// import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
+import Honda from "../sprites/KitFierro/Honda";
+import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
 import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
-import Honda from "../sprites/Honda";
-import LanzaLlamas from "../sprites/LanzaLlamas";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -152,7 +148,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
 
-        this.currentWeapon = new LanzaLlamas(this,0,0);
+        this.fierro = new LanzaLlamas(this);
     }
 
     changeScene() {
@@ -166,7 +162,7 @@ export class BaseGameScene extends Phaser.Scene {
     activarColisiones() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
         this.physics.add.collider(this.player, this.pinchos, this.morirPlayer, null, this);
-        this.physics.add.overlap(this.spray, this.plagaGroup, this.handleParticleCollision, null, this);
+        this.physics.add.overlap(this.fierro, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.sueloFrontera, this.rotar, null, this);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
@@ -222,7 +218,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     aplicarPotenciador(player, potenciador) {
         if (potenciador instanceof TanqueConAgua) {
-            potenciador.applyEffect(this.spray);
+            potenciador.applyEffect(this.fierro);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
         } else if(potenciador instanceof FuriaDude) {
@@ -242,7 +238,7 @@ export class BaseGameScene extends Phaser.Scene {
             duration: 1000,
             ease: 'Back.out',
         });
-        this.barraEstado.actualizar(this.player.vida, this.spray.iterationCount);
+        this.barraEstado.actualizar(this.player.vida, 0);
         this.potenciadorGroup.remove(potenciador, true, true);
     }
 
@@ -280,10 +276,13 @@ export class BaseGameScene extends Phaser.Scene {
         return [particula, rana];
     }
 
-    handleParticleCollision(particle, frog) {
-        const [particula, rana] = this.fijarObjetivo(particle, frog);
-        particula.destroy();
-        rana.takeDamage(this.spray.damage);
+    handleParticleCollision(particle, rana) {
+        if (this.fierro instanceof Honda) {
+            particle.setActive(false);
+            particle.setVisible(false);
+            particle.body.setEnable(false);
+            rana.takeDamage(this.fierro.damage);
+        }
         if (rana.debeMorir()) {
             this.barraEstado.setPuntuacion(rana.vidaMax);
             rana.morir();
@@ -315,7 +314,7 @@ export class BaseGameScene extends Phaser.Scene {
         if (!player.tieneFuria) {
             this.scream.play();
         }
-        this.barraEstado.actualizar(player.vida, this.spray.iterationCount);
+        this.barraEstado.actualizar(player.vida, 0);
         if (player.debeMorir()) {
             this.scene.start('GameOver');
         }
@@ -328,7 +327,7 @@ export class BaseGameScene extends Phaser.Scene {
             rana.morir();
         }
 
-        this.barraEstado.actualizar(player.vida, this.spray.iterationCount);
+        this.barraEstado.actualizar(player.vida, 0);
         if (player.debeMorir()) {
             this.scene.start('GameOver');
         }
@@ -410,11 +409,13 @@ export class BaseGameScene extends Phaser.Scene {
             this.dock.updateDock(3);
         } 
 
-        if (this.currentWeapon instanceof Honda && this.keyboard.S.isDown) {
-            this.player.disparar();
-            this.barraEstado.actualizar(this.player.vida, this.spray.iterationCount);
-        } else if (this.currentWeapon instanceof LanzaLlamas  && this.keyboard.S.isDown) {
-            this.player.disparar();
+        if (this.fierro instanceof Honda && this.keyboard.S.isDown) {
+            this.player.disparar(this.fierro);
+            this.barraEstado.actualizar(this.player.vida, 0);
+        } else if (this.fierro instanceof LanzaLlamas  && this.keyboard.S.isDown) {
+            this.player.disparar(this.fierro);
+        } else if(this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
+            this.player.disparar(this.fierro);
         }
 
 

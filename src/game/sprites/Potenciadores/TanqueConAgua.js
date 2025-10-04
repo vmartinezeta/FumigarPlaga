@@ -26,8 +26,8 @@ export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
         this.play("fluir");
     }
 
-    applyEffect(spray) {
-        spray.reset();
+    applyEffect(fierro) {
+        fierro.reset();
     }
 
     onEliminar() {

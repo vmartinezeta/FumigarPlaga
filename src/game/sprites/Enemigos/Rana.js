@@ -4,13 +4,13 @@ import { ControlDireccional } from "../../classes/ControlDireccional";
 import { Direccional } from "../../classes/Direccional";
 
 export default class Rana extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, imageKey, hembra, puedeCoger) {
+    constructor(scene, x, y, imageKey, hembra, puedeCoger, vida=10) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
         this.hembra = hembra;
-        this.vida = hembra ? 30 : 50;
-        this.vidaMax = hembra ? 30 : 50;
+        this.vida = vida;
+        this.vidaMax = vida;
         this.inicio = false;
         this.puedeCoger = puedeCoger;
         this.finalizo = false;
@@ -34,6 +34,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.body.setBounce(1);
         this.body.setCollideWorldBounds(true);
         this.body.setAllowGravity(false);
+        this.body.setImmovable(true);
         this.body.setSize(40, 40);
         if (!this.existe("run")) {
             this.animate({
@@ -47,7 +48,6 @@ export default class Rana extends Phaser.GameObjects.Sprite {
 
         if (this.puedeCoger) {
             this.healthBar = scene.add.graphics();
-            this.updateHealthBar();
         }
     }
 
@@ -127,7 +127,6 @@ export default class Rana extends Phaser.GameObjects.Sprite {
 
     takeDamage(damage) {
         this.vida -= damage;
-        this.updateHealthBar();
     }
 
     updateHealthBar(x, y, width, height) {

@@ -19,7 +19,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             new Direccional(4, 180, new Punto(-1, 0)),
         ], 1);
 
-        this.canShoot = false;
+        this.canShoot = true;
 
         this.setScale(1);
         this.setOrigin(1 / 2);
@@ -127,31 +127,30 @@ export default class Player extends Phaser.GameObjects.Sprite {
         return this.vida <= 0;
     }
 
+    disparar(fierro) {
+        if (!this.canShoot || !fierro || fierro.vacio()) return;
+        fierro.capacidad --;
 
-    disparar() {
-        if (!this.scene.currentWeapon) return;
-        const weapon = this.scene.currentWeapon;
-
-        switch (weapon.type) {
+        switch (fierro.type) {
             case 'honda':
-                weapon.shoot(this.control.right()?"right":"left", this.x, this.y);
+                fierro.shoot(this.control, this.x, this.y);
                 break;
 
             case 'bomba':
-                weapon.throw(this.x, this.y, this.direction);
+                fierro.throw(this.x, this.y, this.direction);
                 break;
 
             case 'lanzallamas':
-                weapon.spray(this.control.right()?"right":"left", this.x, this.y);
+                fierro.spray(this.control, this.x, this.y);
                 break;
 
             case 'lanzaHumo':
-                weapon.launchSmoke(this.x, this.y, this.control.right()?"right":"left");
+                fierro.launchSmoke(this.x, this.y, this.control);
                 break;
         }
 
         this.canShoot = false;
-        this.scene.time.delayedCall(weapon.fireRate, () => {
+        this.scene.time.delayedCall(fierro.fireRate, () => {
             this.canShoot = true;
         });
     }
