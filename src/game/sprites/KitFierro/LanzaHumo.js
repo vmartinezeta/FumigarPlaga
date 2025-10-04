@@ -25,7 +25,7 @@ export default class LanzaHumo extends Fierro {
 
         const emitX = x + offsetX;
         const emitY = y + offsetY;
-        
+
         this.particles = this.scene.add.particles(emitX, emitY, this.imageKey, {
             speed: { min: 10, max: 30 },
             scale: { start: 0.8, end: 0 },
@@ -88,6 +88,9 @@ export default class LanzaHumo extends Fierro {
         this.scene.physics.add.overlap(this.smokeCloud, this.scene.plagaGroup, (_, rana) => {
             // enemy.slowDown(0.5); // Reducir velocidad a la mitad
             rana.takeDamage(this.damage);
+            if (rana.debeMorir()) {
+                rana.morir();
+            }
         });
     }
 

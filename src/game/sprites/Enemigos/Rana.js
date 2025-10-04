@@ -126,7 +126,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     takeDamage(damage) {
-        this.vida -= damage;
+        this.vida = Math.max(0, this.vida - damage);
     }
 
     updateHealthBar(x, y, width, height) {

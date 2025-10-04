@@ -74,6 +74,9 @@ export default class LanzaLlamas extends Fierro {
         // Colisión con enemigos
         this.scene.physics.add.overlap(this.damageZone, this.scene.plagaGroup, (_, rana) => {
             rana.takeDamage(this.damage);
+            if (rana.debeMorir()) {
+                rana.morir();
+            }
         });
 
         // Destruir la zona de daño después de 300ms
