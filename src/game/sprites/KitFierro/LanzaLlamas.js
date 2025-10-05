@@ -10,13 +10,13 @@ export default class LanzaLlamas extends Fierro {
         this.setVisible(false);
     }
 
-    spray(direction, playerX, playerY) {
+    spray(direction, playerX, playerY, plagaGroup) {
         this.body.setEnable(true);
         // 1. Crear el efecto visual de llamas (partículas)
         this.createFlameParticles(playerX, playerY, direction);
 
         // 2. Crear un sprite invisible para la zona de daño
-        this.createDamageZone(playerX, playerY, direction);
+        this.createDamageZone(playerX, playerY, direction, plagaGroup);
     }
 
     createFlameParticles(x, y, direction) {
@@ -54,7 +54,7 @@ export default class LanzaLlamas extends Fierro {
         });
     }
 
-    createDamageZone(x, y, direction) {
+    createDamageZone(x, y, direction, plagaGroup) {
         // Debug: dibujar un punto en la posición de emisión
         // Crear un sprite invisible para la zona de daño
         this.damageZone = this.scene.physics.add.sprite(
@@ -72,7 +72,7 @@ export default class LanzaLlamas extends Fierro {
         this.damageZone.body.setSize(80, 30);
 
         // Colisión con enemigos
-        this.scene.physics.add.overlap(this.damageZone, this.scene.plagaGroup, (_, rana) => {
+        this.scene.physics.add.overlap(this.damageZone, plagaGroup, (_, rana) => {
             rana.takeDamage(this.damage);
             if (rana.debeMorir()) {
                 rana.morir();

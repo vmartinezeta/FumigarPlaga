@@ -25,6 +25,7 @@ export default class DockCentro extends Phaser.GameObjects.Group {
 
     updateDock(ajuste) {
         this.setVisible(true);
+        this.setDepth(20);
         const xmedia = (this.scene.game.config.width / 2)-150;
         const ymedia = this.scene.game.config.height / 2;
         this.drawHitArea(xmedia, ymedia - 50, this.createPoints(300, 100));

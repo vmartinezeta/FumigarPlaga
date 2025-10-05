@@ -136,23 +136,14 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.dock = new DockCentro(this);
 
-
         this.scream = this.sound.add('scream', {
             volume: 0.4
         });
 
-        //  this.emitter = this.add.particles(0, 0, 'particle', {
-        //     speed: 100,
-        //     scale: { start: 0.3, end: 0 },
-        //     alpha: { start: 0.8, end: 0 },
-        //     lifespan: 1000,
-        //     quantity: 2,
-        //     emitting: false
-        // });
         this.eventBus = new Phaser.Events.EventEmitter();
         this.uiManager = new UIManager(this, this.eventBus, this.potenciadorGroup);
 
-        this.fierro = new LanzaLlamas(this);
+        this.fierro = new LanzaHumo(this);
     }
 
     changeScene() {
@@ -166,7 +157,6 @@ export class BaseGameScene extends Phaser.Scene {
     activarColisiones() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
         this.physics.add.collider(this.player, this.pinchos, this.morirPlayer, null, this);
-        this.physics.add.overlap(this.fierro, this.plagaGroup, this.handleParticleCollision, null, this);
         this.physics.add.collider(this.plagaGroup, this.sueloFrontera, this.rotar, null, this);
         this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
@@ -252,48 +242,6 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
         return particle;
-    }
-
-    fijarObjetivo(izq, der) {
-        let rana = izq
-        let particula = der;
-        if (der instanceof Rana) {
-            rana = der;
-            particula = izq;
-        }
-        return [particula, rana];
-    }
-
-    handleParticleCollision(particle, rana) {
-        if (this.fierro instanceof Honda) {
-            particle.setActive(false);
-            particle.setVisible(false);
-            particle.body.setEnable(false);
-            rana.takeDamage(this.fierro.damage);
-        }
-        if (rana.debeMorir()) {
-            this.barraEstado.setPuntuacion(rana.vidaMax);
-            rana.morir();
-        }
-
-        rana.setTint(0xff0000);
-        this.time.delayedCall(100, () => rana.clearTint());
-        this.createSplashEffect(rana.x, rana.y);
-    }
-
-    createSplashEffect(x, y) {
-        // Partículas de salpicadura
-        const splash = this.add.particles(x, y, 'particle', {
-            speed: { min: 50, max: 150 },
-            scale: { start: 0.4, end: 0 },
-            alpha: { start: 0.8, end: 0 },
-            lifespan: 600,
-            quantity: 3,
-            emitting: false
-        });
-
-        splash.explode(3);
-        this.time.delayedCall(700, () => splash.destroy());
     }
 
     morirPlayer(player, pincho) {
@@ -384,26 +332,26 @@ export class BaseGameScene extends Phaser.Scene {
         }
 
         if (this.keyboard.UNO.isDown) {
-            // this.spray = new Honda(this, this.player);
+            this.fierro = new Honda(this);
             this.barraEstado.setBoquilla(1);
             this.dock.updateDock(1);
         } else if (this.keyboard.DOS.isDown) {
-            this.spray = new BujillaChorrito(this, this.player);
+            this.fierro = new LanzaLlamas(this);
             this.barraEstado.setBoquilla(2);
             this.dock.updateDock(2);
         } else if (this.keyboard.TRES.isDown) {
-            this.spray = new BujillaAvanico(this, this.player);
+            this.fierro = new LanzaHumo(this);
             this.barraEstado.setBoquilla(3);
             this.dock.updateDock(3);
         } 
 
         if (this.fierro instanceof Honda && this.keyboard.S.isDown) {
-            this.player.disparar(this.fierro);
+            this.player.disparar(this.fierro, this.plagaGroup);
             this.barraEstado.actualizar(this.player.vida, 0);
         } else if (this.fierro instanceof LanzaLlamas  && this.keyboard.S.isDown) {
-            this.player.disparar(this.fierro);
+            this.player.disparar(this.fierro, this.plagaGroup);
         } else if(this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
-            this.player.disparar(this.fierro);
+            this.player.disparar(this.fierro, this.plagaGroup);
         }
 
 

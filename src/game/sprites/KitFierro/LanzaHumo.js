@@ -4,19 +4,20 @@ import Phaser from "phaser";
 
 export default class LanzaHumo extends Fierro {
     constructor(scene) {
-        super(scene, 0, 0, 'humo', 'lanzaHumo');
+        super(scene, 0, 0, 'humo', 'lanzaHumo', 10);
         this.smokeCloud = null;
         this.particles = null;
+        this.fireRate = 2000;
         this.setVisible(false);
-        this.damage = 5;
+        this.damage = 2;
     }
 
-    launchSmoke(playerX, playerY, direction) {
+    launchSmoke(playerX, playerY, direction, plagaGroup) {
         // 1. Crear efecto visual de humo (partículas)
         this.createSmokeParticles(playerX, playerY, direction);
 
         // 2. Crear sprite invisible para la nube de humo (colisión)
-        this.createSmokeCloud(playerX, playerY, direction);
+        this.createSmokeCloud(playerX, playerY, direction, plagaGroup);
     }
 
     createSmokeParticles(x, y, direction) {
@@ -51,7 +52,7 @@ export default class LanzaHumo extends Fierro {
         });
     }
 
-    createSmokeCloud(x, y, direction) {
+    createSmokeCloud(x, y, direction, plagaGroup) {
         const targetX = direction.right() ? x + 100 : x - 100;
 
         // Sprite invisible para la nube de humo
@@ -72,7 +73,7 @@ export default class LanzaHumo extends Fierro {
             duration: 2000,
             onUpdate: () => {
                 // Ajustar el tamaño del cuerpo de colisión durante la expansión
-                if (this.smokeCloud) {
+                if (this.smokeCloud && this.smokeCloud.body) {
                     this.smokeCloud.body.setSize(40 * this.smokeCloud.scaleX, 40 * this.smokeCloud.scaleY);
                 }
             },
@@ -85,13 +86,15 @@ export default class LanzaHumo extends Fierro {
         });
 
         // Colisión con enemigos
-        this.scene.physics.add.overlap(this.smokeCloud, this.scene.plagaGroup, (_, rana) => {
+        this.scene.physics.add.overlap(this.smokeCloud, plagaGroup, (_, rana) => {
             // enemy.slowDown(0.5); // Reducir velocidad a la mitad
+            rana.disminuirVelocidad();
             rana.takeDamage(this.damage);
             if (rana.debeMorir()) {
                 rana.morir();
             }
         });
+
     }
 
     cleanup() {

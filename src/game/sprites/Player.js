@@ -127,13 +127,13 @@ export default class Player extends Phaser.GameObjects.Sprite {
         return this.vida <= 0;
     }
 
-    disparar(fierro) {
+    disparar(fierro, plagaGroup) {
         if (!this.canShoot || !fierro || fierro.vacio()) return;
         fierro.capacidad --;
 
         switch (fierro.type) {
             case 'honda':
-                fierro.shoot(this.control, this.x, this.y);
+                fierro.shoot(this.control, this.x, this.y, plagaGroup);
                 break;
 
             case 'bomba':
@@ -141,11 +141,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
                 break;
 
             case 'lanzallamas':
-                fierro.spray(this.control, this.x, this.y);
+                fierro.spray(this.control, this.x, this.y, plagaGroup);
                 break;
 
             case 'lanzaHumo':
-                fierro.launchSmoke(this.x, this.y, this.control);
+                fierro.launchSmoke(this.x, this.y, this.control, plagaGroup);
                 break;
         }
 
