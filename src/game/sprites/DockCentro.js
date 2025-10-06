@@ -39,7 +39,6 @@ export default class DockCentro extends Phaser.GameObjects.Group {
     }
 
 
-
     ocultar() {
         this.setVisible(false);
         this.remove(this.grafico, true, true);

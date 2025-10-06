@@ -34,7 +34,7 @@ export default class LanzaLlamas extends Fierro {
         this.particles = this.scene.add.particles(emitX, emitY, this.imageKey, {
             speed: { min: 100, max: 200 },
             scale: { start: 0.5, end: 0 },
-            lifespan: 300,
+            lifespan: this.fireRate,
             quantity: 5,
             frequency: 50, // Emitir 5 partículas cada 50ms
             blendMode: 'ADD',
@@ -49,7 +49,7 @@ export default class LanzaLlamas extends Fierro {
         });
 
         // Detener el emitter después de 300ms
-        this.scene.time.delayedCall(300, () => {
+        this.scene.time.delayedCall(this.fireRate, () => {
             this.particles.stop();
         });
     }
@@ -80,7 +80,7 @@ export default class LanzaLlamas extends Fierro {
         });
 
         // Destruir la zona de daño después de 300ms
-        this.scene.time.delayedCall(300, () => {
+        this.scene.time.delayedCall(this.fireRate, () => {
             if (this.damageZone) {
                 this.damageZone.destroy();
             }

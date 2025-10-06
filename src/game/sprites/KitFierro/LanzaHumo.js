@@ -30,7 +30,7 @@ export default class LanzaHumo extends Fierro {
         this.particles = this.scene.add.particles(emitX, emitY, this.imageKey, {
             speed: { min: 10, max: 30 },
             scale: { start: 0.8, end: 0 },
-            lifespan: 2000,
+            lifespan: this.fireRate,
             quantity: 2,
             frequency: 100, // Emitir 2 partículas cada 100ms
             blendMode: 'SCREEN',
@@ -45,7 +45,7 @@ export default class LanzaHumo extends Fierro {
             targets: this.particles,
             scaleX: 3,
             scaleY: 3,
-            duration: 2000,
+            duration: this.fireRate,
             onComplete: () => {
                 this.particles.destroy();
             }
@@ -70,7 +70,7 @@ export default class LanzaHumo extends Fierro {
             targets: this.smokeCloud,
             scaleX: 2.5,
             scaleY: 2.5,
-            duration: 2000,
+            duration: this.fireRate,
             onUpdate: () => {
                 // Ajustar el tamaño del cuerpo de colisión durante la expansión
                 if (this.smokeCloud && this.smokeCloud.body) {

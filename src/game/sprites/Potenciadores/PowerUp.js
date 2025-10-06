@@ -3,8 +3,7 @@ export default class PowerUp extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, type) {
         super(scene, x, y, `powerup-${type}`);
         scene.add.existing(this);
-        scene.physics.add.existing(this);
-        
+        scene.physics.add.existing(this);    
         this.type = type;
         this.duration = 10000; // 10 segundos
         this.isActive = false;
