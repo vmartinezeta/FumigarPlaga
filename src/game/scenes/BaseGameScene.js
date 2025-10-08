@@ -11,6 +11,7 @@ import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
 import UIManager from "../sprites/UIManager";
 import DockCenter from "../sprites/DockCenter";
 import RanaStaticFamily from "../sprites/Potenciadores/RanaStaticFamily";
+import RanaMovableFamily from "../sprites/Potenciadores/RanaMovableFamily";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -137,6 +138,7 @@ export class BaseGameScene extends Phaser.Scene {
         // });
 
         this.staticFamilies = [];
+        this.movableFamilies = [];
         this.time.addEvent({
             delay: 10000, // cada 10 segundos intenta generar
             callback: this.spawnStaticFamily,
@@ -169,6 +171,58 @@ export class BaseGameScene extends Phaser.Scene {
 
         return family;
     }
+
+
+    spawnMovableFamily() {
+        const x = Phaser.Math.Between(100, this.width - 100);
+        const y = Phaser.Math.Between(this.ymax + 20, this.height - 20);        
+        const ranaCount = Phaser.Math.Between(5, 7); // 5-7 ranas (más difíciles)
+        const radius = Phaser.Math.Between(70, 110);
+        const movementRadius = Phaser.Math.Between(100, 150);
+        
+        const family = new RanaMovableFamily(this, x, y, ranaCount, radius, movementRadius);
+        this.movableFamilies.push(family);        
+        
+        return family;
+    }
+    
+    getSafeSpawnPosition() {
+        // Buscar posición lejos del jugador
+        const margin = 150;
+        let x, y;
+        let attempts = 0;
+        
+        do {
+            x = Phaser.Math.Between(margin, this.game.config.width - margin);
+            y = Phaser.Math.Between(margin, this.game.config.height - margin);
+            attempts++;
+        } while (
+            Phaser.Math.Distance.Between(x, y, this.player.x, this.player.y) < 200 
+            && attempts < 10
+        );
+        
+        return { x, y };
+    }
+    
+    setupFamilyEvents() {
+        // Escuchar eventos de familias destruidas
+        this.eventBus.on('familyDestroyed', this.onFamilyDestroyed, this);
+    }
+    
+    onFamilyDestroyed(data) {
+        console.log(`🎊 Familia ${data.familyType} destruida! Potenciador: ${data.powerupType}`);
+        
+        // Remover familia de los arrays
+        if (data.familyType === 'static') {
+            this.staticFamilies = this.staticFamilies.filter(f => f.isAlive);
+        } else {
+            this.movableFamilies = this.movableFamilies.filter(f => f.isAlive);
+        }
+        
+        // Bonus de puntos por destruir familia completa
+        this.scoreManager.addScore(500, `familia_${data.familyType}`);
+    }
+    
 
     changeScene() {
         this.sound.stopAll();
