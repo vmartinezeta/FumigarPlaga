@@ -10,6 +10,7 @@ import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
 import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
 import UIManager from "../sprites/UIManager";
 import DockCenter from "../sprites/DockCenter";
+import RanaStaticFamily from "../sprites/Potenciadores/RanaStaticFamily";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -136,8 +137,8 @@ export class BaseGameScene extends Phaser.Scene {
         // });
 
         this.time.addEvent({
-            delay: 10000, // cada 10 segundos intenta generar
-            callback: this.trySpawnExpressPowerup,
+            delay: 1000, // cada 10 segundos intenta generar
+            callback: this.staticFamily,
             callbackScope: this,
             loop: true
         });
@@ -152,6 +153,12 @@ export class BaseGameScene extends Phaser.Scene {
         this.uiManager = new UIManager(this, this.eventBus);
 
         this.fierro = new LanzaHumo(this);
+
+    }
+
+
+    staticFamily() {
+        new RanaStaticFamily(this, 100, 100, 5, 40);
     }
 
     changeScene() {

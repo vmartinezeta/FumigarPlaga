@@ -1,37 +1,72 @@
-import Phaser from "phaser";
 import Rana from "../Enemigos/Rana";
-import { Punto } from "../../classes/Punto";
+import RanaFamily from "./RanaFamily";
 
-export default class RanaStaticFamily extends Phaser.GameObjects.Group {
-    constructor(scene, x, y) {
-        super(scene);
-        scene.physics.add.existing(this);
-        this.velocidad = new Punto(40, 40);
-        this.zona = [];
-        this.total = 5;
-        this.radio = 50;
-        this.type = Math.floor(Math.random() * 2);
-        this.agregar(scene, x, y, this.radio, null);
+
+// RanaStaticFamily.js
+export default class RanaStaticFamily extends RanaFamily {
+    constructor(scene, x, y, ranaCount = 5, radius = 80) {
+        super(scene, x, y, 'static', ranaCount, radius);
+        this.setupStaticBehavior();
     }
-
-    agregar(scene, x, y, radio, rana) {
-        if (rana) {
-            this.total--;
-            this.add(rana);
-        }
-        if (this.total === 0) return; 
-
-        const angle = Math.random() * 2 * Math.PI;
-        const x1 = x + radio * Math.cos(angle);
-        const y1 = y + radio * Math.sin(angle);
-        rana = new Rana(scene, x1, y1, "rana", Boolean(this.type), true);
-        rana.setVelocidad(0, 0);
-        rana.body.setSize(10, 10);
-        scene.physics.add.collider(rana, this, r => {
-            r.morir();
-        });
+    
+    createRana(x, y, index) {
+        // Crear rana estática (usa tu clase Rana existente)
+        const rana = new Rana(this.scene, x, y, "rana", false, false,20);
+        rana.body.setVelocity(0,0);
+        // Configurar propiedades específicas de ranas estáticas
+        rana.health = 30;
+        rana.maxHealth = 30;
+        rana.speed = 0; // No se mueven
+        rana.damage = 15;
+        rana.isStatic = true;
         
-        scene.time.delayedCall(100, this.agregar, [scene, x, y, radio, rana], this);
+        // Configurar física
+        rana.body.setSize(20, 20);
+        rana.body.setOffset(6, 6);
+        
+        return rana;
     }
-
+    
+    setupStaticBehavior() {
+        // Comportamiento específico para ranas estáticas
+        this.children.entries.forEach(rana => {
+            // Las ranas estáticas pueden tener ataques a distancia
+            this.setupRangedAttack(rana);
+        });
+    }
+    
+    setupRangedAttack(rana) {
+        // Ataque de proyectiles cada 3 segundos
+        this.scene.time.addEvent({
+            delay: 3000,
+            callback: () => {
+                if (rana.active && this.scene.player.active) {
+                    this.shootAtPlayer(rana);
+                }
+            },
+            callbackScope: this,
+            loop: true
+        });
+    }
+    
+    shootAtPlayer(rana) {
+        const player = this.scene.player;
+        const angle = Phaser.Math.Angle.Between(rana.x, rana.y, player.x, player.y);
+        
+        // Crear proyectil
+        const projectile = this.scene.projectiles.create(rana.x, rana.y, 'rana_projectile');
+        projectile.setRotation(angle);
+        projectile.damage = 10;
+        
+        // Velocidad del proyectil
+        const speed = 150;
+        this.scene.physics.velocityFromRotation(angle, speed, projectile.body.velocity);
+        
+        // Auto-destrucción después de tiempo
+        this.scene.time.delayedCall(3000, () => {
+            if (projectile.active) {
+                projectile.destroy();
+            }
+        });
+    }
 }

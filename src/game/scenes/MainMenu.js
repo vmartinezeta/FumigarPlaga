@@ -1,8 +1,7 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
-import RanaMovableFamily from '../sprites/Potenciadores/RanaMovableFamily';
-import RanaStaticFamily from '../sprites/Potenciadores/RanaStaticFamily';
+
 
 
 export class MainMenu extends Scene {
@@ -47,7 +46,6 @@ export class MainMenu extends Scene {
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
         
-    
 
         EventBus.emit('current-scene-ready', this);
     }
