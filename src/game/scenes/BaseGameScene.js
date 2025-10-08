@@ -136,9 +136,10 @@ export class BaseGameScene extends Phaser.Scene {
         //     loop: true
         // });
 
+        this.staticFamilies = [];
         this.time.addEvent({
-            delay: 1000, // cada 10 segundos intenta generar
-            callback: this.staticFamily,
+            delay: 10000, // cada 10 segundos intenta generar
+            callback: this.spawnStaticFamily,
             callbackScope: this,
             loop: true
         });
@@ -157,8 +158,16 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
 
-    staticFamily() {
-        new RanaStaticFamily(this, 100, 100, 5, 40);
+    spawnStaticFamily() {
+        const x = Phaser.Math.Between(100, this.width - 100);
+        const y = Phaser.Math.Between(this.ymax + 20, this.height - 20);
+        const ranaCount = Phaser.Math.Between(5, 8); // 5-8 ranas
+        const radius = Phaser.Math.Between(60, 100);
+
+        const family = new RanaStaticFamily(this, x, y, ranaCount, radius);
+        this.staticFamilies.push(family);
+
+        return family;
     }
 
     changeScene() {
