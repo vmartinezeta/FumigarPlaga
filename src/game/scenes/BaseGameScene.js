@@ -30,6 +30,8 @@ export class BaseGameScene extends Phaser.Scene {
         this.pinchos = null;
         this.emitter = null;
         this.eventBus = null;
+        this.gameTime = 0;
+        this.difficultyLevel = 1;
     }
 
     init() {
@@ -126,9 +128,16 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.sueloFrontera = new SueloFrontera(this, 0, this.ymax + 40);
 
+        // this.time.addEvent({
+        //     delay: 6000,
+        //     callback: this.suministrarPotenciador,
+        //     callbackScope: this,
+        //     loop: true
+        // });
+
         this.time.addEvent({
-            delay: 6000,
-            callback: this.suministrarPotenciador,
+            delay: 10000, // cada 10 segundos intenta generar
+            callback: this.trySpawnExpressPowerup,
             callbackScope: this,
             loop: true
         });
@@ -277,7 +286,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.potenciadorGroup.addPotenciador(potenciador);
     }
 
-    update() {
+    update(time, delta) {
         this.player.update();
         this.plagaGroup.update();
         this.potenciadorGroup.update();
@@ -313,12 +322,21 @@ export class BaseGameScene extends Phaser.Scene {
             this.player.disparar(this.fierro, this.plagaGroup);
         }
 
-
         if (this.plagaGroup.estaVacio()) {
             this.uiManager.gameOver = true;
             this.reset();
         }
 
+        this.gameTime += delta / 1000; // convertir a segundos
+        this.updateDifficulty();
+
+    }
+
+
+    updateDifficulty() {
+        // Ajustar la dificultad en función del tiempo
+        // Por ejemplo, cada 60 segundos aumenta la dificultad
+        this.difficultyLevel = 1 + Math.floor(this.gameTime / 60);
     }
 
     updateHonda() {
