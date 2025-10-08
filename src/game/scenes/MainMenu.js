@@ -38,16 +38,13 @@ export class MainMenu extends Scene {
 
     create() {
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
-        // this.spray = new SuperSpray(this, Math.PI / 10);
-        // this.spray.setAngle(Math.PI/8);
-        // this.spray.setOrigen(330, 100);
 
         this.add.text(740, 100, 'Nuevo Record: ' + this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
-            
+
 
         EventBus.emit('current-scene-ready', this);
     }
@@ -75,7 +72,4 @@ export class MainMenu extends Scene {
         this.animacion.reiniciar(this.siguiente, this);
     }
 
-    update() {
-        // this.spray.createParticle("particle",.8);
-    }
 }

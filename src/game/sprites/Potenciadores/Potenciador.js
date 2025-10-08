@@ -7,7 +7,7 @@ export default class Potenciador extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.setScale(1);
         this.setOrigin(1 / 2);
-    
+
         this.animate(scene);
         scene.time.delayedCall(6000, this.onEliminar, [], this);
         scene.add.existing(this);

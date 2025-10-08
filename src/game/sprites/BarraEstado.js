@@ -5,11 +5,11 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
         super(scene);
         this.scene = scene;
         this.config = config;
-        const { x, y, vida, capacidad, boquilla } = config;
+        const { x, y, vida, capacidad, fierro } = config;
         this.vida = vida;
         this.capacidad = capacidad;
-        this.boquilla = boquilla;
-        this.puntuacion = 0
+        this.fierro = fierro;
+        this.puntuacion = 0;
         this.rotuloVida = this.scene.add.text(x, y, 'Vida: ' + this.vida, {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
@@ -22,7 +22,7 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
             align: 'center'
         }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
 
-        this.rotuloFierro = this.scene.add.text(x + 270, y, "Fierro: " + this.boquilla, {
+        this.rotuloFierro = this.scene.add.text(x + 270, y, "Fierro: " + this.fierro, {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
@@ -46,8 +46,8 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
         this.rotuloPuntuacion.setText("Puntuación: "+this.puntuacion);
     }
 
-    setBoquilla(boquilla) {
-        this.rotuloFierro.setText("Fierro: " + boquilla);
+    setFierro(fierro) {
+        this.rotuloFierro.setText("Fierro: " + fierro);
     }
 
     actualizar(vida, capacidad) {
@@ -59,6 +59,12 @@ export default class BarraEstado extends Phaser.GameObjects.Group {
         if (this.capacidad !== capacidad && capacidad >= 0) {
             this.capacidad = capacidad
             this.rotuloCapacidad.setText("Capacidad: " + capacidad)
+        }
+    }
+
+    actualizar(config) {
+        for(let key of Object.keys(config)) {
+            
         }
     }
 

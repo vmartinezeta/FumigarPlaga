@@ -16,23 +16,21 @@ export class DayScene extends BaseGameScene {
     create() {
         super.create();
 
-        
-
         this.add.tileSprite(0, 270, this.reguladorWidth * this.game.config.width, 200, "bosque")
             .setScale(.4)
             .setDepth(0)
             .setScrollFactor(0);
 
         this.add.tileSprite(10, 275, this.reguladorWidth * this.game.config.width, 200, "bosque")
-        .setScale(.5)
-        .setDepth(0)
-        .setScrollFactor(0);
+            .setScale(.5)
+            .setDepth(0)
+            .setScrollFactor(0);
 
         this.add.tileSprite(0, 280, this.reguladorWidth * this.game.config.width, 200, "bosque")
-        .setOrigin(1 / 2)
-        .setScale(.6)
-        .setDepth(0)
-        .setScrollFactor(0);
+            .setOrigin(1 / 2)
+            .setScale(.6)
+            .setDepth(0)
+            .setScrollFactor(0);
 
         this.cloudTextures = ["nube", "nube-2"];
 
@@ -68,10 +66,10 @@ export class DayScene extends BaseGameScene {
             y: 30,
             vida: 10,
             capacidad: 10,
-            boquilla: 1
+            fierro: 3
         });
 
-        this.uiManager.setBarraEstado(this.barraEstado);
+        this.uiManager.setStatusBar(this.barraEstado);
 
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
@@ -83,6 +81,7 @@ export class DayScene extends BaseGameScene {
         this.pinchos = new HileraPincho(this);
 
         this.activarColisiones();
+        
 
         EventBus.emit('current-scene-ready', this);
     }
@@ -176,7 +175,11 @@ export class DayScene extends BaseGameScene {
     }
 
     update() {
-        if (this.gameOver) return;
+        if (this.uiManager.gameOver) {
+            this.scene.start('GameOver');
+            return;
+        }
+
         super.update();
         this.mosquitos.update();
         this.clouds.tilePositionX += .2;

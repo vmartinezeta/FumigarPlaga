@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import Icono from "./Icono";
 
-export default class DockCentro extends Phaser.GameObjects.Group {
+export default class DockCenter extends Phaser.GameObjects.Group {
     constructor(scene) {
         super(scene);
         this.scene = scene;
@@ -37,7 +37,6 @@ export default class DockCentro extends Phaser.GameObjects.Group {
             icono.setTint(0x00ff00);
         }
     }
-
 
     ocultar() {
         this.setVisible(false);

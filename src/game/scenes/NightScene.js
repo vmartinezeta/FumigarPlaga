@@ -58,7 +58,11 @@ export class NightScene extends BaseGameScene {
     }
 
     update() {
-        if (this.gameOver) return;
+        if (this.uiManager.gameOver) {
+            this.scene.start('GameOver');
+            return;
+        }
+
         super.update();
     }
 

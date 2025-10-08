@@ -40,6 +40,7 @@ export default class Honda extends Fierro {
 
         if (rana.debeMorir()) {
             rana.morir();
+            
         }
 
         rana.setTint(0xff0000);

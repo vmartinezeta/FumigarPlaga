@@ -54,6 +54,12 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         }
     }
 
+    setVelocidad(x, y) {
+        this.velocidad.x = x;
+        this.velocidad.y = y;
+        this.body.setVelocity(x, y);
+    }
+
     disminuirVelocidad(){
         this.body.setVelocity(this.velocidad.x*.5, this.velocidad.y*.5);
     }
