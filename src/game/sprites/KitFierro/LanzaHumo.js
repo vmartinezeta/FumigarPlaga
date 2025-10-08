@@ -1,3 +1,4 @@
+import RanaStaticFamily from "../Potenciadores/RanaStaticFamily";
 import Fierro from "./Fierro";
 import Phaser from "phaser";
 
@@ -87,6 +88,17 @@ export default class LanzaHumo extends Fierro {
 
         // Colisión con enemigos
         this.scene.physics.add.overlap(this.smokeCloud, plagaGroup, (_, rana) => {
+            // enemy.slowDown(0.5); // Reducir velocidad a la mitad
+            rana.disminuirVelocidad();
+            rana.takeDamage(this.damage);
+            if (rana.debeMorir()) {
+                rana.morir();
+            }
+        });
+
+        const grupos = plagaGroup.getChildren().filter(child => child instanceof RanaStaticFamily);
+        console.log(grupos)
+        this.scene.physics.add.overlap(this.smokeCloud, grupos, (_, rana) => {
             // enemy.slowDown(0.5); // Reducir velocidad a la mitad
             rana.disminuirVelocidad();
             rana.takeDamage(this.damage);

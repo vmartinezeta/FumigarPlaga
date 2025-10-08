@@ -1,4 +1,6 @@
 // RanaFamily.js - Clase base abstracta
+import Phaser from "phaser";
+
 export default class RanaFamily extends Phaser.GameObjects.Group {
     constructor(scene, x, y, familyType, ranaCount = 5, radius = 80) {
         super(scene);
@@ -11,50 +13,50 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         this.ranaCount = Math.max(5, ranaCount); // Mínimo 5 ranas
         this.isAlive = true;
         this.powerupType = null;
-        
+
         // Crear el grupo circular
         this.createCircularFormation();
-        
+
         // Marcar el grupo para potenciador
         this.markForPowerup();
-        
+
         // Configurar colisiones y eventos
         this.setupFamily();
     }
-    
+
     createCircularFormation() {
         const angleStep = (2 * Math.PI) / this.ranaCount;
-        
+
         for (let i = 0; i < this.ranaCount; i++) {
             const angle = i * angleStep;
             const x = this.centerX + Math.cos(angle) * this.radius;
             const y = this.centerY + Math.sin(angle) * this.radius;
-            
+
             // Crear rana según el tipo de familia
             const rana = this.createRana(x, y, i);
             rana.family = this; // Referencia a la familia
             rana.familyIndex = i;
         }
     }
-    
+
     // Método abstracto - debe implementarse en clases hijas
     createRana(x, y, index) {
         throw new Error("Método createRana debe ser implementado en clase hija");
     }
-    
+
     markForPowerup() {
         // Seleccionar potenciador aleatorio para este grupo
         const powerupTypes = ['superFuria', 'megaHealth', 'timeSlow', 'multiShot', 'invincibility'];
         this.powerupType = Phaser.Utils.Array.GetRandom(powerupTypes);
-        
+
         // Aplicar efectos visuales a todas las ranas del grupo
         this.children.entries.forEach((rana, index) => {
             this.markRanaAsSpecial(rana, index);
         });
-        
+
         console.log(`🎯 Familia ${this.familyType} marcada con potenciador: ${this.powerupType}`);
     }
-    
+
     markRanaAsSpecial(rana, index) {
         // Color distintivo según el tipo de potenciador
         const colors = {
@@ -64,15 +66,15 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             multiShot: 0xffff00,     // Amarillo
             invincibility: 0xff00ff  // Magenta
         };
-        
+
         // Aplicar tint y efectos visuales
         rana.setTint(colors[this.powerupType]);
-        
+
         // Crear aura alrededor de la rana
         const aura = this.scene.add.circle(rana.x, rana.y, rana.width * 0.8, colors[this.powerupType], 0.3);
         aura.setDepth(rana.depth - 1);
         rana.aura = aura;
-        
+
         // Animación de pulsación para el aura
         this.scene.tweens.add({
             targets: aura,
@@ -83,11 +85,11 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             repeat: -1,
             ease: 'Sine.easeInOut'
         });
-        
+
         // Partículas especiales para ranas de grupo
         this.createRanaParticles(rana, colors[this.powerupType]);
     }
-    
+
     createRanaParticles(rana, color) {
         const particles = this.scene.add.particles(rana.x, rana.y, 'powerup_particle', {
             speed: { min: 5, max: 15 },
@@ -96,14 +98,14 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             blendMode: 'ADD',
             lifespan: 1500,
             frequency: 200,
-            emitZone: { 
-                type: 'random', 
-                source: new Phaser.Geom.Circle(0, 0, rana.width * 0.6) 
+            emitZone: {
+                type: 'random',
+                source: new Phaser.Geom.Circle(0, 0, rana.width * 0.6)
             }
         });
-        
+
         rana.particles = particles;
-        
+
         // Hacer que las partículas sigan a la rana
         this.scene.events.on('update', () => {
             if (rana.active && particles.active) {
@@ -111,17 +113,17 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             }
         });
     }
-    
+
     setupFamily() {
         // Configurar colisiones del grupo
         this.scene.physics.add.collider(this, this.scene.player, this.onPlayerCollision, null, this);
-        
+
         // Escuchar eventos de muerte de ranas individuales
         this.children.entries.forEach(rana => {
             rana.on('dead', this.onRanaDead, this);
         });
     }
-    
+
     onRanaDead(deadRana) {
         // Limpiar efectos visuales de la rana muerta
         if (deadRana.aura) {
@@ -130,52 +132,52 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         if (deadRana.particles) {
             deadRana.particles.destroy();
         }
-        
+
         // Verificar si todas las ranas del grupo están muertas
         const aliveRanas = this.children.entries.filter(rana => rana.active && rana.health > 0);
-        
+
         console.log(`💀 Rana eliminada. Quedan: ${aliveRanas.length}/${this.ranaCount}`);
-        
+
         if (aliveRanas.length === 0) {
             this.onFamilyDestroyed();
         }
     }
-    
+
     onFamilyDestroyed() {
         if (!this.isAlive) return;
-        
+
         this.isAlive = false;
         console.log(`🎉 Familia ${this.familyType} completamente eliminada!`);
-        
+
         // Soltar potenciador en el centro del grupo
         this.dropPowerup();
-        
+
         // Emitir evento para el sistema de puntuación
         this.scene.eventBus.emit('familyDestroyed', {
             familyType: this.familyType,
             powerupType: this.powerupType,
             position: { x: this.centerX, y: this.centerY }
         });
-        
+
         // Destruir el grupo después de un breve delay
         this.scene.time.delayedCall(1000, () => {
             this.destroy(true, true);
         });
     }
-    
+
     dropPowerup() {
         // Crear potenciador especial en el centro del grupo
         const powerup = this.scene.powerups.create(this.centerX, this.centerY, `powerup_${this.powerupType}`);
         powerup.type = this.powerupType;
         powerup.powerupClass = 'group';
         powerup.isSuper = true;
-        
+
         // Efectos especiales para potenciador de grupo
         this.createPowerupEffects(powerup);
-        
+
         console.log(`🎁 Potenciador ${this.powerupType} dropeado por familia ${this.familyType}`);
     }
-    
+
     createPowerupEffects(powerup) {
         // Partículas de celebración
         const particles = this.scene.add.particles(powerup.x, powerup.y, 'powerup_particle', {
@@ -186,7 +188,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             quantity: 20,
             emitZone: { type: 'random', source: new Phaser.Geom.Circle(0, 0, 30) }
         });
-        
+
         // Animación de aparición
         powerup.setScale(0);
         this.scene.tweens.add({
@@ -196,7 +198,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             duration: 500,
             ease: 'Back.easeOut'
         });
-        
+
         // Animación flotante
         this.scene.tweens.add({
             targets: powerup,
@@ -206,7 +208,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             repeat: -1,
             ease: 'Sine.easeInOut'
         });
-        
+
         // Auto-destrucción después de tiempo
         this.scene.time.delayedCall(15000, () => {
             if (powerup.active) {
@@ -215,7 +217,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             }
         });
     }
-    
+
     update() {
         // Actualizar posición de auras y partículas
         this.children.entries.forEach(rana => {
@@ -224,14 +226,22 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             }
         });
     }
-    
+
     destroy(fromScene, destroyChildren) {
         // Limpiar recursos antes de destruir
         this.children.entries.forEach(rana => {
             if (rana.aura) rana.aura.destroy();
             if (rana.particles) rana.particles.destroy();
         });
-        
+
         super.destroy(fromScene, destroyChildren);
+    }
+
+    calculatePerpective(rana, skyLevel, groundLevel) {
+        const relativeHeight = Phaser.Math.Clamp((rana.y - skyLevel) / (groundLevel - skyLevel), 0, 1);
+        const minScale = 0.5;
+        const maxScale = 1;
+        const newScale =  minScale + (maxScale - minScale) * relativeHeight;
+        rana.setScale(newScale);
     }
 }

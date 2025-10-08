@@ -39,7 +39,9 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
 
     update() {
         this.getChildren().forEach(rana => {
-            rana.updateSize(this.y, this.scene.game.config.height);
+            if (rana instanceof Rana) {
+                rana.updateSize(this.y, this.scene.game.config.height);
+            }
         });
     }
 

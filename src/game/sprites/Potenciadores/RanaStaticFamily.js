@@ -11,8 +11,9 @@ export default class RanaStaticFamily extends RanaFamily {
     
     createRana(x, y, index) {
         // Crear rana estática (usa tu clase Rana existente)
-        const rana = new Rana(this.scene, x, y, "rana", false, false,20);
+        const rana = new Rana(this.scene, x, y, "rana", false, false,20);        
         rana.body.setVelocity(0,0);
+        this.calculatePerpective(rana, 300, 600);
         // Configurar propiedades específicas de ranas estáticas
         rana.health = 30;
         rana.maxHealth = 30;
@@ -23,7 +24,7 @@ export default class RanaStaticFamily extends RanaFamily {
         // Configurar física
         rana.body.setSize(20, 20);
         rana.body.setOffset(6, 6);
-        
+        this.add(rana);
         return rana;
     }
     
@@ -41,7 +42,7 @@ export default class RanaStaticFamily extends RanaFamily {
             delay: 3000,
             callback: () => {
                 if (rana.active && this.scene.player.active) {
-                    this.shootAtPlayer(rana);
+                    // this.shootAtPlayer(rana);
                 }
             },
             callbackScope: this,
