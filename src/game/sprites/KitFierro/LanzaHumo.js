@@ -35,9 +35,9 @@ export default class LanzaHumo extends Fierro {
             quantity: 2,
             frequency: 100, // Emitir 2 partículas cada 100ms
             blendMode: 'SCREEN',
-            emitZone: { 
-                type: 'source', 
-                source: new Phaser.Geom.Circle(direction.right() ? emitX : emitX - 80, y, 10) 
+            emitZone: {
+                type: 'source',
+                source: new Phaser.Geom.Circle(direction.right() ? emitX : emitX - 80, y, 10)
             }
         });
 
@@ -87,26 +87,25 @@ export default class LanzaHumo extends Fierro {
         });
 
         // Colisión con enemigos
-        this.scene.physics.add.overlap(this.smokeCloud, plagaGroup, (_, rana) => {
-            // enemy.slowDown(0.5); // Reducir velocidad a la mitad
-            rana.disminuirVelocidad();
-            rana.takeDamage(this.damage);
-            if (rana.debeMorir()) {
-                rana.morir();
-            }
-        });
+        this.scene.physics.add.overlap(this.smokeCloud, plagaGroup, this.handleCollision, null, this);
 
         const grupos = plagaGroup.getChildren().filter(child => child instanceof RanaStaticFamily);
-        console.log(grupos)
-        this.scene.physics.add.overlap(this.smokeCloud, grupos, (_, rana) => {
-            // enemy.slowDown(0.5); // Reducir velocidad a la mitad
-            rana.disminuirVelocidad();
-            rana.takeDamage(this.damage);
-            if (rana.debeMorir()) {
-                rana.morir();
-            }
+        grupos.forEach(g => {
+            this.scene.physics.add.overlap(this.smokeCloud, g, (_, rana)=> {
+                this.handleCollision(null, rana);
+                g.remove(rana, true, true);
+            }, null, this);
         });
 
+    }
+
+    handleCollision(_, rana) {
+        rana.disminuirVelocidad();
+        rana.takeDamage(this.damage);
+        if (rana.debeMorir()) {
+            rana.morir();
+
+        }
     }
 
     cleanup() {

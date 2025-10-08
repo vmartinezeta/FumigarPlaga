@@ -129,7 +129,9 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     morir() {
         this.scene.time.removeEvent(this.onComplete);
 
-        this.healthBar.destroy();
+        if (this.healthBar) {
+            this.healthBar.destroy();
+        }
 
         this.destroy();
     }

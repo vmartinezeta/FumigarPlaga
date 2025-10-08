@@ -13,7 +13,6 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         this.ranaCount = Math.max(5, ranaCount); // Mínimo 5 ranas
         this.isAlive = true;
         this.powerupType = null;
-
         // Crear el grupo circular
         this.createCircularFormation();
 
@@ -48,6 +47,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         // Seleccionar potenciador aleatorio para este grupo
         const powerupTypes = ['superFuria', 'megaHealth', 'timeSlow', 'multiShot', 'invincibility'];
         this.powerupType = Phaser.Utils.Array.GetRandom(powerupTypes);
+
 
         // Aplicar efectos visuales a todas las ranas del grupo
         this.children.entries.forEach((rana, index) => {
