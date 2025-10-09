@@ -4,7 +4,7 @@ import { ControlDireccional } from "../../classes/ControlDireccional";
 import { Direccional } from "../../classes/Direccional";
 
 export default class Rana extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, imageKey, hembra, puedeCoger, vida=10) {
+    constructor(scene, x, y, imageKey, hembra, puedeCoger, vida=30) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;

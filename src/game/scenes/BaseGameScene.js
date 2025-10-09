@@ -12,6 +12,8 @@ import UIManager from "../sprites/UIManager";
 import DockCenter from "../sprites/DockCenter";
 import RanaStaticFamily from "../sprites/Potenciadores/RanaStaticFamily";
 import RanaMovableFamily from "../sprites/Potenciadores/RanaMovableFamily";
+import Achievement from "../sprites/Achivements/Achievement";
+
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -37,58 +39,70 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     init() {
-        this.achievements = {
-            firstBlood: {
+
+        this.achievements = [
+            {
+                key: "firstBlood",
                 unlocked: false,
                 text: '¡Primera rana eliminada!',
-                score: 0
+                score: 30
             },
-            score100: {
+            {
+                key: "nightHunter",
                 unlocked: false,
                 text: '¡100 puntos alcanzados!',
                 score: 100
             },
-            score500: {
+            {
+                key: "score100",
                 unlocked: false,
                 text: '¡500 puntos! Eres un experto',
                 score: 500
             },
-            nightHunter: {
+            {
+                key: "score500",
                 unlocked: false,
                 text: 'Cazador nocturno desbloqueado',
                 score: 300
             }
-        };
+        ];
+
+        const logros = JSON.parse(localStorage.getItem('gameAchievements') || "[]");
+        if (logros.length) {
+            logros.forEach(logro => {
+                const oldLogro = this.achievements.find(l => l.key === logro.key);
+                oldLogro.unlocked = logro.unlocked;
+            });
+        }
     }
 
     checkAchievements() {
-        Object.keys(this.achievements).forEach(key => {
-            const achievement = this.achievements[key];
-
-            if (!achievement.unlocked && this.score >= achievement.score) {
-                this.unlockAchievement(key);
+        if (!this.barraEstado) return;
+        this.achievements.forEach(achievement => {
+            if (!achievement.unlocked && this.barraEstado.puntuacion >= achievement.score) {
+                this.unlockAchievement(achievement);
             }
         });
     }
 
-    unlockAchievement(key) {
-        this.achievements[key].unlocked = true;
+    unlockAchievement(achievement) {
+        achievement.unlocked = true;
 
         // Mostrar animación
-        const achievementPopup = new Achievement(this, this.achievements[key]);
+        const achievementPopup = new Achievement(this, this.game.config.width / 2, -100, achievement);
         achievementPopup.show();
 
         // Efectos de sonido
-        this.sound.play('achievement-sound', { volume: 0.7 });
+        this.sound.play('logro', { volume: 0.7 });
 
         // Guardar en localStorage
         this.saveAchievements();
     }
 
     saveAchievements() {
-        const unlocked = {};
-        Object.keys(this.achievements).forEach(key => {
-            unlocked[key] = this.achievements[key].unlocked;
+        const unlocked = [];
+        this.achievements.filter(achievement => achievement.unlocked).forEach(achievement => {
+            unlocked.push(achievement);
         });
         localStorage.setItem('gameAchievements', JSON.stringify(unlocked));
     }
@@ -156,7 +170,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.uiManager = new UIManager(this, this.eventBus);
 
         this.fierro = new LanzaHumo(this);
-
     }
 
     spawnStaticFamily() {
@@ -166,9 +179,7 @@ export class BaseGameScene extends Phaser.Scene {
         const radius = Phaser.Math.Between(20, 30);
 
         const family = new RanaStaticFamily(this, x, y, ranaCount, radius);
-        this.staticFamilies.push(family);
         this.plagaGroup.add(family);
-        return family;
     }
 
     spawnMovableFamily() {
@@ -304,14 +315,12 @@ export class BaseGameScene extends Phaser.Scene {
         if (!player.tieneFuria) {
             this.scream.play();
         }
-        this.eventBus.emit("playerKilled", { player });
-        this.eventBus.emit("playerHealthChanged", { vida: player.vida });
+        this.eventBus.emit("playerDead", { player });
     }
 
     morir(player, rana) {
         rana.morir();
-        this.eventBus.emit("playerKilled", { player });
-
+        this.eventBus.emit("playerDead", { player });
         this.eventBus.emit("puntuacionChanged", { puntuacion: rana.vidaMax });
     }
 
@@ -354,6 +363,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+        this.checkAchievements();
         this.player.update();
         this.plagaGroup.update();
         this.potenciadorGroup.update();
@@ -396,7 +406,6 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.gameTime += delta / 1000; // convertir a segundos
         this.updateDifficulty();
-
     }
 
 

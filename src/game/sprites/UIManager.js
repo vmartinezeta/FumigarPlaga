@@ -22,7 +22,7 @@ export default class UIManager {
         // Salud del jugador
         this.eventBus.on('playerHealthChanged', this.updateHealthBar, this);
         this.eventBus.on('puntuacionChanged', this.updatePuntuacion, this);
-        this.eventBus.on('playerKilled', this.morirPlayer, this);
+        this.eventBus.on('playerDead', this.morirPlayer, this);
         // this.eventBus.on('playerMaxHealthChanged', this.updateMaxHealth, this);
 
         // this.eventBus.on('ranaKilled', this.morirRana, this);
@@ -38,7 +38,8 @@ export default class UIManager {
 
     morirPlayer({ player }) {
         player.takeDamage();
-        this.eventBus.emit("playerHealthChanged", { vida:+player.vida });
+        console.log(player.vida)
+        this.eventBus.emit("playerHealthChanged", { vida:player.vida });
         if (player.debeMorir()) {
             player.destroy();
             this.gameOver = true;
