@@ -1,6 +1,8 @@
 import Potenciador from "./Potenciador";
 
-class MegaHealth extends Potenciador{
-    applyEffect(player) {}
+export default class MegaHealth extends Potenciador{
+    applyEffect(player) {
+        player.vida = player.vida + 100;
+    }
 
 }

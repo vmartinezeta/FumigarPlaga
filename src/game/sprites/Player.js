@@ -4,11 +4,11 @@ import { ControlDireccional } from "../classes/ControlDireccional";
 import { Direccional } from "../classes/Direccional";
 
 export default class Player extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, imageKey, vida) {
+    constructor(scene, x, y, imageKey, vida=20) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
-        this.vida = vida || 10;
+        this.vida = vida;
         this.ymax = 0;
         this.rapidez = 30;
         this.tieneFuria = false;

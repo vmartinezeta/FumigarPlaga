@@ -23,13 +23,9 @@ export default class UIManager {
         this.eventBus.on('playerHealthChanged', this.updateHealthBar, this);
         this.eventBus.on('puntuacionChanged', this.updatePuntuacion, this);
         this.eventBus.on('playerDead', this.morirPlayer, this);
-        // this.eventBus.on('playerMaxHealthChanged', this.updateMaxHealth, this);
-
-        // this.eventBus.on('ranaKilled', this.morirRana, this);
 
         // Sistema de furia
         this.eventBus.on('furiaActivated', this.showFuriaEffect, this);
-        this.eventBus.on('furiaDeactivated', this.hideFuriaEffect, this);
     }
 
     setStatusBar(statusBar) {
@@ -38,7 +34,6 @@ export default class UIManager {
 
     morirPlayer({ player }) {
         player.takeDamage();
-        console.log(player.vida)
         this.eventBus.emit("playerHealthChanged", { vida:player.vida });
         if (player.debeMorir()) {
             player.destroy();
@@ -55,7 +50,7 @@ export default class UIManager {
     }
 
     showFuriaEffect({ player, potenciador }) {
-        player.activarFuria();
+        potenciador.applyEffect(player);
         this.emitter.start();
         this.emitter.startFollow(player);
         this.scene.tweens.add({
@@ -66,15 +61,11 @@ export default class UIManager {
             ease: 'Back.out',
         });
 
-        this.potenciadorGroup.remove(potenciador, true, true);
+        this.scene.time.removeEvent(potenciador.timer);
+        potenciador.destroy();
 
-        this.scene.time.delayedCall(10000, () => {
-            this.eventBus.emit('furiaDeactivated', { player });
+        this.scene.time.delayedCall(potenciador.timegame, () => {
+            this.emitter.stop();
         });
-    }
-
-    hideFuriaEffect({ player }) {
-        this.emitter.stop();
-        player.reset();
     }
 }

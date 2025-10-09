@@ -1,6 +1,6 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
-import { DayScene } from './DayScene';
+
 
 export class GameOver extends Scene {
     constructor() {

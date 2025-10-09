@@ -1,8 +1,7 @@
 import Phaser from "phaser"
-import TanqueConAgua from "./TanqueConAgua"
 import Vida from "./Vida"
 import NotificacionTextual from "../NotificacionTextual";
-import FuriaDude from "./FuriaDude";
+import RecargaFierro from "./RecargaFierro";
 
 export default class PotenciadorGroup extends Phaser.GameObjects.Group {
     constructor(scene) {
@@ -19,7 +18,7 @@ export default class PotenciadorGroup extends Phaser.GameObjects.Group {
     }
 
     addPotenciador(potenciador) {
-        if (potenciador instanceof TanqueConAgua && this.primerasVecesAlerta.tanque > 0) {
+        if (potenciador instanceof RecargaFierro && this.primerasVecesAlerta.tanque > 0) {
             this.createAlerta(this.scene.game.config.width / 2, 60, "Use la tecla A para suministrar el agua", 600, 50);
             this.primerasVecesAlerta.tanque--;
         }
@@ -71,17 +70,5 @@ export default class PotenciadorGroup extends Phaser.GameObjects.Group {
             anterior = actual;
         }
     }
-
-    update() {
-        this.getChildren().forEach(potenciador => {
-            if (potenciador && potenciador.updateSize) {
-                if (potenciador instanceof TanqueConAgua) {
-                    potenciador.updateSize(300, 600);
-                } else {
-                    potenciador.updateSize(300, 600);
-                }
-            }
-        })
-    }
-
+    
 }

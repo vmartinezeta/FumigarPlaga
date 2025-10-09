@@ -1,6 +1,6 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
-import AchievementContainer from '../sprites/Achivements/AchievementContainer';
+
 
 
 export class LogroScene extends Scene {

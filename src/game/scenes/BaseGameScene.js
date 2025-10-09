@@ -3,7 +3,6 @@ import SueloFrontera from "../sprites/SueloFrontera";
 import PlagaGroup from "../sprites/Enemigos/PlagaGroup";
 import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
 import Vida from "../sprites/Potenciadores/Vida";
-import TanqueConAgua from "../sprites/Potenciadores/TanqueConAgua";
 import FuriaDude from "../sprites/Potenciadores/FuriaDude";
 import Honda from "../sprites/KitFierro/Honda";
 import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
@@ -13,6 +12,8 @@ import DockCenter from "../sprites/DockCenter";
 import RanaStaticFamily from "../sprites/Potenciadores/RanaStaticFamily";
 import RanaMovableFamily from "../sprites/Potenciadores/RanaMovableFamily";
 import Achievement from "../sprites/Achivements/Achievement";
+import Invencibility from "../sprites/Potenciadores/Invencibility";
+import RecargaFierro from "../sprites/Potenciadores/RecargaFierro";
 
 
 
@@ -144,12 +145,12 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.sueloFrontera = new SueloFrontera(this, 0, this.ymax + 40);
 
-        // this.time.addEvent({
-        //     delay: 6000,
-        //     callback: this.suministrarPotenciador,
-        //     callbackScope: this,
-        //     loop: true
-        // });
+        this.time.addEvent({
+            delay: 6000,
+            callback: this.suministrarPotenciador,
+            callbackScope: this,
+            loop: true
+        });
 
         this.staticFamilies = [];
         this.movableFamilies = [];
@@ -297,16 +298,12 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     aplicarPotenciador(player, potenciador) {
-        if (potenciador instanceof TanqueConAgua) {
+        if (potenciador instanceof RecargaFierro) {
             potenciador.applyEffect(this.fierro);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
-        } else if (potenciador instanceof FuriaDude) {
-            this.eventBus.emit('furiaActivated', {
-                player,
-                potenciador,
-                potenciadorGroup: this.potenciadorGroup
-            });
+        } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {
+            this.eventBus.emit('furiaActivated', { player, potenciador });
         }
     }
 
@@ -342,7 +339,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     suministrarPotenciador() {
         const x = Phaser.Math.Between(100, this.width - 100);
-        const y = Phaser.Math.Between(100, this.ymax - 100);
+        const y = Phaser.Math.Between(400, this.height - 100);
         const value = Phaser.Math.Between(1, 2);
         let potenciador = null;
         if (value === 1) {
@@ -358,7 +355,7 @@ export class BaseGameScene extends Phaser.Scene {
         if (this.potenciadorGroup.countActive() > 500) return
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(350, this.height - 50);
-        const potenciador = new TanqueConAgua(this, x, y, "tanque");
+        const potenciador = new RecargaFierro(this, x, y, "tanque");
         this.potenciadorGroup.addPotenciador(potenciador);
     }
 
@@ -366,7 +363,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.checkAchievements();
         this.player.update();
         this.plagaGroup.update();
-        this.potenciadorGroup.update();
 
         if (this.plagaGroup.total > 5) {
             this.createTanque();

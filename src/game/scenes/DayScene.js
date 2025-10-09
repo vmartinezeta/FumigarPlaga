@@ -7,6 +7,7 @@ import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
 
 
+
 export class DayScene extends BaseGameScene {
     constructor() {
         super('DayScene');

@@ -1,10 +1,10 @@
 
-export default class TanqueConAgua extends Phaser.GameObjects.Sprite {
+export default class RecargaFierro extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
-        this.setScale(1);
+        this.updateSize(300, 600);
         this.setOrigin(1 / 2);
         this.setDepth(5);
 
