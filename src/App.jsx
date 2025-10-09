@@ -4,6 +4,7 @@ import { useGame } from './context/GameContext';
 import LetraList from './Components/LetraList';
 import CentroControl from './Components/CentroControl';
 import "./estilos.css";
+import Logros from './Components/Logros';
 
 
 function App() {
@@ -53,7 +54,8 @@ function App() {
         <div className="columna__par">
             <div className="columna__izq">
                 <div className="columna__render">
-                    <LetraList onMover={onMover} />
+                    {scene&&scene.scene.key === "MainMenu"&&<LetraList onMover={onMover} />}
+                    {scene&&scene.scene.key === "LogroScene"&&<Logros /> }
                     <PhaserGame ref={phaserRef} currentActiveScene={(scene) => {
                         currentScene(scene);
                         moverLetra(scene);

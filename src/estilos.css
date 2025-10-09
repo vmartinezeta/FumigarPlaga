@@ -50,6 +50,33 @@
     background: #000;
 }
 
+
+.logros {
+    position: absolute;
+    top:100px;
+    width: 1000px;
+    height: 500px;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+
+.logro {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 70px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(0,0,0,.6);
+}
+
+.logro__titulo {
+    font-size: 24px;
+}
+
+
 @keyframes comer {
     to {
         top: 160px;

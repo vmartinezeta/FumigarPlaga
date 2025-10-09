@@ -14,9 +14,6 @@ export class LogroScene extends Scene {
             fill: '#ecf0f1'
         }).setOrigin(0.5);
 
-        const logros = JSON.parse(localStorage.getItem('gameAchievements') || "[]")
-        new AchievementContainer(this, 200, 120, logros);
-
         EventBus.emit('current-scene-ready', this)
     }
 
