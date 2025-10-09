@@ -55,7 +55,7 @@ function App() {
             <div className="columna__izq">
                 <div className="columna__render">
                     {scene&&scene.scene.key === "MainMenu"&&<LetraList onMover={onMover} />}
-                    {scene&&scene.scene.key === "LogroScene"&&<Logros /> }
+                    {/* {scene&&scene.scene.key === "LogroScene"&&<Logros /> } */}
                     <PhaserGame ref={phaserRef} currentActiveScene={(scene) => {
                         currentScene(scene);
                         moverLetra(scene);
