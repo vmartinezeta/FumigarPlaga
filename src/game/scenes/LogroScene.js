@@ -17,29 +17,29 @@ export class LogroScene extends Phaser.Scene {
         // Crear un contenedor para los logros
         this.container = this.add.container(400, 100);
         this.maskGraphics = this.make.graphics();
-        this.maskGraphics.fillRect(100, 100, 600, 400); // Ajusta la posición y tamaño de la máscara
+        this.maskGraphics.fillRect(100, 100, 860, 400); // Ajusta la posición y tamaño de la máscara
 
         const mask = new Phaser.Display.Masks.GeometryMask(this, this.maskGraphics);
 
         this.container.setMask(mask);
 
         this.logros = JSON.parse(localStorage.getItem('gameAchievements') || "[]");
-        // Lista de logros (ejemplo)
-        // this.logros = [
-        //     { nombre: 'Primera sangre', descripcion: 'Mata tu primera rana', desbloqueado: true },
-        //     { nombre: 'Cazador', descripcion: 'Mata 50 ranas', desbloqueado: false },
-        //     // ... más logros
-        // ];
 
         // Crear elementos de logro
         let y = 0;
         const spacing = 60;
         this.logros.forEach((logro, index) => {
-            const bg = this.add.rectangle(0, y, 500, 50, logro.desbloqueado ? 0x00aa00 : 0x333333);
+            const bg = this.add.rectangle(0, y, 860, 50, logro.desbloqueado ? 0x00aa00 : 0x333333);
             const text = this.add.text(-240, y - 10, logro.key, { fontSize: '18px', fill: '#fff' });
             const desc = this.add.text(-240, y + 10, logro.text, { fontSize: '12px', fill: '#ccc' });
 
-            this.container.add([bg, text, desc]);
+            const statusText = this.add.text(260, y, logro.unlocked ? '✅ DESBLOQUEADO' : '🔒 BLOQUEADO', {
+            fontSize: '14px',
+            fill: logro.unlocked ? '#2ecc71' : '#e74c3c',
+            fontFamily: 'Arial'
+            }).setOrigin(0);
+
+            this.container.add([bg, text, desc, statusText]);
 
             y += spacing;
         });
@@ -74,4 +74,5 @@ export class LogroScene extends Phaser.Scene {
     changeScene(key) {
         return this.scene.start(key);
     }
+
 }

@@ -65,7 +65,17 @@ export class BaseGameScene extends Phaser.Scene {
                 unlocked: false,
                 text: 'Cazador nocturno desbloqueado',
                 score: 300
-            }
+            },
+            {
+                key: "firstPowerUp",
+                unlocked: false,
+                text: 'Primer Potenciador usado'
+            },
+            {
+                key: "DoublePowerUp",
+                unlocked: false,
+                text: 'Doble potenciador al instante'
+            },
         ];
 
         const logros = JSON.parse(localStorage.getItem('gameAchievements') || "[]");
@@ -101,11 +111,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     saveAchievements() {
-        const unlocked = [];
-        this.achievements.filter(achievement => achievement.unlocked).forEach(achievement => {
-            unlocked.push(achievement);
-        });
-        localStorage.setItem('gameAchievements', JSON.stringify(unlocked));
+        localStorage.setItem('gameAchievements', JSON.stringify(this.achievements));
     }
 
     create() {
@@ -300,6 +306,8 @@ export class BaseGameScene extends Phaser.Scene {
     aplicarPotenciador(player, potenciador) {
         if (potenciador instanceof RecargaFierro) {
             potenciador.applyEffect(this.fierro);
+            this.eventBus.emit("capacityWeaponChanged", {capacidad:this.fierro.capacidad})
+            this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
         } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {
@@ -316,9 +324,9 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     morir(player, rana) {
-        rana.morir();
+        rana.morir();        
         this.eventBus.emit("playerDead", { player });
-        this.eventBus.emit("puntuacionChanged", { puntuacion: rana.vidaMax });
+        this.eventBus.emit("scoreChanged", { puntuacion: rana.vidaMax });
     }
 
     reset() {
@@ -389,10 +397,13 @@ export class BaseGameScene extends Phaser.Scene {
 
         if (this.fierro instanceof Honda && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
+            this.barraEstado.setConfig({capacidad: this.fierro.capacidad})
         } else if (this.fierro instanceof LanzaLlamas && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
+            this.barraEstado.setConfig({capacidad: this.fierro.capacidad})
         } else if (this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
+            this.barraEstado.setConfig({capacidad: this.fierro.capacidad})
         }
 
         if (this.plagaGroup.estaVacio()) {
@@ -413,19 +424,19 @@ export class BaseGameScene extends Phaser.Scene {
 
     updateHonda() {
         this.fierro = new Honda(this);
-        this.barraEstado.setFierro(1);
+        this.barraEstado.setConfig({fierro:1});
         this.dock.updateDock(1);
     }
 
     updateLanzaLlamas() {
         this.fierro = new LanzaLlamas(this);
-        this.barraEstado.setFierro(2);
+        this.barraEstado.setConfig({fierro:2});
         this.dock.updateDock(2);
     }
 
     updateLanzaHumo() {
         this.fierro = new LanzaHumo(this);
-        this.barraEstado.setFierro(3);
+        this.barraEstado.setConfig({fierro:3});
         this.dock.updateDock(3);
     }
 

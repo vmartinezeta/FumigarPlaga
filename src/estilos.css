@@ -10,7 +10,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #000;
+    background: #fff;
+    color: #000;
     font-weight: 600;    
     width: 100%;
     height: 100%;
@@ -30,15 +31,15 @@
 }
 
 .columna__izq {
-    background: #000;
+    background: #fefefdac;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .columna__render {
+    height: 600px;
     position: relative;
-    padding: 5px;
 }
 
 .columna__der {
@@ -47,33 +48,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #000;
-}
-
-
-.logros {
-    position: absolute;
-    top:100px;
-    width: 1000px;
-    height: 500px;
-    padding: 10px;
-    overflow-y: scroll;
-}
-
-
-.logro {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    height: 70px;
-    padding: 10px;
-    margin-bottom: 10px;
-    background: rgba(0,0,0,.6);
-}
-
-.logro__titulo {
-    font-size: 24px;
+    background: #000000f8;
 }
 
 

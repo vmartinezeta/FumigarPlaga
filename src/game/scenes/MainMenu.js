@@ -3,7 +3,6 @@ import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
 
 
-
 export class MainMenu extends Scene {
 
     constructor() {
@@ -25,7 +24,7 @@ export class MainMenu extends Scene {
 
     createConfetti() {
         // Crear emitter con tiempo de vida automático
-        this.confetti = this.add.particles(this.game.config.width / 2, 300, 'confetti', {
+        this.confetti = this.add.particles(this.game.config.width / 2, 300, 'particle', {
             speed: { min: 100, max: 200 },
             scale: { start: 0.5, end: 0 },
             lifespan: 2000, // 2 segundos de vida
@@ -38,6 +37,7 @@ export class MainMenu extends Scene {
     }
 
     create() {
+        // this.cameras.main.setBackgroundColor("#0af5e9e3");
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
 
         this.add.text(740, 100, 'Nuevo Record: ' + this.record, {

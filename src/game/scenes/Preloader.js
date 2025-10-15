@@ -6,7 +6,6 @@ export class Preloader extends Scene {
     }
 
     init() {
-        this.cameras.main.setBackgroundColor(0x00f94f);
         const xmedia = this.game.config.width / 2;
         const width = 468;
         this.texto = "Loading";

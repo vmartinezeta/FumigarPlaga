@@ -1,10 +1,10 @@
 import { EventBus } from '../EventBus';
 import Phaser from 'phaser';
 import Player from '../sprites/Player';
-import BarraEstado from '../sprites/BarraEstado';
 import { BaseGameScene } from './BaseGameScene';
 import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
+import StatusBar from '../sprites/StatusBar';
 
 
 
@@ -62,18 +62,19 @@ export class DayScene extends BaseGameScene {
 
         this.textureIndex = 0;
 
-        this.barraEstado = new BarraEstado(this, {
+        this.player = new Player(this, 100, 560, "player");
+        this.player.setYmax(this.ymax);
+
+        this.barraEstado = new StatusBar(this, {
             x: 100,
             y: 30,
-            vida: 10,
-            capacidad: 10,
-            fierro: 3
+            vida: this.player.vida,
+            capacidad: this.fierro.capacidad,
+            fierro: 3,
         });
 
         this.uiManager.setStatusBar(this.barraEstado);
 
-        this.player = new Player(this, 100, 560, "player");
-        this.player.setYmax(this.ymax);
 
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 

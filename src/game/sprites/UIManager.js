@@ -20,8 +20,9 @@ export default class UIManager {
 
     setupEventListeners() {
         // Salud del jugador
-        this.eventBus.on('playerHealthChanged', this.updateHealthBar, this);
-        this.eventBus.on('puntuacionChanged', this.updatePuntuacion, this);
+        this.eventBus.on('playerHealthChanged', this.updateStatusBar, this);
+        this.eventBus.on('scoreChanged', this.updateStatusBar, this);
+        this.eventBus.on('capacityWeaponChanged', this.updateStatusBar, this);
         this.eventBus.on('playerDead', this.morirPlayer, this);
 
         // Sistema de furia
@@ -41,12 +42,8 @@ export default class UIManager {
         }
     }    
 
-    updateHealthBar({ vida }) {
-        this.statusBar.actualizar(vida, 0);
-    }
-
-    updatePuntuacion({ puntuacion }) {
-        this.statusBar.setPuntuacion(puntuacion);
+    updateStatusBar(config) {
+        this.statusBar.setConfig(config);
     }
 
     showFuriaEffect({ player, potenciador }) {
