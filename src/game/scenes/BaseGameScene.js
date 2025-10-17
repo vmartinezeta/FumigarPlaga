@@ -21,26 +21,19 @@ export class BaseGameScene extends Phaser.Scene {
     constructor(key) {
         super(key);
         this.player = null;
-        this.barraEstado = null;
+        this.statusBar = null;
         this.potenciadorGroup = null;
         this.plagaGroup = null;
         this.mosquitos = null;
         this.keyboard = null;
-        this.gameOver = false;
-        this.spray = null;
         this.ymax = 300;
         this.width = 0;
         this.height = 0;
         this.sueloFrontera = null;
         this.pinchos = null;
-        this.emitter = null;
         this.eventBus = null;
         this.gameTime = 0;
         this.difficultyLevel = 1;
-    }
-
-    init() {
-
         this.achievements = [
             {
                 key: "firstBlood",
@@ -78,6 +71,9 @@ export class BaseGameScene extends Phaser.Scene {
             },
         ];
 
+    }
+
+    init() {
         const logros = JSON.parse(localStorage.getItem('gameAchievements') || "[]");
         if (logros.length) {
             logros.forEach(logro => {
@@ -88,9 +84,9 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     checkAchievements() {
-        if (!this.barraEstado) return;
+        if (!this.statusBar) return;
         this.achievements.forEach(achievement => {
-            if (!achievement.unlocked && this.barraEstado.puntuacion >= achievement.score) {
+            if (!achievement.unlocked && this.statusBar.puntuacion >= achievement.score) {
                 this.unlockAchievement(achievement);
             }
         });
@@ -144,8 +140,9 @@ export class BaseGameScene extends Phaser.Scene {
             TRES: Phaser.Input.Keyboard.KeyCodes.THREE,
             _BARRA: Phaser.Input.Keyboard.KeyCodes.SPACE,
         });
+        this.eventBus = new Phaser.Events.EventEmitter();
 
-        this.plagaGroup = new PlagaGroup(this, 0, this.ymax);
+        this.plagaGroup = new PlagaGroup(this, this.eventBus, 0, this.ymax);
 
         this.potenciadorGroup = new PotenciadorGroup(this);
 
@@ -173,7 +170,6 @@ export class BaseGameScene extends Phaser.Scene {
             volume: 0.4
         });
 
-        this.eventBus = new Phaser.Events.EventEmitter();
         this.uiManager = new UIManager(this, this.eventBus);
 
         this.fierro = new LanzaHumo(this);
@@ -241,7 +237,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     changeScene() {
         this.sound.stopAll();
-        const record = this.barraEstado?.puntuacion || 0;
+        const record = this.statusBar?.puntuacion || 0;
         this.scene.start('MainMenu', {
             record
         });
@@ -320,12 +316,12 @@ export class BaseGameScene extends Phaser.Scene {
         if (!player.tieneFuria) {
             this.scream.play();
         }
-        this.eventBus.emit("playerDead", { player });
+        this.eventBus.emit("playerHealthChanged", { player });
     }
 
     morir(player, rana) {
-        rana.morir();        
-        this.eventBus.emit("playerDead", { player });
+        rana.morir();
+        this.eventBus.emit("playerHealthChanged", {player});
         this.eventBus.emit("scoreChanged", { puntuacion: rana.vidaMax });
     }
 
@@ -336,7 +332,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.gameOver = false;
         this.player = null;
         this.keyboard = null;
-        this.barraEstado = null;
+        this.statusBar = null;
         this.potenciadorGroup = null;
         this.spray = null;
         this.plagaGroup = null;
@@ -397,13 +393,13 @@ export class BaseGameScene extends Phaser.Scene {
 
         if (this.fierro instanceof Honda && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
-            this.barraEstado.setConfig({capacidad: this.fierro.capacidad})
+            this.statusBar.setConfig({capacidad: this.fierro.capacidad})
         } else if (this.fierro instanceof LanzaLlamas && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
-            this.barraEstado.setConfig({capacidad: this.fierro.capacidad})
+            this.statusBar.setConfig({capacidad: this.fierro.capacidad})
         } else if (this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
-            this.barraEstado.setConfig({capacidad: this.fierro.capacidad})
+            this.statusBar.setConfig({capacidad: this.fierro.capacidad})
         }
 
         if (this.plagaGroup.estaVacio()) {
@@ -415,7 +411,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.updateDifficulty();
     }
 
-
     updateDifficulty() {
         // Ajustar la dificultad en función del tiempo
         // Por ejemplo, cada 60 segundos aumenta la dificultad
@@ -424,19 +419,19 @@ export class BaseGameScene extends Phaser.Scene {
 
     updateHonda() {
         this.fierro = new Honda(this);
-        this.barraEstado.setConfig({fierro:1});
+        this.statusBar.setConfig({fierro:1});
         this.dock.updateDock(1);
     }
 
     updateLanzaLlamas() {
         this.fierro = new LanzaLlamas(this);
-        this.barraEstado.setConfig({fierro:2});
+        this.statusBar.setConfig({fierro:2});
         this.dock.updateDock(2);
     }
 
     updateLanzaHumo() {
         this.fierro = new LanzaHumo(this);
-        this.barraEstado.setConfig({fierro:3});
+        this.statusBar.setConfig({fierro:3});
         this.dock.updateDock(3);
     }
 

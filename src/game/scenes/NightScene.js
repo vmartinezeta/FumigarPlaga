@@ -1,5 +1,6 @@
 import { BaseGameScene } from "./BaseGameScene";
 import NightPlayer from "../sprites/NightPlayer";
+import StatusBar from "../sprites/StatusBar";
 
 export class NightScene extends BaseGameScene {
     constructor() {
@@ -13,6 +14,17 @@ export class NightScene extends BaseGameScene {
         // Player nocturno (con linterna)
         this.player = new NightPlayer(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
+
+        this.statusBar = new StatusBar(this, {
+            x: 100,
+            y: 30,
+            vida: this.player.vida,
+            capacidad: this.fierro.capacidad,
+            fierro: 3,
+        });
+
+        this.uiManager.setStatusBar(this.statusBar);
+
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
         // Sistema de iluminación
         // this.setupLightingSystem();

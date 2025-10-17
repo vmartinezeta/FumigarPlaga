@@ -20,10 +20,9 @@ export default class UIManager {
 
     setupEventListeners() {
         // Salud del jugador
-        this.eventBus.on('playerHealthChanged', this.updateStatusBar, this);
+        this.eventBus.on('playerHealthChanged', this.updatePlayerHealth, this);
         this.eventBus.on('scoreChanged', this.updateStatusBar, this);
         this.eventBus.on('capacityWeaponChanged', this.updateStatusBar, this);
-        this.eventBus.on('playerDead', this.morirPlayer, this);
 
         // Sistema de furia
         this.eventBus.on('furiaActivated', this.showFuriaEffect, this);
@@ -33,9 +32,9 @@ export default class UIManager {
         this.statusBar = statusBar;
     }
 
-    morirPlayer({ player }) {
+    updatePlayerHealth({ player }) {
         player.takeDamage();
-        this.eventBus.emit("playerHealthChanged", { vida:player.vida });
+        this.updateStatusBar({vida: player.vida});
         if (player.debeMorir()) {
             player.destroy();
             this.gameOver = true;

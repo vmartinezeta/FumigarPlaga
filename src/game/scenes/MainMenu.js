@@ -37,8 +37,10 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        // this.cameras.main.setBackgroundColor("#0af5e9e3");
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
+
+        const sceneBaseGame = this.scene.manager.getScene("DayScene");
+        sceneBaseGame.saveAchievements();
 
         this.add.text(740, 100, 'Nuevo Record: ' + this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',
@@ -55,7 +57,7 @@ export class MainMenu extends Scene {
 
     changeScene(key) {
         this.scene.start(key);
-        return this.scene.manager.getScene(key)
+        return this.scene.manager.getScene(key);
     }
 
     moverLetra(reactCallback) {

@@ -7,7 +7,6 @@ import Mosquitos from '../sprites/Enemigos/Mosquitos';
 import StatusBar from '../sprites/StatusBar';
 
 
-
 export class DayScene extends BaseGameScene {
     constructor() {
         super('DayScene');
@@ -65,7 +64,7 @@ export class DayScene extends BaseGameScene {
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
 
-        this.barraEstado = new StatusBar(this, {
+        this.statusBar = new StatusBar(this, {
             x: 100,
             y: 30,
             vida: this.player.vida,
@@ -73,8 +72,7 @@ export class DayScene extends BaseGameScene {
             fierro: 3,
         });
 
-        this.uiManager.setStatusBar(this.barraEstado);
-
+        this.uiManager.setStatusBar(this.statusBar);
 
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
@@ -83,7 +81,6 @@ export class DayScene extends BaseGameScene {
         this.pinchos = new HileraPincho(this);
 
         this.activarColisiones();
-        
 
         EventBus.emit('current-scene-ready', this);
     }

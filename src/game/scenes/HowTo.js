@@ -8,9 +8,12 @@ export class HowTo extends Scene {
     }
 
     create() {
+        this.container = this.add.container(100, 100);
+        const bg = this.add.rectangle(200, 40, 500, 50, 0x00aa00);
+        this.container.add(bg);
         this.add.text(240, 140, "Controles del Teclado", {
             fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 10,
+            stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100)
 

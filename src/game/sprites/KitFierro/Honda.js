@@ -39,7 +39,6 @@ export default class Honda extends Fierro {
         rana.takeDamage(this.damage);
 
         if (rana.debeMorir()) {
-            // this.scene.eventBus.emit("scoreChanged", {puntuacion:rana.vidaMax});
             rana.morir();  
         }
 

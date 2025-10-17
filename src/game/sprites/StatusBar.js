@@ -4,7 +4,6 @@ export default class StatusBar extends Phaser.GameObjects.Group {
     constructor(scene, config) {
         super(scene);
         this.scene = scene;
-        this.config = config;
         this.x = config.x;
         this.y = config.y;
         this.vida = config.vida;
@@ -46,13 +45,19 @@ export default class StatusBar extends Phaser.GameObjects.Group {
     }
 
     setConfig(config) {
-        const keys = ["vida", "capacidad", "fierro", "puntuacion"];
-        
-        keys.forEach((key, index)=> {
-            if (key in config) {
-                this.components[index].setText(keys[index]+": "+config[key]);
-            }
-        });
+        if ("vida" in config) {
+            this.rotuloVida.setText("Vida: "+config.vida)
+        }
+        if ("puntuacion" in config) {
+            this.puntuacion += config.puntuacion;
+            this.rotuloPuntuacion.setText("Puntuacion: "+this.puntuacion);
+        }
+        if ("fierro" in config) {
+            this.rotuloFierro.setText("Fierro: "+config.fierro)
+        }
+        if ("capacidad" in config) {
+            this.rotuloCapacidad.setText("Capacidad: "+config.capacidad);
+        }
     }
 
 }
