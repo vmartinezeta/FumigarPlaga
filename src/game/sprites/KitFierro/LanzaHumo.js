@@ -9,8 +9,7 @@ export default class LanzaHumo extends Fierro {
         this.smokeCloud = null;
         this.particles = null;
         this.fireRate = 2000;
-        this.setVisible(false);
-        this.damage = 2;
+        this.damage = 5;
     }
 
     launchSmoke(playerX, playerY, direction, plagaGroup) {
@@ -91,7 +90,7 @@ export default class LanzaHumo extends Fierro {
         
         const grupos = plagaGroup.children.entries.filter(child => child instanceof RanaStaticFamily && child.children.entries.length>0);
         grupos.forEach(g => {
-            this.scene.physics.add.overlap(this.smokeCloud, g, this.handleCollision, null, this);
+            g.collider = this.scene.physics.add.overlap(this.smokeCloud, g, this.handleCollision, null, this);
         });
     }
 

@@ -5,6 +5,7 @@ import { BaseGameScene } from './BaseGameScene';
 import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
 import StatusBar from '../sprites/StatusBar';
+import PowerUpFactory from '../sprites/Potenciadores/PowerUpFactory';
 
 
 export class DayScene extends BaseGameScene {
@@ -80,29 +81,11 @@ export class DayScene extends BaseGameScene {
 
         this.pinchos = new HileraPincho(this);
 
-        this.activarColisiones();
+        this.activarColisiones();        
 
         EventBus.emit('current-scene-ready', this);
     }
 
-    testBasicCollision() {
-        console.log('=== PRUEBA DE COLISIÓN BÁSICA ===');
-
-        // Crear una partícula y rana en posiciones conocidas
-        const testParticle = this.particles.create(100, 300, 'particle');
-        const testFrog = new Rana(this, 100, 300, 'rana'); // MISMA POSICIÓN
-        testFrog.setTint(0xff0000);
-
-        if (testParticle && testFrog) {
-            this.physics.add.existing(testParticle);
-            this.physics.add.existing(testFrog);
-
-            // Verificar colisión inmediata
-            this.physics.world.collide(testParticle, testFrog, () => {
-                console.log('✅ COLISIÓN FUNCIONA!');
-            });
-        }
-    }
 
     createCreepySounds() {
         // Viento aullante cada 20-30 segundos

@@ -1,12 +1,12 @@
 import Fierro from "./Fierro";
 import Phaser from "phaser";
 
-export default class LanzaLlamas extends Fierro {
+export default class Bomba extends Fierro {
     constructor(scene) {
-        super(scene, 0, 0, "fuego", 'lanzallamas', 10);
+        super(scene, 0, 0, "particle", 'bomba', 10);
         this.damageZone = null;
         this.particles = null;
-        this.damage = 15;
+        this.damage = 20;
     }
 
     spray(direction, playerX, playerY, plagaGroup) {

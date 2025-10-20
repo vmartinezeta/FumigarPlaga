@@ -9,6 +9,7 @@ export default class Fierro extends Phaser.GameObjects.Sprite {
         this.collider = null;
         this.capacidad = capacidad;
         this.capacidadMax = capacidad;
+        this.setVisible(false);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         
@@ -30,6 +31,10 @@ export default class Fierro extends Phaser.GameObjects.Sprite {
                 this.body.setSize(8, 8);
                 this.body.setOffset(4, 4);
                 break;
+            case 'honda3Impact': 
+                this.body.setSize(15, 30);
+                this.body.setOffset(0, -10);
+            break;
             case 'bomba':
                 this.body.setSize(12, 12);
                 this.body.setOffset(2, 2);

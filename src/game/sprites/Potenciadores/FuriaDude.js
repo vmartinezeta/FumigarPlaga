@@ -1,9 +1,23 @@
-import Potenciador from "./Potenciador";
+import PowerUp from "./PowerUp";
 
-export default class FuriaDude extends Potenciador {
+export default class FuriaDude extends PowerUp {
     constructor(scene, x, y, imageKey) {
-        super(scene, x, y, imageKey);
+        super(scene, x, y, imageKey, "furia");
         this.timegame = 10000;
+        this.animate();
+        this.flotar();
+        this.play("furia");
+    }
+
+    animate() {
+        if (!this.existe("furia")) {
+            this.scene.anims.create({
+                key: 'furia',
+                frames: this.scene.anims.generateFrameNumbers(this.imageKey, { start: 0, end: 2 }),
+                frameRate: 12,
+                repeat: -1
+            });
+        }
     }
 
     applyEffect(player) {

@@ -1,6 +1,6 @@
-import Potenciador from "./Potenciador";
+import PowerUp from "./PowerUp";
 
-export default class TimeSlow extends Potenciador{
+export default class TimeSlow extends PowerUp{
     constructor(scene, x,y, imageKey) {
         super(scene, x, y, imageKey);
         this.timegame = 5000;

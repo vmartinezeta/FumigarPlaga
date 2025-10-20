@@ -93,7 +93,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
     }
 
     createRanaParticles(rana, color) {
-        const particles = this.scene.add.particles(rana.x, rana.y, 'powerup_particle', {
+        const particles = this.scene.add.particles(rana.x, rana.y, "particle", {
             speed: { min: 5, max: 15 },
             scale: { start: 0.3, end: 0 },
             tint: color,
@@ -157,17 +157,10 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
 
         // Emitir evento para el sistema de puntuación
         this.scene.eventBus.emit('familyDestroyed', {
-            familyType: this.familyType,
+            familyType: this,
             powerupType: this.powerupType,
             position: { x: this.centerX, y: this.centerY }
         });
-
-        // Destruir el grupo después de un breve delay
-        // this.scene.physics.world.removeCollider(this.collider);
-        // this.scene.time.removeEvent(this.timer);
-        // this.scene.time.delayedCall(1000, () => {
-            // this.destroy();
-        // });
     }
 
     dropPowerup() {

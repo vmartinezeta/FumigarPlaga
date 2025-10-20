@@ -1,7 +1,6 @@
-import Potenciador from "./Potenciador";
+import PowerUp from "./PowerUp";
 
-
-export default class Invencibility extends Potenciador {
+export default class Invencibility extends PowerUp {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey);   
         this.timegame = 20000;     

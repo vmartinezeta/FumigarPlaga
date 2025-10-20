@@ -135,6 +135,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
             case 'honda':
                 fierro.shoot(this.control, this.x, this.y, plagaGroup);
                 break;
+            case 'honda3Impact':
+                fierro.shoot(this.control, this.x, this.y, plagaGroup);
+                break;
 
             case 'bomba':
                 fierro.throw(this.x, this.y, this.direction);

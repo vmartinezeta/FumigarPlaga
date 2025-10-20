@@ -1,6 +1,7 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
+import RanaStaticFamily from '../sprites/Potenciadores/RanaStaticFamily';
 
 
 export class MainMenu extends Scene {
@@ -39,8 +40,10 @@ export class MainMenu extends Scene {
     create() {
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
 
-        const sceneBaseGame = this.scene.manager.getScene("DayScene");
-        sceneBaseGame.saveAchievements();
+        if (!localStorage.getItem('gameAchievements')) {
+            const sceneBaseGame = this.scene.manager.getScene("DayScene");
+            sceneBaseGame.saveAchievements();
+        }
 
         this.add.text(740, 100, 'Nuevo Record: ' + this.record, {
             fontFamily: 'Arial Black', fontSize: 26, color: '#ffffff',

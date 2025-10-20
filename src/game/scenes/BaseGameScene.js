@@ -2,8 +2,6 @@ import Phaser from "phaser";
 import SueloFrontera from "../sprites/SueloFrontera";
 import PlagaGroup from "../sprites/Enemigos/PlagaGroup";
 import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
-import Vida from "../sprites/Potenciadores/Vida";
-import FuriaDude from "../sprites/Potenciadores/FuriaDude";
 import Honda from "../sprites/KitFierro/Honda";
 import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
 import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
@@ -14,6 +12,10 @@ import RanaMovableFamily from "../sprites/Potenciadores/RanaMovableFamily";
 import Achievement from "../sprites/Achivements/Achievement";
 import Invencibility from "../sprites/Potenciadores/Invencibility";
 import RecargaFierro from "../sprites/Potenciadores/RecargaFierro";
+import FuriaDude from "../sprites/Potenciadores/FuriaDude";
+import Vida from "../sprites/Potenciadores/Vida";
+import Honda3Impacto from "../sprites/KitFierro/Honda3Impacto";
+import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
 
 
 
@@ -144,12 +146,12 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.plagaGroup = new PlagaGroup(this, this.eventBus, 0, this.ymax);
 
-        this.potenciadorGroup = new PotenciadorGroup(this);
+        this.potenciadorGroup = this.physics.add.group();
 
         this.sueloFrontera = new SueloFrontera(this, 0, this.ymax + 40);
 
         this.time.addEvent({
-            delay: 6000,
+            delay: 1000,
             callback: this.suministrarPotenciador,
             callbackScope: this,
             loop: true
@@ -172,7 +174,15 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.uiManager = new UIManager(this, this.eventBus);
 
-        this.fierro = new LanzaHumo(this);
+        this.fierro = new Honda3Impacto(this);
+
+        this.eventBus.on("familyDestroyed", ({familyType})=> {
+            this.physics.world.removeCollider(familyType.collider);
+            this.statusBar.setConfig({puntuacion: familyType.ranaCount*30});
+            this.time.delayedCall(1000, ()=> {
+                this.plagaGroup.remove(familyType, true, true);
+            })
+        })        
     }
 
     spawnStaticFamily() {
@@ -302,7 +312,7 @@ export class BaseGameScene extends Phaser.Scene {
     aplicarPotenciador(player, potenciador) {
         if (potenciador instanceof RecargaFierro) {
             potenciador.applyEffect(this.fierro);
-            this.eventBus.emit("capacityWeaponChanged", {capacidad:this.fierro.capacidad})
+            this.eventBus.emit("capacityWeaponChanged", { capacidad: this.fierro.capacidad })
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
@@ -321,7 +331,7 @@ export class BaseGameScene extends Phaser.Scene {
 
     morir(player, rana) {
         rana.morir();
-        this.eventBus.emit("playerHealthChanged", {player});
+        this.eventBus.emit("playerHealthChanged", { player });
         this.eventBus.emit("scoreChanged", { puntuacion: rana.vidaMax });
     }
 
@@ -344,14 +354,9 @@ export class BaseGameScene extends Phaser.Scene {
     suministrarPotenciador() {
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(400, this.height - 100);
-        const value = Phaser.Math.Between(1, 2);
-        let potenciador = null;
-        if (value === 1) {
-            potenciador = new Vida(this, x, y, "vida");
-        } else {
-            potenciador = new FuriaDude(this, x, y, "furia");
-        }
-        this.potenciadorGroup.addPotenciador(potenciador);
+        const potenciador = PowerUpFactory.createRandomPowerUp(this, x, y);
+        console.log(potenciador);
+        this.potenciadorGroup.add(potenciador);
     }
 
     createTanque() {
@@ -359,8 +364,8 @@ export class BaseGameScene extends Phaser.Scene {
         if (this.potenciadorGroup.countActive() > 500) return
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(350, this.height - 50);
-        const potenciador = new RecargaFierro(this, x, y, "tanque");
-        this.potenciadorGroup.addPotenciador(potenciador);
+        const potenciador = PowerUpFactory.createPowerUp("recarga-fierro", this, x, y);
+        this.potenciadorGroup.add(potenciador);
     }
 
     update(time, delta) {
@@ -393,13 +398,15 @@ export class BaseGameScene extends Phaser.Scene {
 
         if (this.fierro instanceof Honda && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
-            this.statusBar.setConfig({capacidad: this.fierro.capacidad})
+            this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
         } else if (this.fierro instanceof LanzaLlamas && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
-            this.statusBar.setConfig({capacidad: this.fierro.capacidad})
+            this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
         } else if (this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
-            this.statusBar.setConfig({capacidad: this.fierro.capacidad})
+            this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
+        } else if (this.fierro instanceof Honda3Impacto && this.keyboard.S.isDown) {
+            this.player.disparar(this.fierro, this.plagaGroup);
         }
 
         if (this.plagaGroup.estaVacio()) {
@@ -419,19 +426,19 @@ export class BaseGameScene extends Phaser.Scene {
 
     updateHonda() {
         this.fierro = new Honda(this);
-        this.statusBar.setConfig({fierro:1});
+        this.statusBar.setConfig({ fierro: 1 });
         this.dock.updateDock(1);
     }
 
     updateLanzaLlamas() {
         this.fierro = new LanzaLlamas(this);
-        this.statusBar.setConfig({fierro:2});
+        this.statusBar.setConfig({ fierro: 2 });
         this.dock.updateDock(2);
     }
 
     updateLanzaHumo() {
         this.fierro = new LanzaHumo(this);
-        this.statusBar.setConfig({fierro:3});
+        this.statusBar.setConfig({ fierro: 3 });
         this.dock.updateDock(3);
     }
 

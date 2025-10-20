@@ -4,7 +4,6 @@ import { useGame } from './context/GameContext';
 import LetraList from './Components/LetraList';
 import CentroControl from './Components/CentroControl';
 import "./estilos.css";
-import Logros from './Components/Logros';
 
 
 function App() {
