@@ -4,7 +4,7 @@ import { ControlDireccional } from "../../classes/ControlDireccional";
 import { Direccional } from "../../classes/Direccional";
 
 export default class Rana extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, imageKey, hembra, fertil, vida=30) {
+    constructor(scene, x, y, imageKey, hembra, fertil, vida = 30) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
@@ -53,6 +53,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         if (this.fertil) {
             this.healthBar = scene.add.graphics();
         }
+        this.emitter = null;
     }
 
     setVelocidad(x, y) {
@@ -61,8 +62,8 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.body.setVelocity(x, y);
     }
 
-    disminuirVelocidad(){
-        this.body.setVelocity(this.velocidad.x*.5, this.velocidad.y*.5);
+    disminuirVelocidad() {
+        this.body.setVelocity(this.velocidad.x * .5, this.velocidad.y * .5);
     }
 
     existe(key) {
@@ -111,9 +112,21 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.play("coger");
 
         this.onComplete = this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
+
+        this.emitter = this.scene.add.particles(this.x, this.y, 'particle', {
+            speed: 100,
+            scale: { start: 0.3, end: 0 },
+            alpha: { start: 0.8, end: 0 },
+            lifespan: 1000,
+            quantity: 2,
+            emitting: true
+        });
     }
 
     soltar() {
+        if (this.emitter) {
+            this.emitter.stop();
+        }
         this.inicio = false;
         this.finalizo = false;
         this.setTint(this.hembra ? 0xff88ff : 0x8888ff);
@@ -143,13 +156,13 @@ export default class Rana extends Phaser.GameObjects.Sprite {
 
     takeDamage(damage) {
         if (!this.canReceiveDamage) return;
-        
+
         // Activar cooldown
         this.canReceiveDamage = false;
         this.scene.time.delayedCall(this.damageCooldown, () => {
             this.canReceiveDamage = true;
         });
-                
+
         this.vida = Math.max(0, this.vida - damage);
     }
 
@@ -158,7 +171,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         // Fondo barra roja
         this.healthBar.fillStyle(0xff0000, 0.5);
         this.healthBar.fillRect(this.x - x, this.y - y, width, height);
-        
+
         const factor = this.vida / this.vidaMax;
         if (!this.furia && factor < 0.5) {
             this.furia = true;
@@ -195,7 +208,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         const maxScale = 1;
         const newScale = minScale + (maxScale - minScale) * relativeHeight;
         this.setScale(newScale);
-        this.updateHealthBar(20*newScale, 40*newScale, 40*newScale, 5*newScale);
+        this.updateHealthBar(20 * newScale, 40 * newScale, 40 * newScale, 5 * newScale);
     }
 
 }

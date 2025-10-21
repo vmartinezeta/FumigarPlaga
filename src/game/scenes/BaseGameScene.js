@@ -186,15 +186,6 @@ export class BaseGameScene extends Phaser.Scene {
             this.physics.world.removeCollider(familyType.collider);
             this.statusBar.setConfig({ puntuacion: familyType.ranaCount * 30 });
         });
-
-        this.emitter = this.add.particles(0, 0, 'particle', {
-            speed: 100,
-            scale: { start: 0.3, end: 0 },
-            alpha: { start: 0.8, end: 0 },
-            lifespan: 1000,
-            quantity: 2,
-            emitting: false
-        });
     }
 
     spawnStaticFamily() {
@@ -285,7 +276,6 @@ export class BaseGameScene extends Phaser.Scene {
         hembra.soltar();
         macho.soltar();
         this.plagaGroup.total++;
-        this.emitter.stop();
     }
 
     activarPotenciador() {
@@ -437,8 +427,6 @@ export class BaseGameScene extends Phaser.Scene {
     createNewFrog(frog1, frog2) {
         if (this.plagaGroup.countActive() > this.totalRanas) return;
         frog1.cogiendo(frog2, "rana2", this.dejarCoger, this);
-        this.emitter.start();
-        this.emitter.startFollow(frog1);
     }
 
     updateDifficulty() {
