@@ -186,6 +186,15 @@ export class BaseGameScene extends Phaser.Scene {
             this.physics.world.removeCollider(familyType.collider);
             this.statusBar.setConfig({ puntuacion: familyType.ranaCount * 30 });
         });
+
+        this.emitter = this.add.particles(0, 0, 'particle', {
+            speed: 100,
+            scale: { start: 0.3, end: 0 },
+            alpha: { start: 0.8, end: 0 },
+            lifespan: 1000,
+            quantity: 2,
+            emitting: false
+        });
     }
 
     spawnStaticFamily() {
@@ -271,36 +280,12 @@ export class BaseGameScene extends Phaser.Scene {
         sprite.rotar();
     }
 
-    coger(izq, der) {
-        const [hembra, macho] = this.fijarPareja(izq, der);
-        const pareja = hembra.hembra && !macho.hembra;
-        if (pareja && !hembra.inicio) {
-            hembra.coger();
-        }
-        return hembra.inicio;
-    }
-
-    cogiendo(izq, der) {
-        const [hembra, macho] = this.fijarPareja(izq, der);
-        if (!hembra.inicio) return;
-        hembra.cogiendo(macho, "rana2", this.dejarCoger, this);
-    }
-
-    fijarPareja(izq, der) {
-        let hembra = izq
-        let macho = der
-        if (!hembra.hembra) {
-            hembra = der
-            macho = izq
-        }
-        return [hembra, macho]
-    }
-
     dejarCoger(hembra, macho) {
         this.plagaGroup.agregar(this, 2);
         hembra.soltar();
         macho.soltar();
         this.plagaGroup.total++;
+        this.emitter.stop();
     }
 
     activarPotenciador() {
@@ -452,6 +437,8 @@ export class BaseGameScene extends Phaser.Scene {
     createNewFrog(frog1, frog2) {
         if (this.plagaGroup.countActive() > this.totalRanas) return;
         frog1.cogiendo(frog2, "rana2", this.dejarCoger, this);
+        this.emitter.start();
+        this.emitter.startFollow(frog1);
     }
 
     updateDifficulty() {
