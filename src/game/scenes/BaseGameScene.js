@@ -34,7 +34,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.sueloFrontera = null;
         this.pinchos = null;
         this.eventBus = null;
-        this.gameTime = 0;
         this.difficultyLevel = 1;
         this.achievements = [
             {
@@ -79,6 +78,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.timeThreshold = 0; // Incremento del umbral con el tiempo
         this.breedingCooldown = 5000; // Tiempo en ms entre apareamientos por rana
         this.lastBreedTime = {}; // Diccionario para guardar el último tiempo de apareamiento de cada rana
+        this.totalRanas = 600;
     }
 
     init() {
@@ -189,6 +189,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     spawnStaticFamily() {
+        if (this.plagaGroup.countActive()> this.totalRanas) return;
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(this.ymax + 20, this.height - 20);
         const ranaCount = Phaser.Math.Between(5, 8); // 5-8 ranas
@@ -449,6 +450,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     createNewFrog(frog1, frog2) {
+        if (this.plagaGroup.countActive() > this.totalRanas) return;
         frog1.cogiendo(frog2, "rana2", this.dejarCoger, this);
     }
 
