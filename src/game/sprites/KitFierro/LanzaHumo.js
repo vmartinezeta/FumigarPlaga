@@ -1,3 +1,4 @@
+import Rana from "../Enemigos/Rana";
 import RanaStaticFamily from "../Potenciadores/RanaStaticFamily";
 import Fierro from "./Fierro";
 import Phaser from "phaser";
@@ -86,11 +87,12 @@ export default class LanzaHumo extends Fierro {
         });
 
         // Colisión con enemigos
-        this.scene.physics.add.overlap(this.smokeCloud, plagaGroup, this.handleCollision, null, this);
+        const ranas = plagaGroup.children.entries.filter(child => child instanceof Rana);
+        this.scene.physics.add.overlap(this.smokeCloud, ranas, this.handleCollision, null, this);
         
-        const grupos = plagaGroup.children.entries.filter(child => child instanceof RanaStaticFamily && child.children.entries.length>0);
-        grupos.forEach(g => {
-            g.collider = this.scene.physics.add.overlap(this.smokeCloud, g, this.handleCollision, null, this);
+        const families = plagaGroup.children.entries.filter(child => child instanceof RanaStaticFamily);
+        families.forEach(family => {
+            family.collider = this.scene.physics.add.overlap(this.smokeCloud, family, this.handleCollision, null, this);
         });
     }
 

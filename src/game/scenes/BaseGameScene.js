@@ -73,6 +73,12 @@ export class BaseGameScene extends Phaser.Scene {
             },
         ];
 
+        this.gameTime = 0; // Tiempo de juego en segundos
+        this.maxFrogs = 50; // Límite absoluto de ranas
+        this.baseThreshold = 50; // Umbral base de distancia para apareamiento
+        this.timeThreshold = 0; // Incremento del umbral con el tiempo
+        this.breedingCooldown = 5000; // Tiempo en ms entre apareamientos por rana
+        this.lastBreedTime = {}; // Diccionario para guardar el último tiempo de apareamiento de cada rana
     }
 
     init() {
@@ -151,7 +157,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.sueloFrontera = new SueloFrontera(this, 0, this.ymax + 40);
 
         this.time.addEvent({
-            delay: 1000,
+            delay: 6000,
             callback: this.suministrarPotenciador,
             callbackScope: this,
             loop: true
@@ -176,13 +182,10 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.fierro = new Honda3Impacto(this);
 
-        this.eventBus.on("familyDestroyed", ({familyType})=> {
+        this.eventBus.on("familyDestroyed", ({ familyType }) => {
             this.physics.world.removeCollider(familyType.collider);
-            this.statusBar.setConfig({puntuacion: familyType.ranaCount*30});
-            this.time.delayedCall(1000, ()=> {
-                this.plagaGroup.remove(familyType, true, true);
-            })
-        })        
+            this.statusBar.setConfig({ puntuacion: familyType.ranaCount * 30 });
+        });
     }
 
     spawnStaticFamily() {
@@ -257,7 +260,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
         this.physics.add.collider(this.player, this.pinchos, this.morirPlayer, null, this);
         this.physics.add.collider(this.plagaGroup, this.sueloFrontera, this.rotar, null, this);
-        this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
+        // this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
         this.physics.add.collider(this.player, this.sueloFrontera);
         this.physics.add.collider(this.mosquitos, this.bosqueFrontera);
@@ -293,10 +296,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     dejarCoger(hembra, macho) {
-        if (this.plagaGroup.countActive() < 300) {
-            this.plagaGroup.agregar(this, 2);
-        }
-        if (!hembra.body || !macho.body) return;
+        this.plagaGroup.agregar(this, 2);
         hembra.soltar();
         macho.soltar();
         this.plagaGroup.total++;
@@ -368,14 +368,14 @@ export class BaseGameScene extends Phaser.Scene {
         this.potenciadorGroup.add(potenciador);
     }
 
-    update(time, delta) {
+    update() {
         this.checkAchievements();
         this.player.update();
         this.plagaGroup.update();
 
-        if (this.plagaGroup.total > 5) {
-            this.createTanque();
-        }
+        // if (this.plagaGroup.total > 5) {
+        //     this.createTanque();
+        // }
 
         if (this.keyboard.UP.isDown) {
             this.player.top();
@@ -413,9 +413,43 @@ export class BaseGameScene extends Phaser.Scene {
             this.uiManager.gameOver = true;
             this.reset();
         }
+        
+    }
 
-        this.gameTime += delta / 1000; // convertir a segundos
-        this.updateDifficulty();
+    breedFrogs(threshold) {
+        let frogsArray = this.plagaGroup.getChildren();
+        let currentTime = this.gameTime * 1000; // Convertir a ms
+
+        for (let i = 0; i < frogsArray.length; i++) {
+            let frog1 = frogsArray[i];
+            for (let j = i + 1; j < frogsArray.length; j++) {
+                let frog2 = frogsArray[j];
+
+                // Calcular distancia entre frog1 y frog2
+                let distance = Phaser.Math.Distance.Between(frog1.x, frog1.y, frog2.x, frog2.y);
+                if (distance < threshold) {
+                    // Verificar cooldown para frog1 y frog2
+                    if (this.canBreed(frog1, currentTime) && this.canBreed(frog2, currentTime)) {
+                        this.createNewFrog(frog1, frog2);
+                        this.lastBreedTime[frog1.id] = currentTime;
+                        this.lastBreedTime[frog2.id] = currentTime;
+                        break; // Evitar múltiples apareamientos para la misma rana en un mismo frame
+                    }
+                }
+            }
+        }
+    }
+
+    canBreed(frog, currentTime) {
+        // Si no ha criado antes, puede criar. O si ha pasado el cooldown.
+        if (!this.lastBreedTime[frog.id]) {
+            return true;
+        }
+        return (currentTime - this.lastBreedTime[frog.id]) > this.breedingCooldown;
+    }
+
+    createNewFrog(frog1, frog2) {
+        frog1.cogiendo(frog2, "rana2", this.dejarCoger, this);
     }
 
     updateDifficulty() {

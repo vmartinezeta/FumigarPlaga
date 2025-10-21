@@ -9,6 +9,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.imageKey = imageKey;
         this.hembra = hembra;
+        this.id = Date.now() + Math.random();
         this.vida = vida;
         this.vidaMax = vida;
         this.fertil = fertil;
