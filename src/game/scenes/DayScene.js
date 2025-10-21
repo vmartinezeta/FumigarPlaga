@@ -157,7 +157,6 @@ export class DayScene extends BaseGameScene {
     }
 
     update(_, delta) {
-        this.statusBar.setConfig({vida: this.plagaGroup.countActive()})
         if (this.uiManager.gameOver) {
             this.scene.start('GameOver');
             return;
