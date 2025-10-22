@@ -16,7 +16,7 @@ export default class BasicAnimation extends Phaser.GameObjects.Group {
         this.origen = new Punto(x, y);
         this.plaga = new Rana(scene, x, y, "rana", false, false);
         this.plaga.rotar();
-        this.plaga.habilitar(false);
+        this.plaga.habilitarBody(false);
         this.add(this.plaga);
         this.siguienteLetra = null;
     }
@@ -31,7 +31,7 @@ export default class BasicAnimation extends Phaser.GameObjects.Group {
 
     iniciar(reactCallback, context) {
         const actual = this.texto.charAt(this.index);
-        reactCallback.call(context, new Letra(this.plaga.actual(), actual, this.index, this.texto.length - 1));
+        reactCallback.call(context, new Letra(this.plaga.getPunto(), actual, this.index, this.texto.length - 1));
         this.plaga.x += this.deltaX;
         this.index++;
         if (this.index === this.texto.length) return;

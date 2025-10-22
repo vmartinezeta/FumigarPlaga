@@ -16,6 +16,7 @@ import FuriaDude from "../sprites/Potenciadores/FuriaDude";
 import Vida from "../sprites/Potenciadores/Vida";
 import Honda3Impacto from "../sprites/KitFierro/Honda3Impacto";
 import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
+import MultiShoot from "../sprites/Potenciadores/MultiShot";
 
 
 
@@ -79,6 +80,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.breedingCooldown = 5000; // Tiempo en ms entre apareamientos por rana
         this.lastBreedTime = {}; // Diccionario para guardar el último tiempo de apareamiento de cada rana
         this.totalRanas = 600;
+        this.honda = null;
     }
 
     init() {
@@ -157,7 +159,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.sueloFrontera = new SueloFrontera(this, 0, this.ymax + 40);
 
         this.time.addEvent({
-            delay: 6000,
+            delay: 3000,
             callback: this.suministrarPotenciador,
             callbackScope: this,
             loop: true
@@ -180,7 +182,8 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.uiManager = new UIManager(this, this.eventBus);
 
-        this.fierro = new Honda3Impacto(this);
+        this.honda = new Honda(this);
+        this.fierro = this.honda;
 
         this.eventBus.on("familyDestroyed", ({ familyType }) => {
             this.physics.world.removeCollider(familyType.collider);
@@ -189,7 +192,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     spawnStaticFamily() {
-        if (this.plagaGroup.countActive()> this.totalRanas) return;
+        if (this.plagaGroup.countActive() > this.totalRanas) return;
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(this.ymax + 20, this.height - 20);
         const ranaCount = Phaser.Math.Between(5, 8); // 5-8 ranas
@@ -261,7 +264,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
         this.physics.add.collider(this.player, this.pinchos, this.morirPlayer, null, this);
         this.physics.add.collider(this.plagaGroup, this.sueloFrontera, this.rotar, null, this);
-        // this.physics.add.collider(this.plagaGroup, this.plagaGroup, this.cogiendo, this.coger, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
         this.physics.add.collider(this.player, this.sueloFrontera);
         this.physics.add.collider(this.mosquitos, this.bosqueFrontera);
@@ -269,13 +271,6 @@ export class BaseGameScene extends Phaser.Scene {
 
     rotar(sprite) {
         sprite.rotar();
-    }
-
-    dejarCoger(hembra, macho) {
-        this.plagaGroup.agregar(this, 2);
-        hembra.soltar();
-        macho.soltar();
-        this.plagaGroup.total++;
     }
 
     activarPotenciador() {
@@ -292,8 +287,13 @@ export class BaseGameScene extends Phaser.Scene {
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
+            this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {
             this.eventBus.emit('furiaActivated', { player, potenciador });
+            this.potenciadorGroup.remove(potenciador, true, true);
+        } else if (potenciador instanceof MultiShoot) {
+            this.honda = potenciador.honda;
+            this.potenciadorGroup.remove(potenciador, true, true);            
         }
     }
 
@@ -312,15 +312,14 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     reset() {
-        this.width = 0;
-        this.height = 0;
+        this.width = 4 * this.game.config.width;
+        this.height = this.game.config.height;
         this.ymax = 300;
-        this.gameOver = false;
+        this.uiManager = null;
         this.player = null;
         this.keyboard = null;
         this.statusBar = null;
         this.potenciadorGroup = null;
-        this.spray = null;
         this.plagaGroup = null;
         this.pinchos = null;
         this.mosquitos = null;
@@ -331,16 +330,6 @@ export class BaseGameScene extends Phaser.Scene {
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(400, this.height - 100);
         const potenciador = PowerUpFactory.createRandomPowerUp(this, x, y);
-        console.log(potenciador);
-        this.potenciadorGroup.add(potenciador);
-    }
-
-    createTanque() {
-        this.plagaGroup.total = 0
-        if (this.potenciadorGroup.countActive() > 500) return
-        const x = Phaser.Math.Between(100, this.width - 100);
-        const y = Phaser.Math.Between(350, this.height - 50);
-        const potenciador = PowerUpFactory.createPowerUp("recarga-fierro", this, x, y);
         this.potenciadorGroup.add(potenciador);
     }
 
@@ -348,10 +337,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.checkAchievements();
         this.player.update();
         this.plagaGroup.update();
-
-        // if (this.plagaGroup.total > 5) {
-        //     this.createTanque();
-        // }
 
         if (this.keyboard.UP.isDown) {
             this.player.top();
@@ -389,7 +374,7 @@ export class BaseGameScene extends Phaser.Scene {
             this.uiManager.gameOver = true;
             this.reset();
         }
-        
+
     }
 
     breedFrogs(threshold) {
@@ -429,6 +414,10 @@ export class BaseGameScene extends Phaser.Scene {
         frog1.cogiendo(frog2, "rana2", this.dejarCoger, this);
     }
 
+    dejarCoger() {
+        this.plagaGroup.agregar(this, 2);
+    }
+
     updateDifficulty() {
         // Ajustar la dificultad en función del tiempo
         // Por ejemplo, cada 60 segundos aumenta la dificultad
@@ -436,7 +425,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     updateHonda() {
-        this.fierro = new Honda(this);
+        this.fierro = this.honda;
         this.statusBar.setConfig({ fierro: 1 });
         this.dock.updateDock(1);
     }

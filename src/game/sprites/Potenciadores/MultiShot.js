@@ -5,7 +5,7 @@ import PowerUp from "./PowerUp";
 export default class MultiShoot extends PowerUp {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey, "weapon");
-        this.fierro = new Honda3Impacto(scene);
+        this.honda = new Honda3Impacto(scene);
         this.animate();
         this.flotar();
         this.play("nuevo-fierro")

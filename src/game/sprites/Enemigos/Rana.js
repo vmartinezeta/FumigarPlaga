@@ -13,13 +13,9 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.vida = vida;
         this.vidaMax = vida;
         this.fertil = fertil;
-        this.inicio = false;
-        this.finalizo = false;
-        this.onComplete = null;
         this.furia = false;
         this.canReceiveDamage = true;
         this.damageCooldown = 200; // ms entre daños
-
         this.control = new ControlDireccional([
             new Direccional(1, 270, new Punto(0, -1)),
             new Direccional(2, 0, new Punto(1, 0)),
@@ -78,24 +74,19 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.flipX = !this.flipX;
     }
 
-    habilitar(ajuste) {
-        this.body.setEnable(ajuste);
+    habilitarBody(value) {
+        this.body.setEnable(value);
     }
 
     parar() {
-        this.habilitar(false);
+        this.habilitarBody(false);
     }
 
     animate(config) {
         return this.scene.anims.create(config);
     }
 
-    coger() {
-        this.inicio = true;
-    }
-
     cogiendo(macho, imageKey, completeCallback, context) {
-        this.inicio = false;
         this.parar();
         macho.parar();
         this.setTexture(imageKey);
@@ -111,7 +102,8 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         macho.visible = false;
         this.play("coger");
 
-        this.onComplete = this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
+        this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
+        this.scene.time.delayedCall(1000, this.soltar, [macho], this);
 
         this.emitter = this.scene.add.particles(this.x, this.y, 'particle', {
             speed: 100,
@@ -123,16 +115,15 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         });
     }
 
-    soltar() {
+    soltar(macho) {
         if (this.emitter) {
             this.emitter.stop();
         }
-        this.inicio = false;
-        this.finalizo = false;
         this.setTint(this.hembra ? 0xff88ff : 0x8888ff);
-        this.habilitar(true);
+        this.habilitarBody(true);
         this.setTexture(this.imageKey);
-        this.visible = true;
+        macho.habilitarBody(true);
+        macho.visible = true;
         this.play("run");
     }
 
@@ -150,7 +141,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.destroy();
     }
 
-    actual() {
+    getPunto() {
         return new Punto(this.x, this.y);
     }
 
