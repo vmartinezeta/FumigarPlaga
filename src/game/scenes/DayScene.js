@@ -158,7 +158,10 @@ export class DayScene extends BaseGameScene {
 
     update(_, delta) {
         if (this.uiManager.gameOver) {
-            this.scene.start('GameOver');
+            const record = this.statusBar?.puntuacion || 0;
+            this.scene.start('GameOver', {
+                record    
+            });
             return;
         }
 

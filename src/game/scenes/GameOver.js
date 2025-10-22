@@ -5,6 +5,11 @@ import { Scene } from 'phaser';
 export class GameOver extends Scene {
     constructor() {
         super('GameOver');
+        this.record = 0;
+    }
+
+    init({record}) {
+        this.record = record;
     }
 
     create() {
@@ -18,6 +23,8 @@ export class GameOver extends Scene {
     }
 
     changeScene() {
-        this.scene.start('MainMenu');
+        this.scene.start('MainMenu', {
+            record: this.record
+        });
     }
 }

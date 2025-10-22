@@ -287,13 +287,15 @@ export class BaseGameScene extends Phaser.Scene {
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
+            this.eventBus.emit("playerHealthChanged", { player });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {
             this.eventBus.emit('furiaActivated', { player, potenciador });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof MultiShoot) {
             this.honda = potenciador.honda;
-            this.potenciadorGroup.remove(potenciador, true, true);            
+            this.fierro = this.honda;
+            this.potenciadorGroup.remove(potenciador, true, true);
         }
     }
 
