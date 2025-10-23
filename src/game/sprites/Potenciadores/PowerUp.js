@@ -1,17 +1,27 @@
 import Phaser from "phaser";
 
 export default class PowerUp extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, imageKey, type) {
+    constructor(scene, x, y, imageKey, type, auto=false) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
         this.type = type;
+        this.color = 0x00ffff;
         this.setOrigin(1 / 2);
-        this.timer = scene.time.delayedCall(6000, this.onEliminar, [], this);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.updateSize(300, 600);
         this.text = null;
+        this.timer = null;
+        if (auto) {
+            this.start();
+        }
+    }
+
+    start() {
+        if (this.timer) return;
+        if (!this.scene) return;
+        this.timer = this.scene.time.delayedCall(6000, this.onEliminar, [], this);
     }
 
     flotar() {

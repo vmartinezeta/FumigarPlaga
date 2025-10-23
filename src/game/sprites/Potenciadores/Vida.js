@@ -4,6 +4,7 @@ import PowerUp from "./PowerUp";
 export default class Vida extends PowerUp {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey, "vida");
+        this.color = 0x00ff00;
         this.body.setVelocity(Phaser.Math.Between(30, 40), Phaser.Math.Between(30, 40));
         this.body.setCollideWorldBounds(true);
         this.body.setBounce(1);

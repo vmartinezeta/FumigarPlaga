@@ -3,6 +3,7 @@ import PowerUp from "./PowerUp";
 export default class RecargaFierro extends PowerUp {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey, "recarga-fierro");
+        this.color = 0xff00ff;
         this.animate();
         this.flotar();
         this.play("recargar")

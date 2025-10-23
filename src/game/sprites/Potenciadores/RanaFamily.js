@@ -1,5 +1,6 @@
 // RanaFamily.js - Clase base abstracta
 import Phaser from "phaser";
+import PowerUpFactory from "./PowerUpFactory";
 
 export default class RanaFamily extends Phaser.GameObjects.Group {
     constructor(scene, x, y, familyType, ranaCount = 5, radius = 80) {
@@ -14,6 +15,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         this.isAlive = true;
         this.powerupType = null;
         this.timer = null;
+        this.collider = null;
         // Crear el grupo circular
         this.createCircularFormation();
 
@@ -47,33 +49,32 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
 
     markForPowerup() {
         // Seleccionar potenciador aleatorio para este grupo
-        const powerupTypes = ['superFuria', 'megaHealth', 'timeSlow', 'multiShot', 'invincibility'];
-        this.powerupType = Phaser.Utils.Array.GetRandom(powerupTypes);
-
+        // const powerupTypes = ['superFuria', 'megaHealth', 'timeSlow', 'multiShot', 'invincibility'];
+        this.powerupType = PowerUpFactory.createRandomPowerUp(this.scene, this.centerX, this.centerY);
 
         // Aplicar efectos visuales a todas las ranas del grupo
         this.children.entries.forEach((rana, index) => {
             this.markRanaAsSpecial(rana, index);
         });
 
-        console.log(`🎯 Familia ${this.familyType} marcada con potenciador: ${this.powerupType}`);
+        // console.log(`🎯 Familia ${this.familyType} marcada con potenciador: ${this.powerupType}`);
     }
 
     markRanaAsSpecial(rana, index) {
         // Color distintivo según el tipo de potenciador
-        const colors = {
-            superFuria: 0xff4500,    // Rojo anaranjado
-            megaHealth: 0x00ff00,    // Verde
-            timeSlow: 0x00ffff,      // Cian
-            multiShot: 0xffff00,     // Amarillo
-            invincibility: 0xff00ff  // Magenta
-        };
+        // const colors = {
+        //     superFuria: 0xff4500,    // Rojo anaranjado
+        //     megaHealth: 0x00ff00,    // Verde
+        //     timeSlow: 0x00ffff,      // Cian
+        //     multiShot: 0xffff00,     // Amarillo
+        //     invincibility: 0xff00ff  // Magenta
+        // };
 
         // Aplicar tint y efectos visuales
-        rana.setTint(colors[this.powerupType]);
-
+        // rana.setTint(colors[this.powerupType]);
+        rana.setTint(this.powerupType.color);
         // Crear aura alrededor de la rana
-        const aura = this.scene.add.circle(rana.x, rana.y, rana.width * 0.8, colors[this.powerupType], 0.3);
+        const aura = this.scene.add.circle(rana.x, rana.y, rana.width * 0.8, this.powerupType.color, 0.3);
         aura.setDepth(rana.depth - 1);
         rana.aura = aura;
 
@@ -89,7 +90,7 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         });
 
         // Partículas especiales para ranas de grupo
-        this.createRanaParticles(rana, colors[this.powerupType]);
+        this.createRanaParticles(rana, this.powerupType.color);
     }
 
     createRanaParticles(rana, color) {
@@ -107,14 +108,6 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         });
 
         rana.particles = particles;
-
-        // Hacer que las partículas sigan a la rana
-        
-        // this.scene.events.on('update', () => {
-        //     if (rana.active && particles.active) {
-        //         particles.setPosition(rana.x, rana.y);
-        //     }
-        // });
     }
 
     setupFamily() {
@@ -165,15 +158,13 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
 
     dropPowerup() {
         // Crear potenciador especial en el centro del grupo
-        const powerup = this.scene.potenciadorGroup.create(this.centerX, this.centerY, `tanque`);
-        powerup.type = this.powerupType;
-        powerup.powerupClass = 'group';
-        powerup.isSuper = true;
+        this.scene.potenciadorGroup.add(this.powerupType);
+        this.powerupType.start();
 
         // Efectos especiales para potenciador de grupo
-        this.createPowerupEffects(powerup);
+        this.createPowerupEffects(this.powerupType);
 
-        console.log(`🎁 Potenciador ${this.powerupType} dropeado por familia ${this.familyType}`);
+        // console.log(`🎁 Potenciador ${this.powerupType} dropeado por familia ${this.familyType}`);
     }
 
     createPowerupEffects(powerup) {
@@ -182,37 +173,16 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
             speed: { min: 50, max: 150 },
             scale: { start: 0.8, end: 0 },
             blendMode: 'ADD',
-            lifespan: 2000,
+            lifespan: 1500,
             quantity: 20,
-            emitZone: { type: 'random', source: new Phaser.Geom.Circle(0, 0, 30) }
+            emitZone: { type: 'source', source: new Phaser.Geom.Circle(powerup.x, powerup.y, 30) }
         });
 
-        // Animación de aparición
-        powerup.setScale(0);
-        this.scene.tweens.add({
-            targets: powerup,
-            scaleX: 1,
-            scaleY: 1,
-            duration: 500,
-            ease: 'Back.easeOut'
-        });
-
-        // Animación flotante
-        this.scene.tweens.add({
-            targets: powerup,
-            y: powerup.y - 20,
-            duration: 1500,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
 
         // Auto-destrucción después de tiempo
-        this.scene.time.delayedCall(15000, () => {
-            if (powerup.active) {
-                particles.destroy();
-                powerup.destroy();
-            }
+        this.scene.time.delayedCall(1500, () => {
+            particles.stop();
+            particles.destroy();
         });
     }
 

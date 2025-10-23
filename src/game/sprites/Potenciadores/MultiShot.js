@@ -6,6 +6,7 @@ import PowerUp from "./PowerUp";
 export default class MultiShoot extends PowerUp {
     constructor(scene, x, y, imageKey) {
         super(scene, x, y, imageKey, "weapon");
+        this.color = 0xffff00;
         this.fierros = [
             new Honda(scene),
             new Honda3Impacto(scene)

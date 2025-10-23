@@ -335,6 +335,7 @@ export class BaseGameScene extends Phaser.Scene {
         const x = Phaser.Math.Between(100, this.width - 100);
         const y = Phaser.Math.Between(400, this.height - 100);
         const potenciador = PowerUpFactory.createRandomPowerUp(this, x, y);
+        potenciador.start();
         this.potenciadorGroup.add(potenciador);
     }
 
