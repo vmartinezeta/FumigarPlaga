@@ -17,6 +17,7 @@ import Vida from "../sprites/Potenciadores/Vida";
 import Honda3Impacto from "../sprites/KitFierro/Honda3Impacto";
 import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
 import MultiShoot from "../sprites/Potenciadores/MultiShot";
+import Bomba from "../sprites/KitFierro/Bomba";
 
 
 
@@ -35,7 +36,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.sueloFrontera = null;
         this.pinchos = null;
         this.eventBus = null;
-        this.difficultyLevel = 1;
         this.achievements = [
             {
                 key: "firstBlood",
@@ -80,7 +80,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.breedingCooldown = 5000; // Tiempo en ms entre apareamientos por rana
         this.lastBreedTime = {}; // Diccionario para guardar el último tiempo de apareamiento de cada rana
         this.totalRanas = 600;
-        this.honda = null;
+        this.fierros = [];
     }
 
     init() {
@@ -152,6 +152,13 @@ export class BaseGameScene extends Phaser.Scene {
         });
         this.eventBus = new Phaser.Events.EventEmitter();
 
+        this.fierros = [
+            new Honda(this),
+            new Bomba(this),
+            new LanzaLlamas(this),
+            new LanzaHumo(this)
+        ];
+
         this.plagaGroup = new PlagaGroup(this, this.eventBus, 0, this.ymax);
 
         this.potenciadorGroup = this.physics.add.group();
@@ -182,8 +189,7 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.uiManager = new UIManager(this, this.eventBus);
 
-        this.honda = new Honda(this);
-        this.fierro = this.honda;
+        this.fierro = this.fierros[0];
 
         this.eventBus.on("familyDestroyed", ({ familyType }) => {
             this.physics.world.removeCollider(familyType.collider);
@@ -265,12 +271,8 @@ export class BaseGameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.pinchos, this.morirPlayer, null, this);
         this.physics.add.collider(this.plagaGroup, this.sueloFrontera, this.rotar, null, this);
         this.physics.add.overlap(this.player, this.potenciadorGroup, this.aplicarPotenciador, this.activarPotenciador, this);
-        this.physics.add.collider(this.player, this.sueloFrontera);
-        this.physics.add.collider(this.mosquitos, this.bosqueFrontera);
-    }
-
-    rotar(sprite) {
-        sprite.rotar();
+        // this.physics.add.collider(this.player, this.sueloFrontera);        
+        // this.physics.add.collider(this.mosquitos, this.bosqueFrontera);
     }
 
     activarPotenciador() {
@@ -287,14 +289,15 @@ export class BaseGameScene extends Phaser.Scene {
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
-            this.eventBus.emit("playerHealthChanged", { player });
+            this.statusBar.setConfig({vida: player.vida});
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {
             this.eventBus.emit('furiaActivated', { player, potenciador });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof MultiShoot) {
-            this.honda = potenciador.honda;
-            this.fierro = this.honda;
+            this.fierros[0] = potenciador.honda;
+            this.fierro = this.fierros[0];
+            potenciador.destruir();
             this.potenciadorGroup.remove(potenciador, true, true);
         }
     }
@@ -359,7 +362,7 @@ export class BaseGameScene extends Phaser.Scene {
             this.updateLanzaHumo();
         }
 
-        if (this.fierro instanceof Honda && this.keyboard.S.isDown) {
+        if ([Honda, Honda3Impacto].some(base=>this.fierro instanceof base) && this.keyboard.S.isDown) {
             this.player.disparar(this.fierro, this.plagaGroup);
             this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
         } else if (this.fierro instanceof LanzaLlamas && this.keyboard.S.isDown) {
@@ -427,19 +430,19 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     updateHonda() {
-        this.fierro = this.honda;
+        this.fierro = this.fierros[0];
         this.statusBar.setConfig({ fierro: 1 });
         this.dock.updateDock(1);
     }
 
     updateLanzaLlamas() {
-        this.fierro = new LanzaLlamas(this);
+        this.fierro = this.fierros[2];
         this.statusBar.setConfig({ fierro: 2 });
         this.dock.updateDock(2);
     }
 
     updateLanzaHumo() {
-        this.fierro = new LanzaHumo(this);
+        this.fierro = this.fierros[3];
         this.statusBar.setConfig({ fierro: 3 });
         this.dock.updateDock(3);
     }

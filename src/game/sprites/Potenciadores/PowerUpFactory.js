@@ -21,7 +21,7 @@ export default class PowerUpFactory {
     }
 
     static createRandomPowerUp(scene, x, y) {
-        const types = ['recarga-fierro', 'vida', 'furia', "weapon"];
+        const types = ['recarga-fierro', 'vida', 'furia', 'weapon'];
         const randomType = types[Math.floor(Math.random() * types.length)];
         return this.createPowerUp(randomType, scene, x, y);
     }

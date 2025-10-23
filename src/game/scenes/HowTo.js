@@ -13,12 +13,12 @@ export class HowTo extends Scene {
         this.container.add(bg);
         this.add.text(240, 140, "Controles del Teclado", {
             fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+            stroke: '#000000', strokeThickness: 6,
             align: 'center'
         }).setOrigin(0.5).setDepth(100)
 
 
-        this.add.text(150, 200, "Tecla A: Llenar el tanque con agua", {
+        this.add.text(150, 200, "Tecla A: Recargar el fierro(Honda, Bomba, Lanza llamas y lanza humo)", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'
@@ -30,11 +30,17 @@ export class HowTo extends Scene {
             align: 'center'
         }).setOrigin(0).setDepth(100)
 
-        this.add.text(150, 320, "Tecla S: Fumigar las plagas", {
+        this.add.text(150, 320, "Tecla S: Disparar el fierro", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'
-        }).setOrigin(0).setDepth(100)
+        }).setOrigin(0).setDepth(100);
+
+        this.add.text(150, 380, "Teclas 1, 2 y 3: Cambiar de fierro", {
+            fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 0,
+            align: 'center'
+        }).setOrigin(0).setDepth(100);
 
         EventBus.emit('current-scene-ready', this)
     }

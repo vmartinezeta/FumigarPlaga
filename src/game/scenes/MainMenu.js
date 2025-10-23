@@ -1,7 +1,6 @@
 import { EventBus } from '../EventBus'
 import { Scene } from 'phaser'
 import BasicAnimation from '../sprites/BasicAnimation';
-import RanaStaticFamily from '../sprites/Potenciadores/RanaStaticFamily';
 
 
 export class MainMenu extends Scene {
