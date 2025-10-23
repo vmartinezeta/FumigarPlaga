@@ -297,7 +297,7 @@ export class BaseGameScene extends Phaser.Scene {
         } else if (potenciador instanceof MultiShoot) {
             this.fierros[0] = potenciador.honda;
             this.fierro = this.fierros[0];
-            potenciador.destruir();
+            potenciador.onEliminar();
             this.potenciadorGroup.remove(potenciador, true, true);
         }
     }

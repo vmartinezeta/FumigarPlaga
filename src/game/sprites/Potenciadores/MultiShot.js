@@ -23,11 +23,6 @@ export default class MultiShoot extends PowerUp {
 
     }
 
-    destruir () {
-        this.text.destroy();
-        this.destroy();
-    }
-
     animate() {
         if (!this.existe("nuevo-fierro")) {
             this.scene.anims.create({

@@ -11,6 +11,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.updateSize(300, 600);
+        this.text = null;
     }
 
     flotar() {
@@ -27,6 +28,9 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
     }
 
     onEliminar() {
+        if (this.text) {
+            this.text.destroy();
+        }
         this.destroy();
     }
 
