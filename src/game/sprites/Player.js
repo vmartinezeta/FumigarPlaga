@@ -108,11 +108,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     }
 
-    activarFuria() {
-        this.tieneFuria = true;
-        this.rapidez = 50;
-    }
-
     takeDamage() {
         if (this.tieneFuria) return;
         this.vida--;
@@ -127,34 +122,4 @@ export default class Player extends Phaser.GameObjects.Sprite {
         return this.vida <= 0;
     }
 
-    disparar(fierro, plagaGroup) {
-        if (!this.canShoot || !fierro || fierro.vacio()) return;
-        fierro.capacidad --;
-
-        switch (fierro.type) {
-            case 'honda':
-                fierro.shoot(this.control, this.x, this.y, plagaGroup);
-                break;
-            case 'honda3Impact':
-                fierro.shoot(this.control, this.x, this.y, plagaGroup);
-                break;
-
-            case 'bomba':
-                fierro.throw(this.x, this.y, this.direction);
-                break;
-
-            case 'lanzallamas':
-                fierro.spray(this.control, this.x, this.y, plagaGroup);
-                break;
-
-            case 'lanzaHumo':
-                fierro.launchSmoke(this.x, this.y, this.control, plagaGroup);
-                break;
-        }
-
-        this.canShoot = false;
-        this.scene.time.delayedCall(fierro.fireRate, () => {
-            this.canShoot = true;
-        });
-    }
 }

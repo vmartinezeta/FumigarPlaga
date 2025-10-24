@@ -2,7 +2,6 @@ import Rana from "../Enemigos/Rana";
 import RanaFamily from "./RanaFamily";
 
 
-// RanaStaticFamily.js
 export default class RanaStaticFamily extends RanaFamily {
     constructor(scene, x, y, ranaCount = 5, radius = 80) {
         super(scene, x, y, 'static', ranaCount, radius);

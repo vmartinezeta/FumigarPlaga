@@ -5,7 +5,6 @@ export default class FuriaDude extends PowerUp {
         super(scene, x, y, imageKey, "furia");
         this.timegame = 10000;
         this.color = 0xff4500;
-        this.animate();
         this.flotar();
         this.play("furia");
     }

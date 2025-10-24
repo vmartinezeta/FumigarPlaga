@@ -9,7 +9,7 @@ export default class Bomba extends Fierro {
         this.damage = 20;
     }
 
-    spray(direction, playerX, playerY, plagaGroup) {
+    shoot(direction, playerX, playerY, plagaGroup) {
         this.body.setEnable(true);
         // 1. Crear el efecto visual de llamas (partículas)
         this.createFlameParticles(playerX, playerY, direction);

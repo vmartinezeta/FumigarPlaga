@@ -18,7 +18,7 @@ import Honda3Impacto from "../sprites/KitFierro/Honda3Impacto";
 import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
 import MultiShoot from "../sprites/Potenciadores/MultiShot";
 import Bomba from "../sprites/KitFierro/Bomba";
-
+import WeaponManager from "../sprites/KitFierro/WeaponManager";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -195,6 +195,41 @@ export class BaseGameScene extends Phaser.Scene {
             this.physics.world.removeCollider(familyType.collider);
             this.statusBar.setConfig({ puntuacion: familyType.ranaCount * 30 });
         });
+
+
+        this.weaponManager = new WeaponManager(this);
+        this.setupWeaponControls();
+    }
+
+    setupWeaponControls() {
+        // Teclas 1, 2, 3 para cambiar a arma específica
+        this.input.keyboard.on('keydown-ONE', () => {
+            this.weaponManager.equipWeapon(0);
+        });
+        this.input.keyboard.on('keydown-TWO', () => {
+            this.weaponManager.equipWeapon(1);
+        });
+        this.input.keyboard.on('keydown-THREE', () => {
+            this.weaponManager.equipWeapon(2);
+        });
+
+        // Rueda del mouse
+        this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
+            if (deltaY > 0) {
+                this.weaponManager.switchToPreviousWeapon();
+            } else {
+                this.weaponManager.switchToNextWeapon();
+            }
+        });
+
+        // Disparar con clic o barra espaciadora
+        this.input.on('pointerdown', () => {
+            this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
+        });
+
+        this.input.keyboard.on('keydown-SPACE', () => {
+            this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
+        });
     }
 
     spawnStaticFamily() {
@@ -289,7 +324,7 @@ export class BaseGameScene extends Phaser.Scene {
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
-            this.statusBar.setConfig({vida: player.vida});
+            this.statusBar.setConfig({ vida: player.vida });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {
             this.eventBus.emit('furiaActivated', { player, potenciador });
@@ -363,18 +398,18 @@ export class BaseGameScene extends Phaser.Scene {
             this.updateLanzaHumo();
         }
 
-        if ([Honda, Honda3Impacto].some(base=>this.fierro instanceof base) && this.keyboard.S.isDown) {
-            this.player.disparar(this.fierro, this.plagaGroup);
-            this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
-        } else if (this.fierro instanceof LanzaLlamas && this.keyboard.S.isDown) {
-            this.player.disparar(this.fierro, this.plagaGroup);
-            this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
-        } else if (this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
-            this.player.disparar(this.fierro, this.plagaGroup);
-            this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
-        } else if (this.fierro instanceof Honda3Impacto && this.keyboard.S.isDown) {
-            this.player.disparar(this.fierro, this.plagaGroup);
-        }
+        // if ([Honda, Honda3Impacto].some(base=>this.fierro instanceof base) && this.keyboard.S.isDown) {
+        //     this.player.disparar(this.fierro, this.plagaGroup);
+        //     this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
+        // } else if (this.fierro instanceof LanzaLlamas && this.keyboard.S.isDown) {
+        //     this.player.disparar(this.fierro, this.plagaGroup);
+        //     this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
+        // } else if (this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
+        //     this.player.disparar(this.fierro, this.plagaGroup);
+        //     this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
+        // } else if (this.fierro instanceof Honda3Impacto && this.keyboard.S.isDown) {
+        //     this.player.disparar(this.fierro, this.plagaGroup);
+        // }
 
         if (this.plagaGroup.estaVacio()) {
             this.uiManager.gameOver = true;
@@ -422,12 +457,6 @@ export class BaseGameScene extends Phaser.Scene {
 
     dejarCoger() {
         this.plagaGroup.agregar(this, 2);
-    }
-
-    updateDifficulty() {
-        // Ajustar la dificultad en función del tiempo
-        // Por ejemplo, cada 60 segundos aumenta la dificultad
-        this.difficultyLevel = 1 + Math.floor(this.gameTime / 60);
     }
 
     updateHonda() {

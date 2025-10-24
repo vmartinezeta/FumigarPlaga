@@ -13,7 +13,6 @@ export default class MultiShoot extends PowerUp {
         ];
         const type = Math.floor(Math.random()*this.fierros.length);
         this.honda = this.fierros[type];
-        this.animate();
         this.flotar();
         this.play("nuevo-fierro");
 

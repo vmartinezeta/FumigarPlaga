@@ -8,7 +8,6 @@ export default class Vida extends PowerUp {
         this.body.setVelocity(Phaser.Math.Between(30, 40), Phaser.Math.Between(30, 40));
         this.body.setCollideWorldBounds(true);
         this.body.setBounce(1);
-        this.animate();
         this.play("vida");
     }
 
