@@ -1,5 +1,6 @@
 import Bomba from "./Bomba";
 import Honda from "./Honda";
+import Honda3Impacto from "./Honda3Impacto";
 import LanzaHumo from "./LanzaHumo";
 import LanzaLlamas from "./LanzaLlamas";
 
@@ -22,11 +23,11 @@ export default class WeaponManager {
         // Crear instancias únicas de todas las armas del juego
         const weaponTypes = [
             { key: 'honda', class: Honda },
+            { key: 'hondax3', class: Honda3Impacto},
             { key: 'bomba', class: Bomba },
             { key: 'lanzaLlamas', class: LanzaLlamas },
             { key: 'lanzaHumo', class: LanzaHumo },
             // { key: 'laser', class: Laser },
-            // ... otras armas
         ];
 
         weaponTypes.forEach(weaponType => {
@@ -37,7 +38,7 @@ export default class WeaponManager {
         });
 
         // Equipar armas iniciales
-        this.equipInitialWeapons(['honda', 'bomba']);
+        this.equipInitialWeapons(['honda', 'bomba', 'lanzaLlamas','lanzaHumo']);
     }
 
     equipInitialWeapons(weaponKeys) {
@@ -67,7 +68,6 @@ export default class WeaponManager {
         this.currentWeaponIndex = index;
         const newWeapon = this.equippedWeapons[this.currentWeaponIndex];
         newWeapon.setActive(true);
-        newWeapon.setVisible(true);
     }
 
     switchToNextWeapon() {
@@ -108,15 +108,10 @@ export default class WeaponManager {
 
     // Método para disparar con el arma actual
     shoot(direction, centerX, centerY, enemigoGroup) {
-        if (!this.canShoot) return;
         const currentWeapon = this.equippedWeapons[this.currentWeaponIndex];
-        if (!currentWeapon) return;
-        currentWeapon.shoot(direction, centerX, centerY, enemigoGroup);
-
-        this.canShoot = false;
-        this.scene.time.delayedCall(currentWeapon.fireRate, () => {
-            this.canShoot = true;
-        });
+        if (!currentWeapon ) return;
+        if (!currentWeapon.canShoot || currentWeapon.vacio()) return;
+        currentWeapon.shoot(direction, centerX, centerY, enemigoGroup);        
     }
 
     // Método para obtener el arma actual

@@ -205,12 +205,19 @@ export class BaseGameScene extends Phaser.Scene {
         // Teclas 1, 2, 3 para cambiar a arma específica
         this.input.keyboard.on('keydown-ONE', () => {
             this.weaponManager.equipWeapon(0);
+            this.dock.updateDock(1);
         });
         this.input.keyboard.on('keydown-TWO', () => {
             this.weaponManager.equipWeapon(1);
+            this.dock.updateDock(2);
         });
         this.input.keyboard.on('keydown-THREE', () => {
             this.weaponManager.equipWeapon(2);
+            this.dock.updateDock(3);
+        });
+
+        this.input.keyboard.on('keydown-FOUR', () => {
+            this.weaponManager.equipWeapon(3);            
         });
 
         // Rueda del mouse
@@ -229,6 +236,7 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-SPACE', () => {
             this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
+            this.statusBar.setConfig({capacidad: this.weaponManager.getCurrentWeapon().capacidad});
         });
     }
 
@@ -319,8 +327,9 @@ export class BaseGameScene extends Phaser.Scene {
 
     aplicarPotenciador(player, potenciador) {
         if (potenciador instanceof RecargaFierro) {
-            potenciador.applyEffect(this.fierro);
-            this.eventBus.emit("capacityWeaponChanged", { capacidad: this.fierro.capacidad })
+            const weapon = this.weaponManager.getCurrentWeapon();
+            potenciador.applyEffect(weapon);
+            this.eventBus.emit("capacityWeaponChanged", { capacidad: weapon.capacidad });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
@@ -390,27 +399,6 @@ export class BaseGameScene extends Phaser.Scene {
         }
 
 
-        if (this.keyboard.UNO.isDown) {
-            this.updateHonda();
-        } else if (this.keyboard.DOS.isDown) {
-            this.updateLanzaLlamas();
-        } else if (this.keyboard.TRES.isDown) {
-            this.updateLanzaHumo();
-        }
-
-        // if ([Honda, Honda3Impacto].some(base=>this.fierro instanceof base) && this.keyboard.S.isDown) {
-        //     this.player.disparar(this.fierro, this.plagaGroup);
-        //     this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
-        // } else if (this.fierro instanceof LanzaLlamas && this.keyboard.S.isDown) {
-        //     this.player.disparar(this.fierro, this.plagaGroup);
-        //     this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
-        // } else if (this.fierro instanceof LanzaHumo && this.keyboard.S.isDown) {
-        //     this.player.disparar(this.fierro, this.plagaGroup);
-        //     this.statusBar.setConfig({ capacidad: this.fierro.capacidad })
-        // } else if (this.fierro instanceof Honda3Impacto && this.keyboard.S.isDown) {
-        //     this.player.disparar(this.fierro, this.plagaGroup);
-        // }
-
         if (this.plagaGroup.estaVacio()) {
             this.uiManager.gameOver = true;
             this.reset();
@@ -457,24 +445,6 @@ export class BaseGameScene extends Phaser.Scene {
 
     dejarCoger() {
         this.plagaGroup.agregar(this, 2);
-    }
-
-    updateHonda() {
-        this.fierro = this.fierros[0];
-        this.statusBar.setConfig({ fierro: 1 });
-        this.dock.updateDock(1);
-    }
-
-    updateLanzaLlamas() {
-        this.fierro = this.fierros[2];
-        this.statusBar.setConfig({ fierro: 2 });
-        this.dock.updateDock(2);
-    }
-
-    updateLanzaHumo() {
-        this.fierro = this.fierros[3];
-        this.statusBar.setConfig({ fierro: 3 });
-        this.dock.updateDock(3);
     }
 
 }

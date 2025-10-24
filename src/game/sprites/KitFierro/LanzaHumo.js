@@ -13,10 +13,11 @@ export default class LanzaHumo extends Fierro {
         this.damage = 5;
     }
 
-    launchSmoke(playerX, playerY, direction, plagaGroup) {
+    shoot(direction, playerX, playerY, plagaGroup) {
+        this.nextShoot();
         // 1. Crear efecto visual de humo (partículas)
         this.createSmokeParticles(playerX, playerY, direction);
-
+        
         // 2. Crear sprite invisible para la nube de humo (colisión)
         this.createSmokeCloud(playerX, playerY, direction, plagaGroup);
     }

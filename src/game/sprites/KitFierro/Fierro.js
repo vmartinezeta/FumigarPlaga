@@ -12,9 +12,17 @@ export default class Fierro extends Phaser.GameObjects.Sprite {
         this.setVisible(false);
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        
+        this.canShoot = true;
         // Configurar hitbox según el tipo de arma
         this.setupHitbox();
+    }
+
+    nextShoot() {
+        this.capacidad--;
+        this.canShoot = false;
+        this.scene.time.delayedCall(this.fireRate+100, () => {
+            this.canShoot = true;
+        });
     }
 
     vacio() {
