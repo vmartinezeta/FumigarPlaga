@@ -41,17 +41,17 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
 
         // Ocultar ranas que están en el radio
         nearbyFrogs.forEach(frog => {
-            if (!this.hiddenFrogs.map(f=> f.id).includes(frog.id)) {
+            if (!this.hiddenFrogs.map(f => f.id).includes(frog.id)) {
                 this.hideFrog(frog);
             }
         });
 
         // Mostrar ranas que se alejaron
-        this.hiddenFrogs.forEach(frog => {
-            if (!nearbyFrogs.includes(frog) || !frog.active) {
-                this.showFrog(frog);
-            }
-        });
+        // this.hiddenFrogs.forEach(frog => {
+        //     if (!nearbyFrogs.map(f => f.id).includes(frog.id)) {
+        //         this.showFrog(frog);
+        //     }
+        // });
     }
 
     getNearbyFrogs() {
@@ -65,7 +65,7 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
     }
 
     hideFrog(frog) {
-        if (this.hiddenFrogs.length> this.ranaCount) return;
+        if (this.hiddenFrogs.length > this.ranaCount) return;
 
         const angleStep = (2 * Math.PI) / this.ranaCount;
         const angle = (this.hiddenFrogs.length) * angleStep;
@@ -80,7 +80,7 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
 
         // Reducir velocidad cuando está escondida
         if (frog.body) {
-            frog.previousSpeed = frog.body.speed;
+            frog.previousSpeed = frog.body.velocity;
             frog.body.setVelocity(0, 0);
         }
 
@@ -105,7 +105,10 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
 
     destroy() {
         // Mostrar todas las ranas antes de destruir el charco
-        this.hiddenFrogs.forEach(frog => this.showFrog(frog));
+        this.hiddenFrogs.forEach(frog => {
+            if (!frog.active) return;
+            this.showFrog(frog);
+        });
         this.graphics.destroy();
         if (this.debugGraphics) this.debugGraphics.destroy();
         super.destroy();

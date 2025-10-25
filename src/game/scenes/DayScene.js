@@ -177,6 +177,6 @@ export class DayScene extends BaseGameScene {
         let currentThreshold = this.baseThreshold + this.timeThreshold;
 
         // Lógica de apareamiento
-        this.breedFrogs(currentThreshold);        
+        this.breedFrogs(currentThreshold);
     }
 }

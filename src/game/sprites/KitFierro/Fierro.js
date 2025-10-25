@@ -20,6 +20,7 @@ export default class Fierro extends Phaser.GameObjects.Sprite {
     nextShoot() {
         this.capacidad--;
         this.canShoot = false;
+        if (!this.scene) return;
         this.scene.time.delayedCall(this.fireRate+100, () => {
             this.canShoot = true;
         });
