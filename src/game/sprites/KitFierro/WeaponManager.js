@@ -15,7 +15,6 @@ export default class WeaponManager {
         this.weaponInventory = new Map(); // Todas las armas disponibles en el juego
         this.equippedWeapons = []; // Armas que lleva el jugador (máximo 3, por ejemplo)
         this.currentWeaponIndex = 0; // Índice del arma actual en equippedWeapons
-        this.canShoot = true;
         this.initializeWeaponInventory();
     }
 
@@ -23,7 +22,7 @@ export default class WeaponManager {
         // Crear instancias únicas de todas las armas del juego
         const weaponTypes = [
             { key: 'honda', class: Honda },
-            { key: 'hondax3', class: Honda3Impacto},
+            { key: 'hondax3', class: Honda3Impacto },
             { key: 'bomba', class: Bomba },
             { key: 'lanzaLlamas', class: LanzaLlamas },
             { key: 'lanzaHumo', class: LanzaHumo },
@@ -38,7 +37,7 @@ export default class WeaponManager {
         });
 
         // Equipar armas iniciales
-        this.equipInitialWeapons(['honda', 'bomba', 'lanzaLlamas','lanzaHumo']);
+        this.equipInitialWeapons(['honda', 'bomba', 'lanzaLlamas', 'lanzaHumo']);
     }
 
     equipInitialWeapons(weaponKeys) {
@@ -109,9 +108,9 @@ export default class WeaponManager {
     // Método para disparar con el arma actual
     shoot(direction, centerX, centerY, enemigoGroup) {
         const currentWeapon = this.equippedWeapons[this.currentWeaponIndex];
-        if (!currentWeapon ) return;
+        if (!currentWeapon) return;
         if (!currentWeapon.canShoot || currentWeapon.vacio()) return;
-        currentWeapon.shoot(direction, centerX, centerY, enemigoGroup);        
+        currentWeapon.shoot(direction, centerX, centerY, enemigoGroup);
     }
 
     // Método para obtener el arma actual
@@ -126,4 +125,24 @@ export default class WeaponManager {
             weapon.upgrade(upgradeType);
         }
     }
+
+    // Método para verificar si un arma puede dañar a una rana escondida
+    canDamageHiddenFrog(weaponKey, frog) {
+        const immuneWeapons = ['bomba', 'lanzallamas', 'lanzahumo'];
+
+        // Si la rana no está escondida, todas las armas funcionan
+        if (!frog.isHidden) return true;
+
+        // Si está escondida, verificar si el arma es inmunizada
+        return !immuneWeapons.includes(weaponKey);
+    }
+
+    // Método para obtener la clave del arma
+    getWeaponKey(weapon) {
+        for (let [key, value] of this.weapons.entries()) {
+            if (value === weapon) return key;
+        }
+        return null;
+    }
+
 }

@@ -19,6 +19,7 @@ import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
 import MultiShoot from "../sprites/Potenciadores/MultiShot";
 import Bomba from "../sprites/KitFierro/Bomba";
 import WeaponManager from "../sprites/KitFierro/WeaponManager";
+import WaterPoolManager from "../sprites/WaterPoolManager";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -238,6 +239,8 @@ export class BaseGameScene extends Phaser.Scene {
             this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
             this.statusBar.setConfig({capacidad: this.weaponManager.getCurrentWeapon().capacidad});
         });
+
+        this.waterPoolManager = new WaterPoolManager(this);
     }
 
     spawnStaticFamily() {

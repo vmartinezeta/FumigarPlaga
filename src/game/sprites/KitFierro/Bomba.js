@@ -14,7 +14,7 @@ export default class Bomba extends Fierro {
         this.body.setEnable(true);
         // 1. Crear el efecto visual de llamas (partículas)
         this.createFlameParticles(playerX, playerY, direction);
-        
+
         // 2. Crear un sprite invisible para la zona de daño
         this.createDamageZone(playerX, playerY, direction, plagaGroup);
     }
@@ -58,7 +58,7 @@ export default class Bomba extends Fierro {
         // Debug: dibujar un punto en la posición de emisión
         // Crear un sprite invisible para la zona de daño
         this.damageZone = this.scene.physics.add.sprite(
-            direction.right()?x+100:x-100,
+            direction.right() ? x + 100 : x - 100,
             y,
             this.imageKey
         );
@@ -97,4 +97,48 @@ export default class Bomba extends Fierro {
             this.damageZone.destroy();
         }
     }
+
+    performShot(weaponKey) {
+        const explosionRadius = 100;
+        const enemies = this.scene.frogManager.frogs;
+
+        enemies.forEach(enemy => {
+            if (!enemy.active) return;
+
+            const distance = Phaser.Math.Distance.Between(
+                this.x, this.y, enemy.x, enemy.y
+            );
+
+            if (distance <= explosionRadius) {
+                // Verificar si puede dañar a la rana escondida
+                if (this.scene.weaponManager.canDamageHiddenFrog(weaponKey, enemy)) {
+                    enemy.takeDamage(this.damage);
+                } else {
+                    // Efecto visual de inmunidad
+                    this.showImmuneEffect(enemy);
+                }
+            }
+        });
+
+        // Crear explosión visual
+        this.scene.createExplosion(this.x, this.y, explosionRadius);
+    }
+
+    showImmuneEffect(enemy) {
+        const text = this.scene.add.text(
+            enemy.x, enemy.y - 30,
+            'INMUNE',
+            { fontSize: '12px', fill: '#00FFFF', fontWeight: 'bold' }
+        );
+
+        this.scene.tweens.add({
+            targets: text,
+            y: enemy.y - 60,
+            alpha: 0,
+            duration: 1000,
+            onComplete: () => text.destroy()
+        });
+    }
+
+
 }
