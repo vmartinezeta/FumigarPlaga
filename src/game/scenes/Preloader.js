@@ -73,6 +73,7 @@ export class Preloader extends Scene {
         this.load.image("pinchos", "pinchos.png");
         this.load.image('bosque', 'bosque.png');
         this.load.image('star', 'star.png');
+        this.load.image('ojitos', 'ojitos.png');
         this.load.spritesheet("weapon", "weapon.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("rana", "rana.png", { frameWidth: 60, frameHeight: 64 });
         this.load.spritesheet("rana2", "rana2.png", { frameWidth: 69.3, frameHeight: 64 });

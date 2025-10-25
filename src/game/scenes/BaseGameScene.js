@@ -391,6 +391,8 @@ export class BaseGameScene extends Phaser.Scene {
         this.player.update();
         this.plagaGroup.update();
 
+        this.waterPoolManager.update();
+
         if (this.keyboard.UP.isDown) {
             this.player.top();
         } else if (this.keyboard.RIGHT.isDown) {
@@ -447,7 +449,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     dejarCoger() {
-        this.plagaGroup.agregar(this, 2);
+        this.plagaGroup.agregar(this, 1);
     }
 
 }
