@@ -41,8 +41,8 @@ export default class WaterPoolManager {
         if (this.pools.length >= this.spawnConfig.maxPoolsOnScreen) return;
         
         const margin = 100;
-        const x = Phaser.Math.Between(margin, this.scene.game.config.width - margin);
-        const y = Phaser.Math.Between(margin, this.scene.game.config.height - margin);
+        const x = Phaser.Math.Between(margin, this.scene.width - margin);
+        const y = Phaser.Math.Between(this.scene.ymax, this.scene.game.config.height - margin);
         
         const size = Phaser.Math.Between(this.spawnConfig.minSize, this.spawnConfig.maxSize);
         
