@@ -90,8 +90,8 @@ export default class Rana extends Phaser.GameObjects.Sprite {
 
     cogiendo(macho, imageKey, completeCallback, context) {
         this.parar();
-        macho.parar();
-        this.setTexture(imageKey);
+        // macho.parar();
+        macho.previousPoint = new Punto(macho.x, macho.y);
         if (!this.existe("coger")) {
             this.animate({
                 key: 'coger',
@@ -100,20 +100,31 @@ export default class Rana extends Phaser.GameObjects.Sprite {
                 repeat: -1
             });
         }
-        this.setTint(0xff0000);
-        macho.visible = false;
-        this.play("coger");
 
-        this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
-        this.scene.time.delayedCall(1000, this.soltar, [macho], this);
+        this.scene.tweens.add({
+            targets: macho,
+            x: this.x,
+            y: this.y,
+            duration: 800,
+            ease: 'Power2',
+            onComplete: () => {
+                macho.parar();
+                macho.visible = false;
+                this.setTexture(imageKey);
+                this.play("coger");
+                this.setTint(0xff0000);
+                this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
+                this.scene.time.delayedCall(1000, this.soltar, [macho], this);
 
-        this.emitter = this.scene.add.particles(this.x, this.y, 'particle', {
-            speed: 100,
-            scale: { start: 0.3, end: 0 },
-            alpha: { start: 0.8, end: 0 },
-            lifespan: 1000,
-            quantity: 2,
-            emitting: true
+                this.emitter = this.scene.add.particles(this.x, this.y, 'particle', {
+                    speed: 100,
+                    scale: { start: 0.3, end: 0 },
+                    alpha: { start: 0.8, end: 0 },
+                    lifespan: 1000,
+                    quantity: 2,
+                    emitting: true
+                });
+            }
         });
     }
 
@@ -125,6 +136,8 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.habilitarBody(true);
         macho.habilitarBody(true);
         macho.visible = true;
+        macho.x = macho.previousPoint.x;
+        macho.y = macho.previousPoint.y;
         if (this.isHidden) {
             this.setTexture("ojitos");
             this.stop()
