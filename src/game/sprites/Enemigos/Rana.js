@@ -52,6 +52,12 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         }
         this.emitter = null;
         this.isHidden = false;
+        this.timerCallFrogMan = null;
+        this.timerComplete = null;
+        this.timerSoltar = null;
+        this.timerPool = null;
+        this.timerSalpicaduraPool = null;
+        this.timeline = scene.add.timeline();
     }
 
     setVelocidad(x, y) {
@@ -102,30 +108,36 @@ export default class Rana extends Phaser.GameObjects.Sprite {
             });
         }
 
-        this.scene.tweens.add({
-            targets: macho,
-            x: this.x,
-            y: this.y,
-            duration: 800,
-            ease: 'Power2',
-            onComplete: () => {
-                macho.parar();
-                macho.visible = false;
-                this.setTexture(imageKey);
-                this.play("coger");
-                this.setTint(0xff0000);
-                this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
-                this.scene.time.delayedCall(1000, this.soltar, [macho], this);
+        // this.timeline.add({
+        //     tween: {
+        //         targets: macho,
+        //         x: this.x,
+        //         y: this.y,
+        //         duration: 800,
+        //         ease: 'Power2'
+        //     }
+        // });
+        // this.timeline.play();
+        this.callFrogMan(macho, imageKey, completeCallback, context);
+        // this.timerCallFrogMan = this.scene.time.delayedCall(800, this.callFrogMan, [macho, imageKey, completeCallback, context], this);
+    }
 
-                this.emitter = this.scene.add.particles(this.x, this.y, 'particle', {
-                    speed: 100,
-                    scale: { start: 0.3, end: 0 },
-                    alpha: { start: 0.8, end: 0 },
-                    lifespan: 1000,
-                    quantity: 2,
-                    emitting: true
-                });
-            }
+    callFrogMan(macho, imageKey, completeCallback, context) {
+        macho.parar();
+        macho.visible = false;
+        this.setTexture(imageKey);
+        this.play("coger");
+        this.setTint(0xff0000);
+        this.timerComplete = this.scene.time.delayedCall(1000, completeCallback, [this, macho], context);
+        this.timerSoltar = this.scene.time.delayedCall(1000, this.soltar, [macho], this);
+
+        this.emitter = this.scene.add.particles(this.x, this.y, 'particle', {
+            speed: 100,
+            scale: { start: 0.3, end: 0 },
+            alpha: { start: 0.8, end: 0 },
+            lifespan: 1000,
+            quantity: 2,
+            emitting: true
         });
     }
 
@@ -161,7 +173,13 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     morir() {
-        this.scene.time.removeEvent(this.onComplete);
+        // this.scene.time.removeEvent(this.onComplete);        
+        this.timeline.stop();
+        this.scene.time.removeEvent(this.timerPool);
+        this.scene.time.removeEvent(this.timerSalpicaduraPool);
+        this.scene.time.removeEvent(this.timerCallFrogMan);
+        this.scene.time.removeEvent(this.timerComplete);
+        this.scene.time.removeEvent(this.timerSoltar);
 
         if (this.healthBar) {
             this.healthBar.destroy();

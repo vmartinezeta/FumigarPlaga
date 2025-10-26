@@ -19,6 +19,7 @@ export class GameOver extends Scene {
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
+
         EventBus.emit('current-scene-ready', this);
     }
 

@@ -192,6 +192,23 @@ export class BaseGameScene extends Phaser.Scene {
         this.setupWeaponControls();
     }
 
+    showImmuneEffect(frog) {
+        // Efecto visual para inmunidad
+        const particles = this.add.particles('bullet');
+        particles.createEmitter({
+            x: frog.x,
+            y: frog.y,
+            speed: { min: -50, max: 50 },
+            scale: { start: 0.5, end: 0 },
+            blendMode: 'ADD',
+            lifespan: 500
+        });
+
+        this.time.delayedCall(500, () => {
+            particles.destroy();
+        });
+    }
+
     setupWeaponControls() {
         // Teclas 1, 2, 3 para cambiar a arma específica
         this.input.keyboard.on('keydown-ONE', () => {
@@ -208,7 +225,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
         this.input.keyboard.on('keydown-FOUR', () => {
-            this.weaponManager.equipWeapon(3);            
+            this.weaponManager.equipWeapon(3);
         });
 
         // Rueda del mouse
@@ -222,12 +239,12 @@ export class BaseGameScene extends Phaser.Scene {
 
         // Disparar con clic o barra espaciadora
         this.input.on('pointerdown', () => {
-            this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
+
         });
 
         this.input.keyboard.on('keydown-SPACE', () => {
             this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
-            this.statusBar.setConfig({capacidad: this.weaponManager.getCurrentWeapon().capacidad});
+            this.statusBar.setConfig({ capacidad: this.weaponManager.getCurrentWeapon().capacidad });
         });
 
         this.waterPoolManager = new WaterPoolManager(this);

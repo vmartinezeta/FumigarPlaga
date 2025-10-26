@@ -50,13 +50,13 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
 
     getNearbyFrogs() {
         return this.scene.plagaGroup.getChildren()
-        .filter(frog => frog.active && !frog.isHidden)
-        .filter(frog => {
-            const distance = Phaser.Math.Distance.Between(
-                this.x, this.y, frog.x, frog.y
-            );
-            return distance <= this.hideRadius;
-        });
+            .filter(frog => frog.active && !frog.isHidden)
+            .filter(frog => {
+                const distance = Phaser.Math.Distance.Between(
+                    this.x, this.y, frog.x, frog.y
+                );
+                return distance <= this.hideRadius;
+            });
     }
 
     hideFrog(frog) {
@@ -68,18 +68,15 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         frog.previousTexture = frog.texture.key;
         frog.setAlpha(0.7); // Semi-transparente
         // animacion suave
-         this.scene.tweens.add({
+        this.scene.tweens.add({
             targets: frog,
             x,
             y,
             duration: 800,
-            ease: 'Power2',
-            onComplete:() => {
-                frog.setTexture('ojitos'); // Sprite solo con ojos
-                frog.stop();
-                this.createSplashEffect(x, y);
-            }
+            ease: 'Power2'
         });
+
+        this.timerPool = this.scene.time.delayedCall(800, this.llegarPool, [frog, x, y], this);
 
         // Reducir velocidad cuando está escondida
         if (frog.body) {
@@ -88,18 +85,24 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         this.hiddenFrogs.push(frog);
     }
 
+    llegarPool(frog, x, y) {
+        frog.setTexture('ojitos'); // Sprite solo con ojos
+        frog.stop();
+        this.createSplashEffect(x, y);
+    }
+
     createSplashEffect(x, y) {
         // Efecto de salpicadura al entrar al charco
-        const particles = this.scene.add.particles(x, y,'particle', {
+        const particles = this.scene.add.particles(x, y, 'particle', {
             speed: { min: 20, max: 60 },
             scale: { start: 0.5, end: 0 },
             blendMode: 'ADD',
             lifespan: 600,
             quantity: 8,
-            emitting:true
+            emitting: true
         });
-        
-        this.scene.time.delayedCall(600, () => {
+
+        this.timerSalpicaduraPool = this.scene.time.delayedCall(600, () => {
             particles.destroy();
         });
     }
@@ -115,11 +118,11 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
             frog.play("run");
             // const angle = Phaser.Math.Between(0, 360);
             // this.scene.physics.velocityFromRotation(
-                // angle, frog.previousSpeed, frog.body.velocity
+            // angle, frog.previousSpeed, frog.body.velocity
             // );
         }
 
-        this.hiddenFrogs = this.hiddenFrogs.filter(f => f.id !== frog.id );
+        this.hiddenFrogs = this.hiddenFrogs.filter(f => f.id !== frog.id);
     }
 
     destroy() {

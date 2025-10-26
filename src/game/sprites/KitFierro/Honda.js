@@ -33,7 +33,8 @@ export default class Honda extends Fierro {
         this.setVisible(false);
     }
 
-    handleCollision(particle, rana) {
+    handleCollision(particle, rana) {  
+        if(!this.scene.weaponManager.canDamageHiddenFrog(this.type, rana)) return;
         particle.setActive(false);
         particle.setVisible(false);
         particle.body.setEnable(false);

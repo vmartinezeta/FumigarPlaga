@@ -139,7 +139,7 @@ export default class WeaponManager {
 
     // Método para obtener la clave del arma
     getWeaponKey(weapon) {
-        for (let [key, value] of this.weapons.entries()) {
+        for (let [key, value] of Object.entries(this.equippedWeapons)) {
             if (value === weapon) return key;
         }
         return null;
