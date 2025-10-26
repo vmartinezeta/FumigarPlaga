@@ -41,7 +41,7 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
 
         // Ocultar ranas que están en el radio
         nearbyFrogs.forEach(frog => {
-            if (!this.hiddenFrogs.map(f => f.id).includes(frog.id)) {
+            if (!this.hiddenFrogs.map(f => f.id).includes(frog.id) && this.hiddenFrogs.length <= this.ranaCount) {
                 this.hideFrog(frog);
             }
         });
@@ -55,35 +55,21 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
     }
 
     getNearbyFrogs() {
-        const frogs = this.scene.plagaGroup.getChildren();
+        const frogs = this.scene.plagaGroup.getChildren().filter(frog => frog.active && !frog.isHidden);
         return frogs.filter(frog => {
             const distance = Phaser.Math.Distance.Between(
                 this.x, this.y, frog.x, frog.y
             );
-            return distance <= this.hideRadius && frog.active;
+            return distance <= this.hideRadius;
         });
     }
 
     hideFrog(frog) {
-        if (this.hiddenFrogs.length > this.ranaCount) return;
-
         const angleStep = (2 * Math.PI) / this.ranaCount;
         const angle = (this.hiddenFrogs.length) * angleStep;
         const x = this.centerX + Math.cos(angle) * this.radius;
         const y = this.centerY + Math.sin(angle) * this.radius;
-        frog.isHidden = true;
-        frog.previousTexture = frog.texture.key;
-        frog.setTexture('ojitos'); // Sprite solo con ojos
-        frog.setAlpha(0.7); // Semi-transparente
-        frog.x = x;
-        frog.y = y;
-
-        // Reducir velocidad cuando está escondida
-        if (frog.body) {
-            frog.previousSpeed = frog.body.velocity;
-            frog.body.setVelocity(0, 0);
-        }
-
+        frog.hide(x, y);
         this.hiddenFrogs.push(frog);
     }
 
@@ -113,4 +99,5 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         if (this.debugGraphics) this.debugGraphics.destroy();
         super.destroy();
     }
+
 }

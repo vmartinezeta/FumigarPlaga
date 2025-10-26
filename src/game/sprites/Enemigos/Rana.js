@@ -3,6 +3,7 @@ import { Punto } from "../../classes/Punto";
 import { ControlDireccional } from "../../classes/ControlDireccional";
 import { Direccional } from "../../classes/Direccional";
 
+
 export default class Rana extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey, hembra, fertil, vida = 30) {
         super(scene, x, y, imageKey);
@@ -50,6 +51,22 @@ export default class Rana extends Phaser.GameObjects.Sprite {
             this.healthBar = scene.add.graphics();
         }
         this.emitter = null;
+        this.isHidden = false;
+    }
+
+    hide(x, y) {
+        this.isHidden = true;
+        this.previousTexture = this.texture.key;
+        this.setTexture('ojitos'); // Sprite solo con ojos
+        this.setAlpha(0.7); // Semi-transparente
+        this.x = x;
+        this.y = y;
+        this.stop();
+        // Reducir velocidad cuando está escondida
+        if (this.body) {
+            this.previousSpeed = this.body.velocity;
+            this.body.setVelocity(0, 0);
+        }   
     }
 
     setVelocidad(x, y) {
@@ -121,10 +138,23 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         }
         this.setTint(this.hembra ? 0xff88ff : 0x8888ff);
         this.habilitarBody(true);
-        this.setTexture(this.imageKey);
         macho.habilitarBody(true);
         macho.visible = true;
-        this.play("run");
+        if (this.isHidden) {
+            this.setTexture("ojitos");
+            this.stop()
+        } else {
+            this.setTexture(this.imageKey);
+            this.play("run");
+        }
+
+        if (macho.isHidden) {
+            macho.setTexture("ojitos");
+            macho.stop();
+        } else {
+            macho.setTexture(this.imageKey);
+            macho.play("run");
+        }
     }
 
     debeMorir() {
@@ -164,13 +194,6 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.healthBar.fillRect(this.x - x, this.y - y, width, height);
 
         const factor = this.vida / this.vidaMax;
-        if (!this.furia && factor < 0.5) {
-            this.furia = true;
-            this.setTint(0xff0000);
-            this.velocidad.x *= 3;
-            this.velocidad.y *= 3;
-            this.body.setVelocity(this.velocidad.x, this.velocidad.y);
-        }
         // Salud actual verde
         const healthWidth = factor * width;
         this.healthBar.fillStyle(0x00ff00, 0.8);

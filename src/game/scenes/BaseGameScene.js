@@ -81,7 +81,6 @@ export class BaseGameScene extends Phaser.Scene {
         this.breedingCooldown = 5000; // Tiempo en ms entre apareamientos por rana
         this.lastBreedTime = {}; // Diccionario para guardar el último tiempo de apareamiento de cada rana
         this.totalRanas = 600;
-        this.fierros = [];
     }
 
     init() {
@@ -153,13 +152,6 @@ export class BaseGameScene extends Phaser.Scene {
         });
         this.eventBus = new Phaser.Events.EventEmitter();
 
-        this.fierros = [
-            new Honda(this),
-            new Bomba(this),
-            new LanzaLlamas(this),
-            new LanzaHumo(this)
-        ];
-
         this.plagaGroup = new PlagaGroup(this, this.eventBus, 0, this.ymax);
 
         this.potenciadorGroup = this.physics.add.group();
@@ -189,8 +181,6 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
         this.uiManager = new UIManager(this, this.eventBus);
-
-        this.fierro = this.fierros[0];
 
         this.eventBus.on("familyDestroyed", ({ familyType }) => {
             this.physics.world.removeCollider(familyType.collider);

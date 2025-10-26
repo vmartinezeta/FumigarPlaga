@@ -50,7 +50,7 @@ export default class WaterPoolManager {
         this.pools.push(pool);
         
         // Desaparecer después de un tiempo
-        this.scene.time.delayedCall(15000, () => {
+        this.scene.time.delayedCall(45000, () => {
             this.removePool(pool);
         });
     }

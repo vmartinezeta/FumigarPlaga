@@ -5,7 +5,6 @@ import { BaseGameScene } from './BaseGameScene';
 import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
 import StatusBar from '../sprites/StatusBar';
-import PowerUpFactory from '../sprites/Potenciadores/PowerUpFactory';
 
 
 export class DayScene extends BaseGameScene {
@@ -69,7 +68,7 @@ export class DayScene extends BaseGameScene {
             x: 100,
             y: 30,
             vida: this.player.vida,
-            capacidad: this.fierro.capacidad,
+            capacidad: this.weaponManager.getCurrentWeapon().capacidad,
             fierro: 3,
         });
 
@@ -85,7 +84,6 @@ export class DayScene extends BaseGameScene {
 
         EventBus.emit('current-scene-ready', this);
     }
-
 
     createCreepySounds() {
         // Viento aullante cada 20-30 segundos
@@ -160,7 +158,7 @@ export class DayScene extends BaseGameScene {
         if (this.uiManager.gameOver) {
             const record = this.statusBar?.puntuacion || 0;
             this.scene.start('GameOver', {
-                record    
+                record
             });
             return;
         }
@@ -179,4 +177,5 @@ export class DayScene extends BaseGameScene {
         // Lógica de apareamiento
         this.breedFrogs(currentThreshold);
     }
+
 }
