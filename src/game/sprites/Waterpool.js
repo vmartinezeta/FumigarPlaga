@@ -46,17 +46,12 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
             }
         });
 
-        // Mostrar ranas que se alejaron
-        // this.hiddenFrogs.forEach(frog => {
-        //     if (!nearbyFrogs.map(f => f.id).includes(frog.id)) {
-        //         this.showFrog(frog);
-        //     }
-        // });
     }
 
     getNearbyFrogs() {
-        const frogs = this.scene.plagaGroup.getChildren().filter(frog => frog.active && !frog.isHidden);
-        return frogs.filter(frog => {
+        return this.scene.plagaGroup.getChildren()
+        .filter(frog => frog.active && !frog.isHidden)
+        .filter(frog => {
             const distance = Phaser.Math.Distance.Between(
                 this.x, this.y, frog.x, frog.y
             );
@@ -69,7 +64,17 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         const angle = (this.hiddenFrogs.length) * angleStep;
         const x = this.centerX + Math.cos(angle) * this.radius;
         const y = this.centerY + Math.sin(angle) * this.radius;
-        frog.hide(x, y);
+        frog.isHidden = true;
+        frog.previousTexture = frog.texture.key;
+        frog.setTexture('ojitos'); // Sprite solo con ojos
+        frog.setAlpha(0.7); // Semi-transparente
+        frog.x = x;
+        frog.y = y;
+        frog.stop();
+        // Reducir velocidad cuando está escondida
+        if (frog.body) {
+            frog.body.setVelocity(0, 0);
+        }   
         this.hiddenFrogs.push(frog);
     }
 
@@ -79,11 +84,13 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         frog.setAlpha(1);
 
         // Restaurar velocidad
-        if (frog.body && frog.previousSpeed) {
-            const angle = Phaser.Math.Between(0, 360);
-            this.scene.physics.velocityFromRotation(
-                angle, frog.previousSpeed, frog.body.velocity
-            );
+        if (frog.body) {
+            frog.body.setVelocity(frog.velocidad.x, frog.velocidad.y);
+            frog.play("run");
+            // const angle = Phaser.Math.Between(0, 360);
+            // this.scene.physics.velocityFromRotation(
+                // angle, frog.previousSpeed, frog.body.velocity
+            // );
         }
 
         this.hiddenFrogs = this.hiddenFrogs.filter(f => f.id !== frog.id );

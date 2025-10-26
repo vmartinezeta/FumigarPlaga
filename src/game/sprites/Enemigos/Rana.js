@@ -54,21 +54,6 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.isHidden = false;
     }
 
-    hide(x, y) {
-        this.isHidden = true;
-        this.previousTexture = this.texture.key;
-        this.setTexture('ojitos'); // Sprite solo con ojos
-        this.setAlpha(0.7); // Semi-transparente
-        this.x = x;
-        this.y = y;
-        this.stop();
-        // Reducir velocidad cuando está escondida
-        if (this.body) {
-            this.previousSpeed = this.body.velocity;
-            this.body.setVelocity(0, 0);
-        }   
-    }
-
     setVelocidad(x, y) {
         this.velocidad.x = x;
         this.velocidad.y = y;
