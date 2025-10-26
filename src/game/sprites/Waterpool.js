@@ -76,7 +76,7 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
             ease: 'Power2'
         });
 
-        this.timerPool = this.scene.time.delayedCall(800, this.llegarPool, [frog, x, y], this);
+        frog.timerPool = this.scene.time.delayedCall(800, this.llegarPool, [frog, x, y], this);
 
         // Reducir velocidad cuando está escondida
         if (frog.body) {
@@ -88,10 +88,6 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
     llegarPool(frog, x, y) {
         frog.setTexture('ojitos'); // Sprite solo con ojos
         frog.stop();
-        this.createSplashEffect(x, y);
-    }
-
-    createSplashEffect(x, y) {
         // Efecto de salpicadura al entrar al charco
         const particles = this.scene.add.particles(x, y, 'particle', {
             speed: { min: 20, max: 60 },
@@ -102,10 +98,12 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
             emitting: true
         });
 
-        this.timerSalpicaduraPool = this.scene.time.delayedCall(600, () => {
+        frog.timerSalpicaduraPool = this.scene.time.delayedCall(600, () => {
             particles.destroy();
         });
+
     }
+
 
     showFrog(frog) {
         frog.isHidden = false;
