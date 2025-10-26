@@ -349,8 +349,6 @@ export class BaseGameScene extends Phaser.Scene {
             this.eventBus.emit('furiaActivated', { player, potenciador });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof MultiShoot) {
-            this.fierros[0] = potenciador.honda;
-            this.fierro = this.fierros[0];
             potenciador.onEliminar();
             this.potenciadorGroup.remove(potenciador, true, true);
         }
