@@ -66,16 +66,42 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         const y = this.centerY + Math.sin(angle) * this.radius;
         frog.isHidden = true;
         frog.previousTexture = frog.texture.key;
-        frog.setTexture('ojitos'); // Sprite solo con ojos
         frog.setAlpha(0.7); // Semi-transparente
-        frog.x = x;
-        frog.y = y;
-        frog.stop();
+        // animacion suave
+         this.scene.tweens.add({
+            targets: frog,
+            x,
+            y,
+            duration: 800,
+            ease: 'Power2',
+            onComplete:() => {
+                frog.setTexture('ojitos'); // Sprite solo con ojos
+                frog.stop();
+                this.createSplashEffect(x, y);
+            }
+        });
+
         // Reducir velocidad cuando está escondida
         if (frog.body) {
             frog.body.setVelocity(0, 0);
-        }   
+        }
         this.hiddenFrogs.push(frog);
+    }
+
+    createSplashEffect(x, y) {
+        // Efecto de salpicadura al entrar al charco
+        const particles = this.scene.add.particles(x, y,'particle', {
+            speed: { min: 20, max: 60 },
+            scale: { start: 0.5, end: 0 },
+            blendMode: 'ADD',
+            lifespan: 600,
+            quantity: 8,
+            emitting:true
+        });
+        
+        this.scene.time.delayedCall(600, () => {
+            particles.destroy();
+        });
     }
 
     showFrog(frog) {

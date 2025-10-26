@@ -36,7 +36,7 @@ export default class WaterPoolManager {
             loop: true
         });
     }
-    
+
     spawnRandomPool() {
         if (this.pools.length >= this.spawnConfig.maxPoolsOnScreen) return;
         
@@ -48,7 +48,7 @@ export default class WaterPoolManager {
         
         const pool = new WaterPool(this.scene, x, y, size, size * 0.7);
         this.pools.push(pool);
-        
+
         // Desaparecer después de un tiempo
         this.scene.time.delayedCall(45000, () => {
             this.removePool(pool);
