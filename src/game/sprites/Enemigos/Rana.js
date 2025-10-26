@@ -77,6 +77,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     habilitarBody(value) {
+        if (!this.body) return;
         this.body.setEnable(value);
     }
 
