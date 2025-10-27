@@ -127,8 +127,13 @@ export default class RanaFamily extends Phaser.GameObjects.Group {
         if (deadRana.aura) {
             deadRana.aura.destroy();
         }
+
         if (deadRana.particles) {
             deadRana.particles.destroy();
+        }
+
+        if (deadRana.healthBar) {
+            deadRana.healthBar.destroy();
         }
 
         // Verificar si todas las ranas del grupo están muertas

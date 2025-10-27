@@ -20,7 +20,9 @@ export default class PlagaGroup extends Phaser.GameObjects.Group {
             const y = Phaser.Math.Between(scene.ymax + 20, this.scene.width - 20);
             const hembra = Math.floor(Math.random() * 2);
             const rana = new Rana(scene, x, y, "rana", Boolean(hembra), true);
-            rana.on("destroy", () => this.eventBus.emit("scoreChanged", {puntuacion:rana.vidaMax}));
+            rana.on("destroy", () => {
+                this.eventBus.emit("scoreChanged", {puntuacion:rana.vidaMax});
+            });
             this.add(rana);
         }
     }

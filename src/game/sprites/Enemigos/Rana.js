@@ -47,6 +47,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         }
         this.play('run');
 
+        this.healthBar = null;
         if (this.fertil) {
             this.healthBar = scene.add.graphics();
         }
@@ -54,6 +55,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.isHidden = false;
         this.timerComplete = null;
         this.timerSoltar = null;
+        this.tweenLlegarPool = null;
     }
 
     setVelocidad(x, y) {
@@ -155,6 +157,9 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     morir() {
         this.scene.time.removeEvent(this.timerComplete);
         this.scene.time.removeEvent(this.timerSoltar);
+        if (this.tweenLlegarPool) {
+            this.tweenLlegarPool.remove();
+        }
 
         if (this.healthBar) {
             this.healthBar.destroy();
