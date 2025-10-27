@@ -2,9 +2,6 @@ import Phaser from "phaser";
 import SueloFrontera from "../sprites/SueloFrontera";
 import PlagaGroup from "../sprites/Enemigos/PlagaGroup";
 import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
-import Honda from "../sprites/KitFierro/Honda";
-import LanzaLlamas from "../sprites/KitFierro/LanzaLlamas";
-import LanzaHumo from "../sprites/KitFierro/LanzaHumo";
 import UIManager from "../sprites/UIManager";
 import DockCenter from "../sprites/DockCenter";
 import RanaStaticFamily from "../sprites/Potenciadores/RanaStaticFamily";
@@ -14,10 +11,8 @@ import Invencibility from "../sprites/Potenciadores/Invencibility";
 import RecargaFierro from "../sprites/Potenciadores/RecargaFierro";
 import FuriaDude from "../sprites/Potenciadores/FuriaDude";
 import Vida from "../sprites/Potenciadores/Vida";
-import Honda3Impacto from "../sprites/KitFierro/Honda3Impacto";
 import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
 import MultiShoot from "../sprites/Potenciadores/MultiShot";
-import Bomba from "../sprites/KitFierro/Bomba";
 import WeaponManager from "../sprites/KitFierro/WeaponManager";
 import WaterPoolManager from "../sprites/WaterPoolManager";
 
@@ -182,11 +177,10 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.uiManager = new UIManager(this, this.eventBus);
 
-        this.eventBus.on("familyDestroyed", ({ familyType }) => {
-            this.physics.world.removeCollider(familyType.collider);
-            this.statusBar.setConfig({ puntuacion: familyType.ranaCount * 30 });
+        this.eventBus.on("familyDestroyed", ({ family }) => {
+            this.physics.world.removeCollider(family.collider);
+            this.statusBar.setConfig({ puntuacion: family.ranaCount * 30 });
         });
-
 
         this.weaponManager = new WeaponManager(this);
         this.setupWeaponControls();
@@ -238,9 +232,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
         // Disparar con clic o barra espaciadora
-        this.input.on('pointerdown', () => {
-
-        });
+        this.input.on('pointerdown', () => {});
 
         this.input.keyboard.on('keydown-SPACE', () => {
             this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);

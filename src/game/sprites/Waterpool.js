@@ -9,6 +9,7 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         this.radius = 40;
         this.centerX = x;
         this.centerY = y;
+        this.timeline = scene.add.timeline();
 
         // Radio de influencia (más grande que la zona visible)
         this.hideRadius = 100;
@@ -67,16 +68,10 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         frog.isHidden = true;
         frog.previousTexture = frog.texture.key;
         frog.setAlpha(0.7); // Semi-transparente
-        // animacion suave
-        this.scene.tweens.add({
-            targets: frog,
-            x,
-            y,
-            duration: 800,
-            ease: 'Power2'
-        });
-
-        frog.timerPool = this.scene.time.delayedCall(800, this.llegarPool, [frog, x, y], this);
+        frog.setTexture('ojitos'); // Sprite solo con ojos
+        frog.stop();
+        frog.x = x;
+        frog.y = y;
 
         // Reducir velocidad cuando está escondida
         if (frog.body) {
@@ -84,26 +79,6 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         }
         this.hiddenFrogs.push(frog);
     }
-
-    llegarPool(frog, x, y) {
-        frog.setTexture('ojitos'); // Sprite solo con ojos
-        frog.stop();
-        // Efecto de salpicadura al entrar al charco
-        const particles = this.scene.add.particles(x, y, 'particle', {
-            speed: { min: 20, max: 60 },
-            scale: { start: 0.5, end: 0 },
-            blendMode: 'ADD',
-            lifespan: 600,
-            quantity: 8,
-            emitting: true
-        });
-
-        frog.timerSalpicaduraPool = this.scene.time.delayedCall(600, () => {
-            particles.destroy();
-        });
-
-    }
-
 
     showFrog(frog) {
         frog.isHidden = false;

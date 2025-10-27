@@ -56,6 +56,8 @@ export default class RanaStaticFamily extends RanaFamily {
         // Velocidad del proyectil
         const speed = 150;
         this.scene.physics.velocityFromRotation(angle, speed, projectile.body.velocity);
+
+        this.scene.physics.add.collider(this.scene.player, projectile, this.onPlayerCollision, null, this);
         
         // Auto-destrucción después de tiempo
         this.scene.time.delayedCall(3000, () => {
@@ -63,5 +65,13 @@ export default class RanaStaticFamily extends RanaFamily {
                 projectile.destroy();
             }
         });
+    }
+    
+    onPlayerCollision(player, particle) {
+        particle.destroy();
+        if (!player.tieneFuria) {
+            this.scene.scream.play();
+        }
+        this.scene.eventBus.emit("playerHealthChanged", { player });
     }
 }

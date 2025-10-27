@@ -36,7 +36,7 @@ export class MainMenu extends Scene {
         this.confetti.explode(2000); // Explota y se destruye después de 2 segundos
     }
 
-    create() {
+    create() {    
         this.animacion = new BasicAnimation(this, 240, 220, "FUMIGAR", 65);
 
         if (!localStorage.getItem('gameAchievements')) {

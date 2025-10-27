@@ -20,7 +20,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
     }
 
     animate(){
-        throw new TypeError("Animacion base");
+        throw new TypeError("animate(), método abstracto");
     }
 
     start() {

@@ -52,12 +52,8 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         }
         this.emitter = null;
         this.isHidden = false;
-        this.timerCallFrogMan = null;
         this.timerComplete = null;
         this.timerSoltar = null;
-        this.timerPool = null;
-        this.timerSalpicaduraPool = null;
-        this.timeline = scene.add.timeline();
     }
 
     setVelocidad(x, y) {
@@ -97,8 +93,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
 
     cogiendo(macho, imageKey, completeCallback, context) {
         this.parar();
-        // macho.parar();
-        macho.previousPoint = new Punto(macho.x, macho.y);
+        macho.previousPoint = macho.getPunto();
         if (!this.existe("coger")) {
             this.animate({
                 key: 'coger',
@@ -108,21 +103,6 @@ export default class Rana extends Phaser.GameObjects.Sprite {
             });
         }
 
-        // this.timeline.add({
-        //     tween: {
-        //         targets: macho,
-        //         x: this.x,
-        //         y: this.y,
-        //         duration: 800,
-        //         ease: 'Power2'
-        //     }
-        // });
-        // this.timeline.play();
-        this.callFrogMan(macho, imageKey, completeCallback, context);
-        // this.timerCallFrogMan = this.scene.time.delayedCall(800, this.callFrogMan, [macho, imageKey, completeCallback, context], this);
-    }
-
-    callFrogMan(macho, imageKey, completeCallback, context) {
         macho.parar();
         macho.visible = false;
         this.setTexture(imageKey);
@@ -173,11 +153,6 @@ export default class Rana extends Phaser.GameObjects.Sprite {
     }
 
     morir() {
-        // this.scene.time.removeEvent(this.onComplete);        
-        this.timeline.stop();
-        this.scene.time.removeEvent(this.timerPool);
-        this.scene.time.removeEvent(this.timerSalpicaduraPool);
-        this.scene.time.removeEvent(this.timerCallFrogMan);
         this.scene.time.removeEvent(this.timerComplete);
         this.scene.time.removeEvent(this.timerSoltar);
 
