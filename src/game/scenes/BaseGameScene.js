@@ -163,7 +163,7 @@ export class BaseGameScene extends Phaser.Scene {
         this.staticFamilies = [];
         this.movableFamilies = [];
         this.time.addEvent({
-            delay: 1000, // cada 10 segundos intenta generar
+            delay: 10000, // cada 10 segundos intenta generar
             callback: this.spawnStaticFamily,
             callbackScope: this,
             loop: true
@@ -366,6 +366,8 @@ export class BaseGameScene extends Phaser.Scene {
         this.ymax = 300;
         this.uiManager = null;
         this.player = null;
+        this.dock = null;
+        this.weaponManager = null;
         this.keyboard = null;
         this.statusBar = null;
         this.potenciadorGroup = null;

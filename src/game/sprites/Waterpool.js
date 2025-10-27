@@ -65,28 +65,21 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         const angle = (this.hiddenFrogs.length) * angleStep;
         const x = this.centerX + Math.cos(angle) * this.radius;
         const y = this.centerY + Math.sin(angle) * this.radius;
-        frog.centerX = x;
-        frog.centerY = y;
         frog.isHidden = true;
         frog.previousTexture = frog.texture.key;
+        frog.setAlpha(0.7); // Semi-transparente
+        frog.setTexture('ojitos'); // Sprite solo con ojos
+        frog.stop();
+        frog.x = x;
+        frog.y = y;
 
-
-        frog.tweenLlegarPool = this.scene.tweens.add({
-            targets: frog,
-            x,
-            y,
-            duration: 800,
-            ease: 'Power2',
-            onComplete:()=> {
-                if (frog && frog.active) {
-                    frog.setAlpha(0.7); // Semi-transparente
-                    frog.setTexture('ojitos'); // Sprite solo con ojos
-                    frog.stop();
-                    frog.x = frog.centerX;
-                    frog.y = frog.centerY;
-                }
-            }
-        });
+        // frog.tweenLlegarPool = this.scene.tweens.add({
+        //     targets: frog,
+        //     x,
+        //     y,
+        //     duration: 800,
+        //     ease: 'Power2'
+        // });
 
         // Reducir velocidad cuando está escondida
         if (frog.body) {

@@ -6,11 +6,6 @@ import LanzaLlamas from "./LanzaLlamas";
 
 export default class WeaponManager {
     constructor(scene) {
-        if (WeaponManager.instance) {
-            return WeaponManager.instance;
-        }
-        WeaponManager.instance = this;
-
         this.scene = scene;
         this.weaponInventory = new Map(); // Todas las armas disponibles en el juego
         this.equippedWeapons = []; // Armas que lleva el jugador (máximo 3, por ejemplo)

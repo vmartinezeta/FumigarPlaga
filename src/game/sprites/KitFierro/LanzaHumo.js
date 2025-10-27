@@ -90,7 +90,7 @@ export default class LanzaHumo extends Fierro {
         // Colisión con enemigos
         const ranas = plagaGroup.children.entries.filter(child => child instanceof Rana);
         this.scene.physics.add.overlap(this.smokeCloud, ranas, this.handleCollision, null, this);
-        
+
         const families = plagaGroup.children.entries.filter(child => child instanceof RanaStaticFamily);
         families.forEach(family => {
             family.collider = this.scene.physics.add.overlap(this.smokeCloud, family, this.handleCollision, null, this);
