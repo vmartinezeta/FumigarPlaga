@@ -15,6 +15,7 @@ import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
 import MultiShoot from "../sprites/Potenciadores/MultiShot";
 import WeaponManager from "../sprites/KitFierro/WeaponManager";
 import WaterPoolManager from "../sprites/WaterPoolManager";
+import WeaponDock from "../sprites/WeaponDock";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -145,6 +146,7 @@ export class BaseGameScene extends Phaser.Scene {
             TRES: Phaser.Input.Keyboard.KeyCodes.THREE,
             _BARRA: Phaser.Input.Keyboard.KeyCodes.SPACE,
         });
+
         this.eventBus = new Phaser.Events.EventEmitter();
 
         this.plagaGroup = new PlagaGroup(this, this.eventBus, 0, this.ymax);
@@ -169,7 +171,7 @@ export class BaseGameScene extends Phaser.Scene {
             loop: true
         });
 
-        this.dock = new DockCenter(this);
+        // this.dock = new DockCenter(this);
 
         this.scream = this.sound.add('scream', {
             volume: 0.4
@@ -184,7 +186,40 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.weaponManager = new WeaponManager(this);
         this.setupWeaponControls();
+
+        this.weaponDock = new WeaponDock(this, null);
+
+        // this.time.removeEvent()
+
+        this.weaponDock.addWeapon({
+            name: 'Pistola',
+            iconTexture: 'tecla-1',
+            damage: 10,
+            fireRate: 0.5
+        });
+
+        this.weaponDock.addWeapon({
+            name: 'Escopeta',
+            iconTexture: 'tecla-2',
+            damage: 25,
+            fireRate: 1.0
+        });
+
+        this.weaponDock.addWeapon({
+            name: 'Rifle',
+            iconTexture: 'tecla-3',
+            damage: 15,
+            fireRate: 0.3
+        });
+
+        this.weaponDock.addWeapon({
+            name: 'Humo',
+            iconTexture: 'star',
+            damage: 15,
+            fireRate: 0.3
+        });
     }
+
 
     showImmuneEffect(frog) {
         // Efecto visual para inmunidad
@@ -207,19 +242,21 @@ export class BaseGameScene extends Phaser.Scene {
         // Teclas 1, 2, 3 para cambiar a arma específica
         this.input.keyboard.on('keydown-ONE', () => {
             this.weaponManager.equipWeapon(0);
-            this.dock.updateDock(1);
+            this.weaponDock.selectWeapon(0);
         });
         this.input.keyboard.on('keydown-TWO', () => {
             this.weaponManager.equipWeapon(1);
-            this.dock.updateDock(2);
+            this.weaponDock.selectWeapon(1);
         });
+
         this.input.keyboard.on('keydown-THREE', () => {
             this.weaponManager.equipWeapon(2);
-            this.dock.updateDock(3);
+            this.weaponDock.selectWeapon(2);
         });
 
         this.input.keyboard.on('keydown-FOUR', () => {
             this.weaponManager.equipWeapon(3);
+            this.weaponDock.selectWeapon(3);
         });
 
         // Rueda del mouse
@@ -232,7 +269,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
         // Disparar con clic o barra espaciadora
-        this.input.on('pointerdown', () => {});
+        this.input.on('pointerdown', () => { });
 
         this.input.keyboard.on('keydown-SPACE', () => {
             this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
@@ -240,6 +277,10 @@ export class BaseGameScene extends Phaser.Scene {
         });
 
         this.waterPoolManager = new WaterPoolManager(this);
+    }
+
+    ocultarDock() {
+        this.weaponDock.setVisible(false);
     }
 
     spawnStaticFamily() {
@@ -308,7 +349,13 @@ export class BaseGameScene extends Phaser.Scene {
         const record = this.statusBar?.puntuacion || 0;
         this.scene.start('MainMenu', {
             record
+        }, {
+            shutdown: true
         });
+    }
+
+    shutdown() {
+        console.log("ok");
     }
 
     activarColisiones() {
