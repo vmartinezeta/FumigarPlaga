@@ -5,10 +5,11 @@ export default class Honda extends Fierro {
         super(scene, 0, 0, 'bomb', 'honda', 8);
         this.fireRate = 1500;
         this.damage = 15;
+        this.iconTexture = 'tecla-1';
     }
 
     shoot(direction, playerX, playerY, plagaGroup) {
-        this.nextShoot();
+        this.nextShot();
         this.setPosition(playerX, playerY);
         this.setActive(true);
         this.setVisible(true);

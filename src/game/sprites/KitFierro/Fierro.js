@@ -3,6 +3,7 @@ export default class Fierro extends Phaser.GameObjects.Sprite {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
+        this.iconTexture = null;
         this.type = type;
         this.fireRate = 500; // ms entre disparos
         this.damage = 10;
@@ -17,7 +18,7 @@ export default class Fierro extends Phaser.GameObjects.Sprite {
         this.setupHitbox();
     }
 
-    nextShoot() {
+    nextShot() {
         this.capacidad--;
         this.canShoot = false;
         if (!this.scene) return;

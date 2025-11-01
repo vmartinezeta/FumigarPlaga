@@ -1,7 +1,5 @@
 import Phaser from "phaser";
 import { Punto } from "../../classes/Punto";
-import { ControlDireccional } from "../../classes/ControlDireccional";
-import { Direccional } from "../../classes/Direccional";
 
 
 export default class Rana extends Phaser.GameObjects.Sprite {
@@ -17,12 +15,6 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         this.furia = false;
         this.canReceiveDamage = true;
         this.damageCooldown = 200; // ms entre daños
-        this.control = new ControlDireccional([
-            new Direccional(1, 270, new Punto(0, -1)),
-            new Direccional(2, 0, new Punto(1, 0)),
-            new Direccional(3, 90, new Punto(0, 1)),
-            new Direccional(4, 180, new Punto(-1, 0)),
-        ], 3);
         this.setTint(hembra ? 0xff88ff : 0x8888ff);
         this.setOrigin(1 / 2);
         this.setScale(1);

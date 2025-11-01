@@ -3,7 +3,6 @@ import SueloFrontera from "../sprites/SueloFrontera";
 import PlagaGroup from "../sprites/Enemigos/PlagaGroup";
 import PotenciadorGroup from "../sprites/Potenciadores/PotenciadorGroup";
 import UIManager from "../sprites/UIManager";
-import DockCenter from "../sprites/DockCenter";
 import RanaStaticFamily from "../sprites/Potenciadores/RanaStaticFamily";
 import RanaMovableFamily from "../sprites/Potenciadores/RanaMovableFamily";
 import Achievement from "../sprites/Achivements/Achievement";
@@ -16,6 +15,7 @@ import MultiShoot from "../sprites/Potenciadores/MultiShot";
 import WeaponManager from "../sprites/KitFierro/WeaponManager";
 import WaterPoolManager from "../sprites/WaterPoolManager";
 import WeaponDock from "../sprites/WeaponDock";
+import PlagaManager from "../sprites/Enemigos/PlagaManager";
 
 
 export class BaseGameScene extends Phaser.Scene {
@@ -70,13 +70,6 @@ export class BaseGameScene extends Phaser.Scene {
             },
         ];
 
-        this.gameTime = 0; // Tiempo de juego en segundos
-        this.maxFrogs = 50; // Límite absoluto de ranas
-        this.baseThreshold = 50; // Umbral base de distancia para apareamiento
-        this.timeThreshold = 0; // Incremento del umbral con el tiempo
-        this.breedingCooldown = 5000; // Tiempo en ms entre apareamientos por rana
-        this.lastBreedTime = {}; // Diccionario para guardar el último tiempo de apareamiento de cada rana
-        this.totalRanas = 600;
     }
 
     init() {
@@ -171,8 +164,6 @@ export class BaseGameScene extends Phaser.Scene {
             loop: true
         });
 
-        // this.dock = new DockCenter(this);
-
         this.scream = this.sound.add('scream', {
             volume: 0.4
         });
@@ -187,39 +178,39 @@ export class BaseGameScene extends Phaser.Scene {
         this.weaponManager = new WeaponManager(this);
         this.setupWeaponControls();
 
-        this.weaponDock = new WeaponDock(this, null);
+        // this.weaponDock = new WeaponCarousel(this);
+        this.weaponDock = new WeaponDock(this, this.weaponManager);
 
-        // this.time.removeEvent()
+        // this.weaponDock.addWeapon({
+        //     name: 'Pistola',
+        //     iconTexture: 'tecla-1',
+        //     damage: 10,
+        //     fireRate: 0.5
+        // });
 
-        this.weaponDock.addWeapon({
-            name: 'Pistola',
-            iconTexture: 'tecla-1',
-            damage: 10,
-            fireRate: 0.5
-        });
+        // this.weaponDock.addWeapon({
+        //     name: 'Escopeta',
+        //     iconTexture: 'tecla-2',
+        //     damage: 25,
+        //     fireRate: 1.0
+        // });
 
-        this.weaponDock.addWeapon({
-            name: 'Escopeta',
-            iconTexture: 'tecla-2',
-            damage: 25,
-            fireRate: 1.0
-        });
+        // this.weaponDock.addWeapon({
+        //     name: 'Rifle',
+        //     iconTexture: 'tecla-3',
+        //     damage: 15,
+        //     fireRate: 0.3
+        // });
 
-        this.weaponDock.addWeapon({
-            name: 'Rifle',
-            iconTexture: 'tecla-3',
-            damage: 15,
-            fireRate: 0.3
-        });
+        // this.weaponDock.addWeapon({
+        //     name: 'Humo',
+        //     iconTexture: 'star',
+        //     damage: 15,
+        //     fireRate: 0.3
+        // });
 
-        this.weaponDock.addWeapon({
-            name: 'Humo',
-            iconTexture: 'star',
-            damage: 15,
-            fireRate: 0.3
-        });
+        this.plagaManager = new PlagaManager(this, this.plagaGroup);
     }
-
 
     showImmuneEffect(frog) {
         // Efecto visual para inmunidad
@@ -242,45 +233,37 @@ export class BaseGameScene extends Phaser.Scene {
         // Teclas 1, 2, 3 para cambiar a arma específica
         this.input.keyboard.on('keydown-ONE', () => {
             this.weaponManager.equipWeapon(0);
-            this.weaponDock.selectWeapon(0);
         });
+
         this.input.keyboard.on('keydown-TWO', () => {
             this.weaponManager.equipWeapon(1);
-            this.weaponDock.selectWeapon(1);
         });
 
         this.input.keyboard.on('keydown-THREE', () => {
             this.weaponManager.equipWeapon(2);
-            this.weaponDock.selectWeapon(2);
         });
 
         this.input.keyboard.on('keydown-FOUR', () => {
             this.weaponManager.equipWeapon(3);
-            this.weaponDock.selectWeapon(3);
         });
 
         // Rueda del mouse
-        this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
-            if (deltaY > 0) {
-                this.weaponManager.switchToPreviousWeapon();
-            } else {
-                this.weaponManager.switchToNextWeapon();
-            }
-        });
+        // this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
+        //     if (deltaY > 0) {
+        //         this.weaponManager.switchToPreviousWeapon();
+        //     } else {
+        //         this.weaponManager.switchToNextWeapon();
+        //     }
+        // });
 
-        // Disparar con clic o barra espaciadora
-        this.input.on('pointerdown', () => { });
 
         this.input.keyboard.on('keydown-SPACE', () => {
-            this.weaponManager.shoot(this.player.control, this.player.x, this.player.y, this.plagaGroup);
+            const {direction, x, y} = this.player;
+            this.weaponManager.shoot(direction, x, y, this.plagaGroup);
             this.statusBar.setConfig({ capacidad: this.weaponManager.getCurrentWeapon().capacidad });
         });
 
         this.waterPoolManager = new WaterPoolManager(this);
-    }
-
-    ocultarDock() {
-        this.weaponDock.setVisible(false);
     }
 
     spawnStaticFamily() {
@@ -354,9 +337,7 @@ export class BaseGameScene extends Phaser.Scene {
         });
     }
 
-    shutdown() {
-        console.log("ok");
-    }
+    shutdown() {}
 
     activarColisiones() {
         this.physics.add.collider(this.player, this.plagaGroup, this.morir, null, this);
@@ -455,47 +436,6 @@ export class BaseGameScene extends Phaser.Scene {
             this.reset();
         }
 
-    }
-
-    breedFrogs(threshold) {
-        let frogsArray = this.plagaGroup.getChildren();
-        let currentTime = this.gameTime * 1000; // Convertir a ms
-
-        for (let i = 0; i < frogsArray.length; i++) {
-            let frog1 = frogsArray[i];
-            for (let j = i + 1; j < frogsArray.length; j++) {
-                let frog2 = frogsArray[j];
-
-                // Calcular distancia entre frog1 y frog2
-                let distance = Phaser.Math.Distance.Between(frog1.x, frog1.y, frog2.x, frog2.y);
-                if (distance < threshold) {
-                    // Verificar cooldown para frog1 y frog2
-                    if (this.canBreed(frog1, currentTime) && this.canBreed(frog2, currentTime)) {
-                        this.createNewFrog(frog1, frog2);
-                        this.lastBreedTime[frog1.id] = currentTime;
-                        this.lastBreedTime[frog2.id] = currentTime;
-                        break; // Evitar múltiples apareamientos para la misma rana en un mismo frame
-                    }
-                }
-            }
-        }
-    }
-
-    canBreed(frog, currentTime) {
-        // Si no ha criado antes, puede criar. O si ha pasado el cooldown.
-        if (!this.lastBreedTime[frog.id]) {
-            return true;
-        }
-        return (currentTime - this.lastBreedTime[frog.id]) > this.breedingCooldown;
-    }
-
-    createNewFrog(frog1, frog2) {
-        if (this.plagaGroup.countActive() > this.totalRanas) return;
-        frog1.cogiendo(frog2, "rana2", this.dejarCoger, this);
-    }
-
-    dejarCoger() {
-        this.plagaGroup.agregar(this, 1);
     }
 
 }

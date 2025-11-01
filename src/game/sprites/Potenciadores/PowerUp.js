@@ -8,6 +8,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
         this.type = type;
         this.color = 0x00ffff;
         this.setOrigin(1 / 2);
+        this.setVisible(false);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.updateSize(300, 600);
@@ -26,6 +27,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
     start() {
         if (this.timer) return;
         if (!this.scene) return;
+        this.setVisible(true);
         this.timer = this.scene.time.delayedCall(6000, this.onEliminar, [], this);
     }
 

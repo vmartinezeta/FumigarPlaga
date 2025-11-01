@@ -7,10 +7,11 @@ export default class LanzaLlamas extends Fierro {
         this.damageZone = null;
         this.particles = null;
         this.damage = 15;
+        this.iconTexture = 'tecla-3';
     }
 
     shoot(direction, playerX, playerY, plagaGroup) {
-        this.nextShoot();
+        this.nextShot();
         this.body.setEnable(true);
         // 1. Crear el efecto visual de llamas (partículas)
         this.createFlameParticles(playerX, playerY, direction);

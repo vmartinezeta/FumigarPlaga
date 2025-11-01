@@ -1,7 +1,8 @@
 import Phaser from "phaser"
 import { Punto } from "../classes/Punto";
-import { ControlDireccional } from "../classes/ControlDireccional";
-import { Direccional } from "../classes/Direccional";
+import { VectorManager } from "../classes/VectorManager";
+import { Vector } from "../classes/Vector";
+
 
 export default class Player extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, imageKey, vida=20) {
@@ -12,14 +13,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.ymax = 0;
         this.rapidez = 30;
         this.tieneFuria = false;
-        this.control = new ControlDireccional([
-            new Direccional(1, 270, new Punto(0, -1)),
-            new Direccional(2, 0, new Punto(1, 0)),
-            new Direccional(3, 90, new Punto(0, 1)),
-            new Direccional(4, 180, new Punto(-1, 0)),
+        this.direction = new VectorManager([
+            new Vector(1, new Punto(0, -1)),
+            new Vector(2, new Punto(1, 0)),
+            new Vector(3, new Punto(0, 1)),
+            new Vector(4, new Punto(-1, 0)),
         ], 1);
-
-        this.canShoot = true;
 
         this.setScale(1);
         this.setOrigin(1 / 2);
@@ -69,26 +68,26 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     top() {
         this.play("frontal");
-        const { vector } = this.control.fromInt(1);
-        this.mover(vector, vector.y * this.body.velocity.y + this.rapidez);
+        const { punto } = this.direction.fromInt(1);
+        this.mover(punto, punto.y * this.body.velocity.y + this.rapidez);
     }
 
     right() {
         this.play("der");
-        const { vector } = this.control.fromInt(2);
-        this.mover(vector, vector.x * this.body.velocity.x + this.rapidez);
+        const { punto } = this.direction.fromInt(2);
+        this.mover(punto, punto.x * this.body.velocity.x + this.rapidez);
     }
 
     bottom() {
         this.play("frontal");
-        const { vector } = this.control.fromInt(3);
-        this.mover(vector, vector.y * this.body.velocity.y + this.rapidez);
+        const { punto } = this.direction.fromInt(3);
+        this.mover(punto, punto.y * this.body.velocity.y + this.rapidez);
     }
 
     left() {
         this.play("izq");
-        const { vector } = this.control.fromInt(4);
-        this.mover(vector, vector.x * this.body.velocity.x + this.rapidez);
+        const { punto } = this.direction.fromInt(4);
+        this.mover(punto, punto.x * this.body.velocity.x + this.rapidez);
     }
 
     setYmax(y) {
@@ -97,7 +96,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     saltar() {
         this.play("frontal");
-        const { vector } = this.control.fromInt(1);
+        const { vector } = this.direction.fromInt(1);
         this.mover(vector, 330);
     }
 
@@ -105,7 +104,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         if (this.y > this.ymax)return;
         this.y = this.ymax;
         this.body.setVelocityY(0);
-
     }
 
     takeDamage() {

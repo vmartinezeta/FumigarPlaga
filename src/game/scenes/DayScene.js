@@ -167,15 +167,7 @@ export class DayScene extends BaseGameScene {
         this.mosquitos.update();
         this.clouds.tilePositionX += .2;
 
-
-        this.gameTime += delta / 1000; // Convertir delta a segundos
-        // Calcular el umbral actual: baseThreshold + (incremento por tiempo)
-        // Por ejemplo, cada 10 segundos el umbral aumenta 1 pixel, hasta un máximo de 100.
-        this.timeThreshold = Math.min(50, Math.floor(this.gameTime / 10));
-        let currentThreshold = this.baseThreshold + this.timeThreshold;
-
-        // Lógica de apareamiento
-        this.breedFrogs(currentThreshold);
+        this.plagaManager.update(delta);
     }
 
 }

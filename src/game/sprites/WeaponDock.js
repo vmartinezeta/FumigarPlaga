@@ -1,11 +1,11 @@
 import Phaser from "phaser";
 
 export default class WeaponDock extends Phaser.GameObjects.Group{
-    constructor(scene, player) {
+    constructor(scene, weaponManager) {
         super(scene);
         this.scene = scene;
-        this.player = player;
-        this.weapons = []; // Array de armas del jugador
+        this.weaponManager = weaponManager;
+        // this.weaponManager.equippedWeapons = []; // Array de armas del jugador
         this.selectedWeaponIndex = 0;
         this.dockGroup = null;
         this.createDock();
@@ -17,8 +17,6 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
 
     createDock() {
         // Crear grupo para el dock
-        // this.dockGroup = this.scene.add.group();
-        // this.dockGroup.setDepth(20);
         const dockWidth = 300;
         const dockHeight = 80;
         const startX = this.scene.game.config.width / 2 - dockWidth / 2;
@@ -78,7 +76,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
 
 
         // Actualizar dock inicialmente
-        // this.updateDock();
+        this.updateDock();
 
         // Configurar inputs para cambiar armas
         this.setupInputs();
@@ -86,7 +84,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
 
     // Agregar un arma al dock
     addWeapon(weaponConfig) {
-        this.weapons.push(weaponConfig);
+        // this.weaponManager.equippedWeapons.push(weaponConfig);
         // this.updateDock();
     }
 
@@ -100,8 +98,9 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
             }
         });
 
+
         // Crear nuevos iconos para las armas disponibles
-        this.weapons.forEach((weapon, index) => {
+        this.weaponManager.equippedWeapons.forEach((weapon, index) => {
             if (index < this.weaponSlots.length) {
                 const slot = this.weaponSlots[index];
 
@@ -127,7 +126,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
     // Actualizar apariencia de un slot
     updateSlotAppearance(slot, index) {
         const isSelected = index === this.selectedWeaponIndex;
-        const hasWeapon = index < this.weapons.length;
+        const hasWeapon = index < this.weaponManager.equippedWeapons.length;
 
         if (hasWeapon) {
             if (isSelected) {
@@ -145,7 +144,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
 
     // Seleccionar arma
     selectWeapon(index) {
-        if (index >= 0 && index < this.weapons.length) {
+        if (index >= 0 && index < this.weaponManager.equippedWeapons.length) {
             this.selectedWeaponIndex = index;
             this.setVisible(true);
             this.updateDock();
@@ -153,7 +152,8 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
             this.scene.time.removeEvent(this.timer);
             this.timer = this.scene.time.delayedCall(1000, this.ocultar, [], this);
             // Cambiar arma del jugador
-            // this.player.equipWeapon(this.weapons[index]);
+
+            // this.player.equipWeapon(this.weaponManager.equippedWeapons[index]);
             
             return true;
         }
@@ -167,9 +167,10 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
     // Configurar controles de entrada
     setupInputs() {
         // Teclas numéricas (1-4)
-        for (let i = 1; i <= 4; i++) {
-            this.scene.input.keyboard.on(`keydown-${i}`, () => {
-                this.selectWeapon(i - 1);
+        const teclas = ['ONE', 'TWO', 'THREE', 'FOUR'];
+        for (let i = 0; i < 4; i++) {
+            this.scene.input.keyboard.on(`keydown-${teclas[i]}`, () => {
+                this.selectWeapon(i);
             });
         }
 
@@ -188,7 +189,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
         this.weaponSlots.forEach((slot, index) => {
             slot.background.setInteractive();
             slot.background.on('pointerdown', () => {
-                if (index < this.weapons.length) {
+                if (index < this.weaponManager.equippedWeapons.length) {
                     this.selectWeapon(index);
                 }
             });
@@ -198,7 +199,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
     // Siguiente arma
     nextWeapon() {
         let nextIndex = this.selectedWeaponIndex + 1;
-        if (nextIndex >= this.weapons.length) {
+        if (nextIndex >= this.weaponManager.equippedWeapons.length) {
             nextIndex = 0;
         }
         this.selectWeapon(nextIndex);
@@ -208,7 +209,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
     previousWeapon() {
         let prevIndex = this.selectedWeaponIndex - 1;
         if (prevIndex < 0) {
-            prevIndex = this.weapons.length - 1;
+            prevIndex = this.weaponManager.equippedWeapons.length - 1;
         }
         this.selectWeapon(prevIndex);
     }
@@ -221,67 +222,7 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
 
     // Obtener arma actual
     getCurrentWeapon() {
-        return this.weapons[this.selectedWeaponIndex];
-    }
-
-}
-
-
-// Ejemplo de uso en tu escena principal
-class GameScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'GameScene' });
-        this.player = null;
-        this.weaponDock = null;
-    }
-
-    create() {
-        // Crear jugador
-        this.player = new Player(this, 400, 300);
-        
-        // Crear dock de armas
-        this.weaponDock = new WeaponDock(this, this.player);
-        
-        // Agregar algunas armas de ejemplo
-        this.weaponDock.addWeapon({
-            name: 'Pistola',
-            iconTexture: 'pistol_icon',
-            damage: 10,
-            fireRate: 0.5
-        });
-
-        this.weaponDock.addWeapon({
-            name: 'Escopeta',
-            iconTexture: 'shotgun_icon',
-            damage: 25,
-            fireRate: 1.0
-        });
-
-        this.weaponDock.addWeapon({
-            name: 'Rifle',
-            iconTexture: 'rifle_icon',
-            damage: 15,
-            fireRate: 0.3
-        });
-    }
-
-    update() {
-        // Tu lógica de juego...
-    }
-}
-
-// Clase Player de ejemplo
-class Player {
-    constructor(scene, x, y) {
-        this.scene = scene;
-        this.currentWeapon = null;
-        // ... resto de tu código del jugador
-    }
-
-    equipWeapon(weapon) {
-        this.currentWeapon = weapon;
-        console.log(`Arma equipada: ${weapon.name}`);
-        // Aquí agregas la lógica para cambiar el arma real del jugador
+        return this.weaponManager.equippedWeapons[this.selectedWeaponIndex];
     }
 
 }

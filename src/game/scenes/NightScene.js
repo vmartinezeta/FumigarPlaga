@@ -19,7 +19,7 @@ export class NightScene extends BaseGameScene {
             x: 100,
             y: 30,
             vida: this.player.vida,
-            capacidad: this.fierro.capacidad,
+            capacidad: this.weaponManager.getCurrentWeapon().capacidad,
             fierro: 3,
         });
 
