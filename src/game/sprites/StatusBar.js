@@ -15,29 +15,37 @@ export default class StatusBar extends Phaser.GameObjects.Group {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
+        }).setOrigin(0).setDepth(100).setScrollFactor(0);
         this.components.push(this.rotuloVida);
 
-        this.rotuloFierro = this.scene.add.text(this.x + 60, this.y, "Fierro: " + this.fierro, {
+        this.rotuloPowerUp = this.scene.add.text(this.x, this.y+20, 'PowerUp: N/D' , {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(0, .5).setDepth(100).setScrollFactor(0);
+        }).setOrigin(0).setDepth(100).setScrollFactor(0);
+        this.components.push(this.rotuloPowerUp);
+
+        this.rotuloFierro = this.scene.add.text(this.x + 160, this.y, "Fierro: " + this.fierro, {
+            fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 5,
+            align: 'center'
+        }).setOrigin(0).setDepth(100).setScrollFactor(0);
         this.components.push(this.rotuloFierro);
 
-        this.rotuloCapacidad = this.scene.add.text(this.x + 60, this.y+20, "Capacidad: " + this.capacidad, {
+        this.rotuloCapacidad = this.scene.add.text(this.x + 160, this.y+20, "Capacidad: " + this.capacidad, {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(0, .5).setDepth(100).setScrollFactor(0);
+        }).setOrigin(0).setDepth(100).setScrollFactor(0);
         this.components.push(this.rotuloCapacidad);
 
-        this.rotuloPuntuacion = this.scene.add.text(this.x + 330, this.y, "Puntuación: 0" , {
+        this.rotuloPuntuacion = this.scene.add.text(this.x +160, this.y+40, "Puntuación: 0" , {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
+        }).setOrigin(0).setDepth(100).setScrollFactor(0);
         this.components.push(this.rotuloPuntuacion);
+
 
         this.addMultiple(this.components);
 
