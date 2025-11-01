@@ -37,4 +37,5 @@ export default class AudioManager {
             this.currentMusic.resume();
         }
     }
+
 }

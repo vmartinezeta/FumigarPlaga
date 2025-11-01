@@ -1,6 +1,6 @@
 import { EventBus } from '../EventBus';
 import Phaser from 'phaser';
-import Player from '../sprites/Player';
+import Player from '../sprites/Players/Player';
 import { BaseGameScene } from './BaseGameScene';
 import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
@@ -80,7 +80,7 @@ export class DayScene extends BaseGameScene {
 
         this.pinchos = new HileraPincho(this);
 
-        this.activarColisiones();        
+        this.activarColisiones();  
 
         EventBus.emit('current-scene-ready', this);
     }

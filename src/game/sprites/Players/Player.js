@@ -1,7 +1,7 @@
 import Phaser from "phaser"
-import { Punto } from "../classes/Punto";
-import { VectorManager } from "../classes/VectorManager";
-import { Vector } from "../classes/Vector";
+import { Punto } from "../../classes/Punto";
+import { VectorManager } from "../../classes/VectorManager";
+import { Vector } from "../../classes/Vector";
 
 
 export default class Player extends Phaser.GameObjects.Sprite {

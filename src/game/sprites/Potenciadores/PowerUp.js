@@ -14,6 +14,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
         this.updateSize(300, 600);
         this.text = null;
         this.timer = null;
+
         if (auto) {
             this.start();
         }

@@ -1,5 +1,5 @@
 import { BaseGameScene } from "./BaseGameScene";
-import NightPlayer from "../sprites/NightPlayer";
+import NightPlayer from "../sprites/Players/NightPlayer";
 import StatusBar from "../sprites/StatusBar";
 
 export class NightScene extends BaseGameScene {

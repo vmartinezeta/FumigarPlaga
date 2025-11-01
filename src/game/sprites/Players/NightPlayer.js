@@ -1,4 +1,4 @@
-import Player from "./Player";
+import Player from "../Players/Player";
 
 export default class NightPlayer extends Player {
     constructor(scene, x, y, imageKey, vida) {

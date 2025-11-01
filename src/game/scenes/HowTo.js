@@ -30,13 +30,13 @@ export class HowTo extends Scene {
             align: 'center'
         }).setOrigin(0).setDepth(100)
 
-        this.add.text(150, 320, "Tecla S: Disparar el fierro", {
+        this.add.text(150, 320, "Barra espaciadora: Disparar el fierro", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'
         }).setOrigin(0).setDepth(100);
 
-        this.add.text(150, 380, "Teclas 1, 2 y 3: Cambiar de fierro", {
+        this.add.text(150, 380, "Teclas 1, 2, 3 y 4: Cambiar de fierro", {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 0,
             align: 'center'

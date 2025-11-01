@@ -1,6 +1,5 @@
 import Phaser from "phaser"
 import Vida from "./Vida"
-import NotificacionTextual from "../NotificacionTextual";
 import RecargaFierro from "./RecargaFierro";
 
 export default class PotenciadorGroup extends Phaser.GameObjects.Group {

@@ -14,7 +14,7 @@ import PowerUpFactory from "../sprites/Potenciadores/PowerUpFactory";
 import MultiShoot from "../sprites/Potenciadores/MultiShot";
 import WeaponManager from "../sprites/KitFierro/WeaponManager";
 import WaterPoolManager from "../sprites/WaterPoolManager";
-import WeaponDock from "../sprites/WeaponDock";
+import WeaponDock from "../sprites/Notifications/WeaponDock";
 import PlagaManager from "../sprites/Enemigos/PlagaManager";
 
 
@@ -168,6 +168,10 @@ export class BaseGameScene extends Phaser.Scene {
             volume: 0.4
         });
 
+        this.recivePowerUp = this.sound.add('logro', {
+            volume: 0.9
+        });
+
         this.uiManager = new UIManager(this, this.eventBus);
 
         this.eventBus.on("familyDestroyed", ({ family }) => {
@@ -177,37 +181,8 @@ export class BaseGameScene extends Phaser.Scene {
 
         this.weaponManager = new WeaponManager(this);
         this.setupWeaponControls();
-
-        // this.weaponDock = new WeaponCarousel(this);
+        
         this.weaponDock = new WeaponDock(this, this.weaponManager);
-
-        // this.weaponDock.addWeapon({
-        //     name: 'Pistola',
-        //     iconTexture: 'tecla-1',
-        //     damage: 10,
-        //     fireRate: 0.5
-        // });
-
-        // this.weaponDock.addWeapon({
-        //     name: 'Escopeta',
-        //     iconTexture: 'tecla-2',
-        //     damage: 25,
-        //     fireRate: 1.0
-        // });
-
-        // this.weaponDock.addWeapon({
-        //     name: 'Rifle',
-        //     iconTexture: 'tecla-3',
-        //     damage: 15,
-        //     fireRate: 0.3
-        // });
-
-        // this.weaponDock.addWeapon({
-        //     name: 'Humo',
-        //     iconTexture: 'star',
-        //     damage: 15,
-        //     fireRate: 0.3
-        // });
 
         this.plagaManager = new PlagaManager(this, this.plagaGroup);
     }
@@ -356,6 +331,7 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     aplicarPotenciador(player, potenciador) {
+        this.recivePowerUp.play();
         if (potenciador instanceof RecargaFierro) {
             const weapon = this.weaponManager.getCurrentWeapon();
             potenciador.applyEffect(weapon);
@@ -370,6 +346,7 @@ export class BaseGameScene extends Phaser.Scene {
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof MultiShoot) {
             potenciador.onEliminar();
+            this.weaponManager.addWeaponToPlayer(potenciador.hondaType);
             this.potenciadorGroup.remove(potenciador, true, true);
         }
     }
@@ -435,7 +412,6 @@ export class BaseGameScene extends Phaser.Scene {
             this.uiManager.gameOver = true;
             this.reset();
         }
-
     }
 
 }

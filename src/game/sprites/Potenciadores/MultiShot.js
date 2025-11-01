@@ -1,5 +1,3 @@
-import Honda from "../KitFierro/Honda";
-import Honda3Impacto from "../KitFierro/Honda3Impacto";
 import PowerUp from "./PowerUp";
 
 
@@ -8,11 +6,11 @@ export default class MultiShoot extends PowerUp {
         super(scene, x, y, imageKey, "weapon");
         this.color = 0xffff00;
         this.fierros = [
-            new Honda(scene),
-            new Honda3Impacto(scene)
+            'honda',
+            'hondax3'
         ];
         const type = Math.floor(Math.random()*this.fierros.length);
-        this.honda = this.fierros[type];
+        this.hondaType = this.fierros[type];
         this.flotar();
         this.play("nuevo-fierro");
 
