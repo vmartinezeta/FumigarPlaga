@@ -18,21 +18,21 @@ export default class StatusBar extends Phaser.GameObjects.Group {
         }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
         this.components.push(this.rotuloVida);
 
-        this.rotuloCapacidad = this.scene.add.text(this.x + 130, this.y, "Capacidad: " + this.capacidad, {
+        this.rotuloFierro = this.scene.add.text(this.x + 60, this.y, "Fierro: " + this.fierro, {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'
-        }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
-        this.components.push(this.rotuloCapacidad);
-
-        this.rotuloFierro = this.scene.add.text(this.x + 270, this.y, "Fierro: " + this.fierro, {
-            fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 5,
-            align: 'center'
-        }).setOrigin(1 / 2).setDepth(100).setScrollFactor(0);
+        }).setOrigin(0, .5).setDepth(100).setScrollFactor(0);
         this.components.push(this.rotuloFierro);
 
-        this.rotuloPuntuacion = this.scene.add.text(this.x + 410, this.y, "Puntuación: 0" , {
+        this.rotuloCapacidad = this.scene.add.text(this.x + 60, this.y+20, "Capacidad: " + this.capacidad, {
+            fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 5,
+            align: 'center'
+        }).setOrigin(0, .5).setDepth(100).setScrollFactor(0);
+        this.components.push(this.rotuloCapacidad);
+
+        this.rotuloPuntuacion = this.scene.add.text(this.x + 330, this.y, "Puntuación: 0" , {
             fontFamily: 'Arial Black', fontSize: 18, color: '#ffffff',
             stroke: '#000000', strokeThickness: 5,
             align: 'center'

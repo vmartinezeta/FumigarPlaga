@@ -63,13 +63,13 @@ export class DayScene extends BaseGameScene {
 
         this.player = new Player(this, 100, 560, "player");
         this.player.setYmax(this.ymax);
-
+        const currentWeapon = this.weaponManager.getCurrentWeapon();
         this.statusBar = new StatusBar(this, {
             x: 100,
             y: 30,
             vida: this.player.vida,
-            capacidad: this.weaponManager.getCurrentWeapon().capacidad,
-            fierro: 3,
+            capacidad: currentWeapon.capacidad,
+            fierro: this.weaponManager.getWeaponKey(currentWeapon),
         });
 
         this.uiManager.setStatusBar(this.statusBar);
