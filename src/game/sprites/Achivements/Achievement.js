@@ -14,7 +14,7 @@ export default class Achievement extends Phaser.GameObjects.Container {
             .setStrokeStyle(2, 0xf39c12);
 
         // Icono
-        const icon = this.scene.add.image(-120, 0, 'star')
+        const icon = this.scene.add.image(-120, 0, 'icon-lanzaHumo')
             .setScale(0.8);
         
         // Texto
