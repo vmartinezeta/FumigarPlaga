@@ -1,8 +1,8 @@
 import Bomba from "./Bomba";
 import Honda from "./Honda";
-import Honda3Impacto from "./Honda3Impacto";
 import LanzaHumo from "./LanzaHumo";
 import LanzaLlamas from "./LanzaLlamas";
+import SuperHonda from "./SuperHonda";
 
 export default class WeaponManager {
     constructor(scene) {
@@ -17,7 +17,7 @@ export default class WeaponManager {
         // Crear instancias únicas de todas las armas del juego
         const weaponTypes = [
             { key: 'honda', class: Honda },
-            { key: 'hondax3', class: Honda3Impacto },
+            { key: 'superHonda', class: SuperHonda },
             { key: 'bomba', class: Bomba },
             { key: 'lanzaLlamas', class: LanzaLlamas },
             { key: 'lanzaHumo', class: LanzaHumo },
@@ -130,17 +130,6 @@ export default class WeaponManager {
 
         // Si está escondida, verificar si el arma es inmunizada
         return !immuneWeapons.includes(weaponKey);
-    }
-
-    // Método para obtener la clave del arma
-    getWeaponKey(weapon) {
-        let output = ""
-        this.weaponInventory.forEach((key, value) => {
-            if (key === weapon) {
-                output = value;
-            };
-        });
-        return output;
     }
 
 }

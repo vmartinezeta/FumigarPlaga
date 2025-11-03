@@ -1,9 +1,9 @@
 export default class Fierro extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, imageKey, type, capacidad) {
+    constructor(scene, x, y, imageKey, iconTexture, type, capacidad) {
         super(scene, x, y, imageKey);
         this.scene = scene;
         this.imageKey = imageKey;
-        this.iconTexture = null;
+        this.iconTexture = iconTexture;
         this.type = type;
         this.fireRate = 500; // ms entre disparos
         this.damage = 10;

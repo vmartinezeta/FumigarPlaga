@@ -23,10 +23,11 @@ export default class FuriaDude extends PowerUp {
     applyEffect(player) {
         player.rapidez = 50;
         player.tieneFuria = true;
-        this.scene.time.delayedCall(this.timegame, this.reset, [player], this);
+        this.scene.time.delayedCall(this.timegame, this.reset, [player, this.scene], this);
     }
 
-    reset(player) {
+    reset(player, scene) {
+        scene.eventBus.emit('statusBarChanged', {powerUp:'N/D'});
         player.tieneFuria = false;
         this.destroy();
     }

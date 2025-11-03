@@ -3,11 +3,10 @@ import Phaser from "phaser";
 
 export default class LanzaLlamas extends Fierro {
     constructor(scene) {
-        super(scene, 0, 0, "fuego", 'lanzallamas', 10);
+        super(scene, 0, 0, 'fuego', 'icon-lanzaLlamas', 'lanzallamas', 10);
         this.damageZone = null;
         this.particles = null;
         this.damage = 15;
-        this.iconTexture = 'tecla-3';
     }
 
     shoot(direction, playerX, playerY, plagaGroup) {

@@ -185,6 +185,8 @@ export class BaseGameScene extends Phaser.Scene {
         this.weaponDock = new WeaponDock(this, this.weaponManager);
 
         this.plagaManager = new PlagaManager(this, this.plagaGroup);
+        
+        this.waterPoolManager = new WaterPoolManager(this);
     }
 
     showImmuneEffect(frog) {
@@ -205,40 +207,11 @@ export class BaseGameScene extends Phaser.Scene {
     }
 
     setupWeaponControls() {
-        // Teclas 1, 2, 3 para cambiar a arma específica
-        this.input.keyboard.on('keydown-ONE', () => {
-            this.weaponManager.equipWeapon(0);
-        });
-
-        this.input.keyboard.on('keydown-TWO', () => {
-            this.weaponManager.equipWeapon(1);
-        });
-
-        this.input.keyboard.on('keydown-THREE', () => {
-            this.weaponManager.equipWeapon(2);
-        });
-
-        this.input.keyboard.on('keydown-FOUR', () => {
-            this.weaponManager.equipWeapon(3);
-        });
-
-        // Rueda del mouse
-        // this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
-        //     if (deltaY > 0) {
-        //         this.weaponManager.switchToPreviousWeapon();
-        //     } else {
-        //         this.weaponManager.switchToNextWeapon();
-        //     }
-        // });
-
-
         this.input.keyboard.on('keydown-SPACE', () => {
             const {direction, x, y} = this.player;
             this.weaponManager.shoot(direction, x, y, this.plagaGroup);
             this.statusBar.setConfig({ capacidad: this.weaponManager.getCurrentWeapon().capacidad });
         });
-
-        this.waterPoolManager = new WaterPoolManager(this);
     }
 
     spawnStaticFamily() {
@@ -341,8 +314,11 @@ export class BaseGameScene extends Phaser.Scene {
             potenciador.applyEffect(player);
             this.statusBar.setConfig({ vida: player.vida });
             this.potenciadorGroup.remove(potenciador, true, true);
-        } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {
+        } else if (potenciador instanceof FuriaDude || potenciador instanceof Invencibility) {            
             this.eventBus.emit('furiaActivated', { player, potenciador });
+            this.statusBar.setConfig({
+                powerUp: 'Furia'
+            });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof MultiShoot) {
             potenciador.onEliminar();
@@ -362,7 +338,7 @@ export class BaseGameScene extends Phaser.Scene {
     morir(player, rana) {
         rana.morir();
         this.eventBus.emit("playerHealthChanged", { player });
-        this.eventBus.emit("scoreChanged", { puntuacion: rana.vidaMax });
+        this.eventBus.emit("statusBarChanged", { puntuacion: rana.vidaMax });
     }
 
     reset() {

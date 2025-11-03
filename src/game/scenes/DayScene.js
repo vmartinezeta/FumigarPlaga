@@ -1,10 +1,10 @@
 import { EventBus } from '../EventBus';
+import { BaseGameScene } from './BaseGameScene';
 import Phaser from 'phaser';
 import Player from '../sprites/Players/Player';
-import { BaseGameScene } from './BaseGameScene';
-import HileraPincho from '../sprites/Enemigos/HileraPincho';
 import Mosquitos from '../sprites/Enemigos/Mosquitos';
 import StatusBar from '../sprites/StatusBar';
+import HileraPincho from '../sprites/Enemigos/HileraPincho';
 
 
 export class DayScene extends BaseGameScene {
@@ -65,11 +65,11 @@ export class DayScene extends BaseGameScene {
         this.player.setYmax(this.ymax);
         const currentWeapon = this.weaponManager.getCurrentWeapon();
         this.statusBar = new StatusBar(this, {
-            x: 100,
+            x: 40,
             y: 30,
             vida: this.player.vida,
             capacidad: currentWeapon.capacidad,
-            fierro: this.weaponManager.getWeaponKey(currentWeapon),
+            fierro: currentWeapon.type,
         });
 
         this.uiManager.setStatusBar(this.statusBar);

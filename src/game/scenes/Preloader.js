@@ -70,28 +70,32 @@ export class Preloader extends Scene {
         this.load.image('bg', 'bg2.png');
         this.load.image('nube', 'nube.png');
         this.load.image('nube-2', 'nube-2.png');
-        this.load.image("pinchos", "pinchos.png");
+        this.load.image('pinchos', 'pinchos.png');
         this.load.image('bosque', 'bosque.png');
-        this.load.image('star', 'star.png');
-        this.load.image('ojitos', 'ojitos.png');
-        this.load.spritesheet("weapon", "weapon.png", { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet("rana", "rana.png", { frameWidth: 60, frameHeight: 64 });
-        this.load.spritesheet("rana2", "rana2.png", { frameWidth: 69.3, frameHeight: 64 });
-        this.load.spritesheet("player", "dude.png", { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet("furia", "furia.png", { frameWidth: 40, frameHeight: 46 });
-        this.load.spritesheet('tanque', 'cisterna.png', { frameWidth: 40, frameHeight: 51 });
+        this.load.image('icon-honda', 'icon-honda.png');
+        this.load.image('icon-bomba', 'icon-bomba.png');
+        this.load.image('icon-lanzaLlamas', 'icon-lanzaLlamas.png');
+        this.load.image('icon-lanzaHumo', 'icon-lanzaHumo.png');
+        this.load.image('rana-oculta', 'rana-oculta.png');
+        this.load.spritesheet('weapon', 'weapon.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('rana', 'rana.png', { frameWidth: 60, frameHeight: 64 });
+        this.load.spritesheet('rana-cogiendo', 'rana-cogiendo.png', { frameWidth: 70, frameHeight: 64 });
+        this.load.spritesheet('player', 'dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('furia', 'furia.png', { frameWidth: 40, frameHeight: 46 });
+        this.load.spritesheet('water', 'water.png', { frameWidth: 40, frameHeight: 51 });
         this.load.spritesheet('vida', 'vida.png', { frameWidth: 32, frameHeight: 27 });
         this.load.spritesheet('mosquito', 'mosquito.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.audio("bosque-tenebroso", "bosque-tenebroso.wav");
-        this.load.audio("efecto-1", "efecto-1.wav");
-        this.load.audio("efecto-2", "efecto-2.wav");
-        this.load.audio("efecto-3", "efecto-3.wav");
-        this.load.audio("scream", "scream.mp3");
-        this.load.audio("logro", "nuevo-logro.mp3");
+        this.load.audio('bosque-tenebroso', 'audios/bosque-tenebroso.wav');
+        this.load.audio('efecto-1', 'audios/efecto-1.wav');
+        this.load.audio('efecto-2', 'audios/efecto-2.wav');
+        this.load.audio('efecto-3', 'audios/efecto-3.wav');
+        this.load.audio('scream', 'audios/scream.mp3');
+        this.load.audio('logro', 'audios/nuevo-logro.mp3');
     }
 
     create() {
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
     }
+
 }

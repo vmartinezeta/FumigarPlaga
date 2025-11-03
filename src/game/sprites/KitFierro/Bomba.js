@@ -3,11 +3,10 @@ import Phaser from "phaser";
 
 export default class Bomba extends Fierro {
     constructor(scene) {
-        super(scene, 0, 0, "particle", 'bomba', 10);
+        super(scene, 0, 0, 'particle', 'icon-bomba', 'bomba', 10);
         this.damageZone = null;
         this.particles = null;
         this.damage = 20;
-        this.iconTexture = 'tecla-2';
     }
 
     shoot(direction, playerX, playerY, plagaGroup) {

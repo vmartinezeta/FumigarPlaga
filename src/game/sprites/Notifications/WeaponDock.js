@@ -152,9 +152,13 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
             this.scene.time.removeEvent(this.timer);
             this.timer = this.scene.time.delayedCall(1000, this.ocultar, [], this);
             // Cambiar arma del jugador
-
+            this.weaponManager.equipWeapon(index);
             const currentWeapon = this.weaponManager.getCurrentWeapon();
-            this.scene.eventBus.emit("fierroChanged",{fierro: this.weaponManager.getWeaponKey(currentWeapon)});
+            this.scene.eventBus.emit("statusBarChanged",{
+                fierro: currentWeapon.type,
+                capacidad: currentWeapon.capacidad
+            });
+
             
             return true;
         }

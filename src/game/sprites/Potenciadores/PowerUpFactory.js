@@ -7,7 +7,7 @@ export default class PowerUpFactory {
     static createPowerUp(type, scene, x, y) {
         switch(type) {
             case 'recarga-fierro':
-                return new RecargaFierro(scene, x, y, "tanque");
+                return new RecargaFierro(scene, x, y, "water");
             case 'vida':
                 return new Vida(scene, x, y, "vida");
             case 'furia':

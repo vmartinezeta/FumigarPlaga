@@ -21,9 +21,7 @@ export default class UIManager {
     setupEventListeners() {
         // Salud del jugador
         this.eventBus.on('playerHealthChanged', this.updatePlayerHealth, this);
-        this.eventBus.on('scoreChanged', this.updateStatusBar, this);
-        this.eventBus.on('capacityWeaponChanged', this.updateStatusBar, this);
-        this.eventBus.on('fierroChanged', this.updateStatusBar, this);
+        this.eventBus.on('statusBarChanged', this.updateStatusBar, this);
 
         // Sistema de furia
         this.eventBus.on('furiaActivated', this.showFuriaEffect, this);

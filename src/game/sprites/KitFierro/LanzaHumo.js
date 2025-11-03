@@ -6,12 +6,11 @@ import Phaser from "phaser";
 
 export default class LanzaHumo extends Fierro {
     constructor(scene) {
-        super(scene, 0, 0, 'humo', 'lanzaHumo', 10);
+        super(scene, 0, 0, 'humo', 'icon-lanzaHumo', 'lanzaHumo', 10);
         this.smokeCloud = null;
         this.particles = null;
         this.fireRate = 2000;
         this.damage = 5;
-        this.iconTexture = 'star';
     }
 
     shoot(direction, playerX, playerY, plagaGroup) {

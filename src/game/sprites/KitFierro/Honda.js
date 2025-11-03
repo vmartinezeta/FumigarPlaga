@@ -2,10 +2,9 @@ import Fierro from "./Fierro";
 
 export default class Honda extends Fierro {
     constructor(scene) {
-        super(scene, 0, 0, 'bomb', 'honda', 8);
+        super(scene, 0, 0, 'bomb', 'icon-honda', 'honda', 8);
         this.fireRate = 1500;
         this.damage = 15;
-        this.iconTexture = 'tecla-1';
     }
 
     shoot(direction, playerX, playerY, plagaGroup) {

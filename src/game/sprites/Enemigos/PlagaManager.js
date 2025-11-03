@@ -58,7 +58,7 @@ export default class PlagaManager {
 
     createNewFrog(frog1, frog2) {
         if (this.plagaGroup.countActive() > this.totalRanas) return;
-        frog1.cogiendo(frog2, "rana2", this.dejarCoger, this);
+        frog1.cogiendo(frog2, "rana-cogiendo", this.dejarCoger, this);
     }
 
     dejarCoger() {

@@ -5,7 +5,11 @@ export default class HileraPincho extends Phaser.GameObjects.Group {
     constructor(scene) {
         super(scene);
         scene.physics.add.existing(this);
-        for (let i = 0; i < 5; i++) {
+        this.addMultiple(scene, 5);
+    }
+
+    addMultiple(scene, cantidad) {
+        for (let i = 0; i < cantidad; i++) {
             const x = Phaser.Math.Between(100, scene.width-100);
             const y = Phaser.Math.Between(320, scene.height-20);
             this.createPincho(scene, x, y);

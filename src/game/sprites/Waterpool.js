@@ -68,7 +68,7 @@ export default class WaterPool extends Phaser.GameObjects.Zone {
         frog.isHidden = true;
         frog.previousTexture = frog.texture.key;
         frog.setAlpha(0.7); // Semi-transparente
-        frog.setTexture('ojitos'); // Sprite solo con ojos
+        frog.setTexture('rana-oculta'); // Sprite solo con ojos
         frog.stop();
         frog.x = x;
         frog.y = y;

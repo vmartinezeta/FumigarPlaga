@@ -1,18 +1,19 @@
 import Fierro from "./Fierro";
 
-export default class Honda3Impacto extends Fierro {
+export default class SuperHonda extends Fierro {
     constructor(scene) {
-        super(scene, 0, 0, 'bomb', 'honda3Impact', 8);
+        super(scene, 0, 0, 'bomb', 'icon-honda', 'superHonda', 8);
         this.fireRate = 1500;
         this.damage = 30;
         this.angle = 0;
         this.gap = 12;
         this.grupo = null;
         this.timer = null;
-        this.particles = []
+        this.particles = [];
     }
 
-    shoot(direction, playerX, playerY, plagaGroup) {            
+    shoot(direction, playerX, playerY, plagaGroup) { 
+        this.nextShot();
         this.body.setEnable(true);
         this.grupo = this.scene.physics.add.group();
         // Lógica de disparo específica de honda

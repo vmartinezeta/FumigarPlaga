@@ -54,14 +54,17 @@ export default class StatusBar extends Phaser.GameObjects.Group {
 
     setConfig(config) {
         if ("vida" in config) {
-            this.rotuloVida.setText("Vida: "+config.vida)
+            this.rotuloVida.setText("Vida: "+config.vida);
+        }
+        if ("powerUp" in config) {
+            this.rotuloPowerUp.setText("PowerUp: "+config.powerUp);
         }
         if ("puntuacion" in config) {
             this.puntuacion += config.puntuacion;
             this.rotuloPuntuacion.setText("Puntuacion: "+this.puntuacion);
         }
         if ("fierro" in config) {
-            this.rotuloFierro.setText("Fierro: "+config.fierro)
+            this.rotuloFierro.setText("Fierro: "+config.fierro);
         }
         if ("capacidad" in config) {
             this.rotuloCapacidad.setText("Capacidad: "+config.capacidad);

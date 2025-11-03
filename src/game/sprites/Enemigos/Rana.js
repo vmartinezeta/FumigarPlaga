@@ -126,7 +126,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         macho.x = macho.previousPoint.x;
         macho.y = macho.previousPoint.y;
         if (this.isHidden) {
-            this.setTexture("ojitos");
+            this.setTexture("rana-oculta");
             this.stop()
         } else {
             this.setTexture(this.imageKey);
@@ -134,7 +134,7 @@ export default class Rana extends Phaser.GameObjects.Sprite {
         }
 
         if (macho.isHidden) {
-            macho.setTexture("ojitos");
+            macho.setTexture("rana-oculta");
             macho.stop();
         } else {
             macho.setTexture(this.imageKey);
