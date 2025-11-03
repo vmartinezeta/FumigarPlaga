@@ -7,14 +7,17 @@ export default class MultiShoot extends PowerUp {
         this.color = 0xffff00;
         this.fierros = [
             'honda',
-            'hondax3'
+            'superHonda',
+            'bomba',
+            'lanzaLlamas',
+            'lanzaHumo'
         ];
         const type = Math.floor(Math.random()*this.fierros.length);
         this.hondaType = this.fierros[type];
         this.flotar();
         this.play("nuevo-fierro");
 
-        this.text = scene.add.text(x, y, type===0?"Honda":"HondaTriple", {
+        this.text = scene.add.text(x, y, this.hondaType, {
             fontSize: '16px',
             fill: '#ecf0f1'
         }).setOrigin(0.5);

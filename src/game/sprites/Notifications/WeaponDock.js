@@ -158,7 +158,6 @@ export default class WeaponDock extends Phaser.GameObjects.Group{
                 fierro: currentWeapon.type,
                 capacidad: currentWeapon.capacidad
             });
-
             
             return true;
         }

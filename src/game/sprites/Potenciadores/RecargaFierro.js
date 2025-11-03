@@ -21,6 +21,7 @@ export default class RecargaFierro extends PowerUp {
 
     applyEffect(fierro) {
         fierro.reset();
+        this.scene.eventBus.emit("statusBarChanged", { capacidad: fierro.capacidad });
     }
 
 }

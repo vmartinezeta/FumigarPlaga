@@ -25,10 +25,10 @@ export default class Honda extends Fierro {
         this.scene.physics.add.overlap(this, plagaGroup, this.handleCollision, null, this);
 
         // Auto-destrucción después de tiempo
-        this.scene.time.delayedCall(this.fireRate, this.reset, [], this);
+        this.scene.time.delayedCall(this.fireRate, this.resetear, [], this);
     }
 
-    reset() {
+    resetear() {
         this.setActive(false);
         this.setVisible(false);
     }

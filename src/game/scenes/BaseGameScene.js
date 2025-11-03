@@ -308,7 +308,6 @@ export class BaseGameScene extends Phaser.Scene {
         if (potenciador instanceof RecargaFierro) {
             const weapon = this.weaponManager.getCurrentWeapon();
             potenciador.applyEffect(weapon);
-            this.eventBus.emit("capacityWeaponChanged", { capacidad: weapon.capacidad });
             this.potenciadorGroup.remove(potenciador, true, true);
         } else if (potenciador instanceof Vida) {
             potenciador.applyEffect(player);
